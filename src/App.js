@@ -1,8 +1,14 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Main from "./pages/Main";
 
 function App() {
   return (
     <div className="App">
-        client
+        <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Main/>} />
+        </Routes>
+        </BrowserRouter>
     </div>
   );
 }

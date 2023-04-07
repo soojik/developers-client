@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es6", //어떤버전의 js로 컴파일할지 정의
+    "lib": ["dom", "dom.iterable", "esnext"], // 어떤 환경에서 사용하는지 정의(api자동완성 제공해줌)
+    "baseUrl": "./src", // ./src를 절대 경로로 지정
+    "allowJs": true, //ts안에서 js허용(js파일 import가능)
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+    // "downlevelIteration": true //코드가 너무 방대해지기 때문에 downlevelIteration 옵션을 설정할 수 있도록 하고
+    // //기본 값은 false로 설정하여 가장 기본적인 Array 타입만을 사용하게 해서 변환되는 코드량을 줄이기 위한 것이다.
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

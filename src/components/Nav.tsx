@@ -8,17 +8,23 @@ import MenuCloseIcon from "./icons/MenuCloseIcon";
 const Nav = () => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const navigate = useNavigate();
-  const isLoggedIn = false;
+  const sideBarMenu = [
+    { title: "홈", href: "/" },
+    { title: "문제 풀이", href: "/problem" },
+    { title: "멘토링", href: "/mentoring" },
+  ];
+  const isLoggedIn = false; // 임시 로그인 상태
 
   const handleOpenMenuBar = () => {
     setIsOpenMenu(!isOpenMenu);
   };
+
   return (
     <nav className="px-4 py-3 bg-gray-800">
       <div className="flex items-center justify-between">
         <Link to="/" className="flex items-center">
           <img
-            className="w-auto h-8"
+            className="w-auto h-6"
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
             alt="로고 이미지"
           />
@@ -46,61 +52,66 @@ const Nav = () => {
             <NotificationIcon fill="white" />
           </button>
           <div className="hidden md:block">
-            {isLoggedIn ? (
-              <button>로그인한 유저이미지</button>
-            ) : (
-              <button className="p-2" onClick={() => navigate("/login")}>
-                <PersonIcon fill="white" />
-              </button>
-            )}
+            <button
+              className="p-2"
+              onClick={() =>
+                navigate(isLoggedIn ? "/profile/:memberId" : "/login")
+              }
+            >
+              <PersonIcon fill="white" />
+            </button>
           </div>
           {/* 모바일 화면에서 햄버거 메뉴 표시 */}
-          <div className="md:hidden">
-            <button className={`p-2 ${isOpenMenu ? "hidden" : "block"}`}>
-              <MenuBarIcon fill="white" />
-            </button>
-
-            {/* <div
+          <div className="block md:hidden">
+            <div className="border-none " onClick={handleOpenMenuBar}>
+              <button className={`p-2 ${isOpenMenu ? "hidden" : "block"}`}>
+                <MenuBarIcon fill="white" />
+              </button>
+            </div>
+            {/* 메뉴 활성화 시 SideBar */}
+            <div
               className={`${
                 isOpenMenu
-                  ? "absolute left-0 w-full h-screen bg-neutral-700"
+                  ? "fixed left-0 top-0 w-full h-full bg-neutral-700/[0.6] z-40"
                   : ""
               }`}
             >
               <div
-                className={`bg-white fixed top-0 right-0 h-full w-48 z-10 ${
-                  isOpenMenu ? "" : "translate-x-0"
+                className={`bg-white fixed p-5 top-0 right-0 h-full w-48 z-10  transition-all	${
+                  isOpenMenu ? "translate-x-0" : "translate-x-full"
                 }`}
                 onBlur={() => setIsOpenMenu(false)}
               >
                 <button
-                  className={`absolute top-0 p-1 -left-20 translate-x-full bg-transparent border-none ${
-                    isOpenMenu ? "hidden" : "block"
+                  className={`absolute top-2 p-1 bg-transparent border-none -left-12 ${
+                    isOpenMenu ? "block" : "hidden"
                   }`}
                   onClick={handleOpenMenuBar}
                 >
                   <MenuCloseIcon fill="white" />
                 </button>
-                <div
-                  className="text-xl hover:font-bold"
-                  onClick={() => setIsOpenMenu(false)}
-                >
-                  <Link to="/">홈</Link>
-                </div>
-                <div
-                  className="text-xl hover:font-bold"
-                  onClick={() => setIsOpenMenu(false)}
-                >
-                  <Link to="/problem">문제 풀이</Link>
-                </div>
-                <div
-                  className="text-xl hover:font-bold"
-                  onClick={() => setIsOpenMenu(false)}
-                >
-                  <Link to="/mentoring">멘토링</Link>
-                </div>
+
+                {sideBarMenu?.map((menu) => (
+                  <Link
+                    to={menu.href}
+                    className="block pb-1 mb-2 text-xl font-light border-b border-solid border-slate-200 hover:font-normal "
+                    onClick={() => setIsOpenMenu(false)}
+                  >
+                    {menu.title}
+                  </Link>
+                ))}
+
+                {isLoggedIn ? (
+                  <Link
+                    to="/profile/:memberId"
+                    className="block pb-1 mb-2 text-xl font-light border-b border-solid border-slate-200 hover:font-normal"
+                    onClick={() => setIsOpenMenu(false)}
+                  >
+                    마이페이지
+                  </Link>
+                ) : null}
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

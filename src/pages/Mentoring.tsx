@@ -3,8 +3,6 @@ import Popup from 'components/Live/PopUp';
 import MentorProfile from 'components/Live/MentorProfile';
 import CalendarPopUp from "components/Live/CalendarPopUp";
 
-import "../styles/Live/Live.css";
-
 const Mentoring = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showCalendarPopup, setShowCalendarPopup] = useState(false);

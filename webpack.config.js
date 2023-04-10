@@ -23,7 +23,14 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+        exclude: /node_modules\/rrule/, // 이 부분 추가
+      },
+      {
         test: /\.css$/,
+        devtool: 'eval-source-map',
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',

@@ -1,9 +1,10 @@
 import axios from "axios";
 import Options from "components/Options";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import TagInput from "components/TagInput";
+import MultiOptions from "components/MultiOptions";
 
 interface SignProps {
   email: string;
@@ -11,8 +12,8 @@ interface SignProps {
   pwConfirm?: string;
   nickname: string;
   address?: string;
-  position?: string;
-  skills?: string;
+  position?: string[];
+  skills?: string[];
 }
 
 const SignUp = () => {
@@ -28,7 +29,7 @@ const SignUp = () => {
 
   const [pwd, setPwd] = useState("");
   const [address, setAdress] = useState("");
-  const [position, setPosition] = useState("");
+  const [position, setPosition] = useState<string[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
 
   const addressList: string[] = [
@@ -69,7 +70,8 @@ const SignUp = () => {
 
   const handleSignSubmit: SubmitHandler<SignProps> = (data) => {
     const skillToString = skills.join(",");
-    // console.log({ ...data, address, position, skillToString });
+    const positionToString = position.join(",");
+    // console.log({ ...data, address, positionToString, skillToString });
     if (data.password !== data.pwConfirm) {
       setError(
         "pwConfirm",
@@ -81,7 +83,7 @@ const SignUp = () => {
     axios
       .post(
         `${URL}/api/auth/register`,
-        { ...data, address, position, skills: skillToString },
+        { ...data, address, position: positionToString, skills: skillToString },
         {
           headers: {
             "Content-Type": "application/json",
@@ -186,9 +188,22 @@ const SignUp = () => {
             </div>
             <label className="mt-4 text-xs">거주지</label>
             <Options label="거주지" lists={addressList} setState={setAdress} />
-            <label className="mt-4 text-xs">원하는 직무</label>
-            <Options label="직무" lists={positionList} setState={setPosition} />
-            <label className="mt-4 text-xs">주요 기술</label>
+            <div className="flex justify-between">
+              <label className="mt-4 text-xs">원하는 직무</label>
+              <span className="mt-4 text-xs font-thin">최대 5개 선택 가능</span>
+            </div>
+            <MultiOptions
+              label="직무"
+              lists={positionList}
+              state={position}
+              setState={setPosition}
+            />
+            <div className="flex justify-between">
+              <label className="mt-4 text-xs">주요 기술</label>
+              <span className="mt-4 text-xs font-thin">
+                최대 10개 선택 가능
+              </span>
+            </div>
             <TagInput
               tags={skills}
               setTags={setSkills}

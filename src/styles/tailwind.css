@@ -11,6 +11,9 @@
 .border_base {
   @apply border border-solid rounded-md outline-none border-slate-300;
 }
+.selected_btn {
+  @apply border-accent-200 border border-solid text-accent-200;
+}
 
 @layer utilities {
   .scrollbar_option::-webkit-scrollbar {
@@ -20,5 +23,11 @@
     background-color: #bab9b9;
     border-radius: 15px;
     scrollbar-width: thin;
+  }
+  .line_wrap {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
   }
 }

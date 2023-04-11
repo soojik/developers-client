@@ -5,7 +5,7 @@
 .sign_input {
   @apply p-2 my-2 border border-solid rounded-md outline-none border-slate-300 placeholder:font-thin placeholder:text-sm;
 }
-.form_submit_btn {
+.sign_form_submit_btn {
   @apply w-full p-2 mt-6 mb-4 rounded-md text-slate-50 bg-accent-400 hover:bg-accent-500;
 }
 .border_base {

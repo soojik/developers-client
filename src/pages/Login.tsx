@@ -86,7 +86,10 @@ const Login = () => {
               {errors?.password?.message}
             </div>
 
-            <button type="submit" className="form_submit_btn">
+            <button
+              type="submit"
+              className="sign_form_submit_btn bg-accent-400"
+            >
               로그인
             </button>
             <div className="flex justify-between font-light">

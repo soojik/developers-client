@@ -212,7 +212,10 @@ const SignUp = () => {
               placeholder="예시) React, Java, Python (보유 기술명 입력)"
             />
 
-            <button type="submit" className="form_submit_btn">
+            <button
+              type="submit"
+              className="sign_form_submit_btn bg-accent-400"
+            >
               회원가입
             </button>
             <div className="flex justify-between font-light">

@@ -26,13 +26,6 @@ const LiveList: React.FC = () => {
         // Perform search using query parameter
     };
 
-
-    //     <button
-    //     className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-    //     onClick={handleOpenModal}>
-    //     방 생성
-    // </button>
-
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
             <div className="w-full px-4 mt-4 lg:w-1/2">

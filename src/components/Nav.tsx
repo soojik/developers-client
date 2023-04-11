@@ -96,6 +96,7 @@ const Nav = () => {
                     to={menu.href}
                     className="block pb-1 mb-2 text-xl font-light border-b border-solid border-slate-200 hover:font-normal "
                     onClick={() => setIsOpenMenu(false)}
+                    key={menu.title}
                   >
                     {menu.title}
                   </Link>

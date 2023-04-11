@@ -9,12 +9,17 @@ import Mentoring from "pages/Mentoring";
 import Problem from "pages/Problem";
 import MyPage from "pages/MyPage";
 
+import Login from "pages/Login";
+import SignUp from "pages/SignUp";
+import Mentoring from "pages/Mentoring";
+import Problem from "pages/Problem";
+import MyPage from "pages/MyPage";
 const App: React.FC = () => {
   return (
     <div className="App">
       <BrowserRouter>
         <Nav />
-        <Layout>
+        <Layout> 
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/login" element={<Login />} />
@@ -30,3 +35,5 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+  

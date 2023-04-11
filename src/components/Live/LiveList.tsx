@@ -26,19 +26,27 @@ const LiveList: React.FC = () => {
         // Perform search using query parameter
     };
 
+
+    //     <button
+    //     className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+    //     onClick={handleOpenModal}>
+    //     방 생성
+    // </button>
+
     return (
-        <div className="flex flex-col justify-center items-center h-screen">
-            <div className="w-1/2">
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+            <div className="w-full px-4 mt-4 lg:w-1/2">
                 <SearchBar onSearch={handleSearch}></SearchBar>
             </div>
-            <div className="h-32 flex items-center">
+            <div className="w-32 px-4 mt-4">
                 <button
-                    className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                    onClick={handleOpenModal}>
+                    className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 w-32 flex justify-center"
+                    onClick={handleOpenModal}
+                >
                     방 생성
                 </button>
             </div>
-            <div>
+            <div className="w-full px-4 mt-4">
                 <RoomList rooms={rooms}></RoomList>
             </div>
             {isModalOpen && <CreateRoomModal onClose={() => setIsModalOpen(false)} />}

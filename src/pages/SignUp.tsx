@@ -3,6 +3,7 @@ import Options from "components/Options";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import TagInput from "components/TagInput";
 
 interface SignProps {
   email: string;
@@ -28,7 +29,7 @@ const SignUp = () => {
   const [pwd, setPwd] = useState("");
   const [address, setAdress] = useState("");
   const [position, setPosition] = useState("");
-  const [skills, setSkills] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
 
   const addressList: string[] = [
     "전체",
@@ -54,20 +55,6 @@ const SignUp = () => {
     "시스템/네트워크",
     "빅데이터",
   ];
-  const skillList: string[] = [
-    "전체",
-    "Java",
-    "C/C++",
-    "JavaScript",
-    "React",
-    "Vue",
-    "Python",
-    "안드로이드",
-    "iOS",
-    "DevOps",
-    "Node.js",
-    "PHP",
-  ];
 
   const onValid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const pwdConfirm = e.target.value;
@@ -81,7 +68,8 @@ const SignUp = () => {
   };
 
   const handleSignSubmit: SubmitHandler<SignProps> = (data) => {
-    // console.log({ ...data, address, position, skills });
+    const skillToString = skills.join(",");
+    // console.log({ ...data, address, position, skillToString });
     if (data.password !== data.pwConfirm) {
       setError(
         "pwConfirm",
@@ -93,7 +81,7 @@ const SignUp = () => {
     axios
       .post(
         `${URL}/api/auth/register`,
-        { ...data, address, position, skills },
+        { ...data, address, position, skills: skillToString },
         {
           headers: {
             "Content-Type": "application/json",
@@ -199,13 +187,13 @@ const SignUp = () => {
             <label className="mt-4 text-xs">거주지</label>
             <Options label="거주지" lists={addressList} setState={setAdress} />
             <label className="mt-4 text-xs">원하는 직무</label>
-            <Options
-              label="원하는 직무"
-              lists={positionList}
-              setState={setPosition}
-            />
+            <Options label="직무" lists={positionList} setState={setPosition} />
             <label className="mt-4 text-xs">주요 기술</label>
-            <Options label="주요 기술" lists={skillList} setState={setSkills} />
+            <TagInput
+              tags={skills}
+              setTags={setSkills}
+              placeholder="예시) React, Java, Python (보유 기술명 입력)"
+            />
 
             <button type="submit" className="form_submit_btn">
               회원가입

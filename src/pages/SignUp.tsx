@@ -214,7 +214,7 @@ const SignUp = () => {
               이미 계정이 있으세요?
               <Link
                 to="/login"
-                className="font-semibold text-accent-400 hover:text-accent-500"
+                className="font-semibold text-accent-300 hover:text-accent-500"
               >
                 로그인
               </Link>

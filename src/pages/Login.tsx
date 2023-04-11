@@ -91,7 +91,7 @@ const Login = () => {
               아직 계정이 없다면?
               <Link
                 to="/register"
-                className="font-semibold text-accent-400 hover:text-accent-500"
+                className="font-semibold text-accent-300 hover:text-accent-500"
               >
                 회원가입
               </Link>

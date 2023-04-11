@@ -1,10 +1,12 @@
 import axios from "axios";
 import Options from "components/Options";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import TagInput from "components/TagInput";
 import MultiOptions from "components/MultiOptions";
+import NaverOauthBtn from "components/buttons/NaverOauthBtn";
+import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 
 interface SignProps {
   email: string;
@@ -224,6 +226,14 @@ const SignUp = () => {
             </div>
           </div>
         </form>
+
+        <div className="flex justify-center mt-20 mb-8 font-light">
+          소셜 계정으로 회원가입
+        </div>
+        <div className="flex justify-center">
+          <NaverOauthBtn />
+          <GoogleOauthBtn />
+        </div>
       </div>
     </div>
   );

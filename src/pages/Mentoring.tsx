@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import ShowMentoring from 'components/Live/ShowMentoring';
+import React, { useEffect, useState } from 'react';
 import ShowSchedule from 'components/Live/ShowSchedule';
 import LiveList from '../components/Live/LiveList';
 
@@ -19,7 +18,6 @@ const Mentoring = () => {
     setShowPopup(!showPopup);
   };
 
-  
   const events = [
     {
       title: '테스트 1',
@@ -73,7 +71,7 @@ const Mentoring = () => {
       </div>
       {showScheduler ? (
         <ShowSchedule events={events} />
-      ) : (
+      ) : ( 
         <LiveList></LiveList>
       )}
     </div>

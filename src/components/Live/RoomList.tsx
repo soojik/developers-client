@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import ShowMentoring from './ShowMentoring';
 
-interface Room {
-    id: number;
-    title: string;
-    description: string;
-    mentorName: string;
-    thumbnailUrl: string;
+export interface Room {
+    mentoringRoomId:Number,
+    title:String,
+    mentorName:String,
+    description:String,
+    point:Number,
+    createdAt:Date
 }
 
 interface RoomListProps {
@@ -14,23 +15,17 @@ interface RoomListProps {
 }
 
 const RoomList: React.FC<RoomListProps> = ({ rooms }) => {
-    const [showRoomInfo, setShowRoomInfo] = useState(false);
-
-    const handleOpenRoomInfo = () => {
-        setShowRoomInfo(true);
-    }
+    let num = 1;
 
     return (
         <div className="flex flex-wrap justify-center">
             {rooms.map((room) => (
-                <div key={room.id} className="w-1/3 p-4 flex flex-col justify-center items-center">
-                    <img className="h-50" src={room.thumbnailUrl} alt={room.title} onClick={handleOpenRoomInfo} />
-                    <h2 className="text-lg font-semibold mt-2" onClick={handleOpenRoomInfo} >{room.title}</h2>
-                    <h3 className='' onClick={handleOpenRoomInfo} >{room.description}</h3>
+                <div key={num++} className="w-1/3 p-4 flex flex-col justify-center items-center">
+                    <h2 className="text-lg font-semibold mt-2">{room.title}</h2>
+                    <h3 className=''>{room.description}</h3>
                     <h3 className=''>{room.mentorName}</h3>
                 </div>
             ))}
-            { showRoomInfo && <ShowMentoring handleClose={() => setShowRoomInfo(false)} /> }
         </div>
     );
 }

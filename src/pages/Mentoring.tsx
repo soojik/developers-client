@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ShowMentoring from 'components/Live/ShowMentoring';
 import ShowSchedule from 'components/Live/ShowSchedule';
+import LiveList from '../components/Live/LiveList';
 
 const Mentoring = () => {
   const [showPopup, setShowPopup] = useState(false); // 팝업 창 취소
@@ -69,13 +70,14 @@ const Mentoring = () => {
       {showScheduler ? (
         <ShowSchedule events={events} />
       ) : ( // 지수 님이 담당하는 방 전체 목록 이 만들어지면 팝업 여부 추가
-        <div>
-          {/* 방 만들어졌다는 전제 하에 */}
-          <button onClick={togglePopup}>방 버튼</button> 
-          {showPopup && (
-            <ShowMentoring handleClose={togglePopup} />
-          )}
-        </div>
+        // <div>
+        //   {/* 방 만들어졌다는 전제 하에 */}
+        //   <button onClick={togglePopup}>방 버튼</button> 
+        //   {showPopup && (
+        //     <ShowMentoring handleClose={togglePopup} />
+        //   )}
+        // </div>
+        <LiveList></LiveList>
       )}
     </div>
   );

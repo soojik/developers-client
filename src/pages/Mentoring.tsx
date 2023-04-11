@@ -7,9 +7,13 @@ const Mentoring = () => {
   const [showPopup, setShowPopup] = useState(false); // 팝업 창 취소
   const [showScheduler, setShowScheduler] = useState(true); // 보여주는 창 변경
 
-  const toggleSelectMenu = () => {
-    setShowScheduler(!showScheduler);
+  const handleClickScheduler = () => {
+    setShowScheduler(true);
   };
+
+  const handleClickRoomList = () => {
+    setShowScheduler(false);
+  }
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -54,7 +58,7 @@ const Mentoring = () => {
           className={`flex-1 py-2 px-4 border border-blue- text-center ${
             showScheduler ? 'bg-blue-300' : 'bg-blue-500'
           }`}
-          onClick={toggleSelectMenu}
+          onClick={handleClickRoomList}
         >
           전체 방 목록
         </button>
@@ -62,21 +66,14 @@ const Mentoring = () => {
           className={`flex-1 py-2 px-4 border border-blue-500 text-center ${
             showScheduler ? 'bg-blue-500' : 'bg-blue-300'
           }`}
-          onClick={toggleSelectMenu}
+          onClick={handleClickScheduler}
         >
           일정 관리
         </button>
       </div>
       {showScheduler ? (
         <ShowSchedule events={events} />
-      ) : ( // 지수 님이 담당하는 방 전체 목록 이 만들어지면 팝업 여부 추가
-        // <div>
-        //   {/* 방 만들어졌다는 전제 하에 */}
-        //   <button onClick={togglePopup}>방 버튼</button> 
-        //   {showPopup && (
-        //     <ShowMentoring handleClose={togglePopup} />
-        //   )}
-        // </div>
+      ) : (
         <LiveList></LiveList>
       )}
     </div>

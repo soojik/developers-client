@@ -1,6 +1,8 @@
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import NaverOauthBtn from "components/buttons/NaverOauthBtn";
+import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 
 interface LoginProps {
   memberId: string;
@@ -84,7 +86,10 @@ const Login = () => {
               {errors?.password?.message}
             </div>
 
-            <button type="submit" className="form_submit_btn">
+            <button
+              type="submit"
+              className="sign_form_submit_btn bg-accent-400"
+            >
               로그인
             </button>
             <div className="flex justify-between font-light">
@@ -95,6 +100,14 @@ const Login = () => {
               >
                 회원가입
               </Link>
+            </div>
+
+            <div className="flex justify-center mt-20 mb-8 font-light">
+              소셜 계정으로 로그인
+            </div>
+            <div className="flex justify-center">
+              <NaverOauthBtn />
+              <GoogleOauthBtn />
             </div>
           </div>
         </form>

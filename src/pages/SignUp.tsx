@@ -3,6 +3,10 @@ import Options from "components/Options";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import TagInput from "components/TagInput";
+import MultiOptions from "components/MultiOptions";
+import NaverOauthBtn from "components/buttons/NaverOauthBtn";
+import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 
 interface SignProps {
   email: string;
@@ -10,8 +14,8 @@ interface SignProps {
   pwConfirm?: string;
   nickname: string;
   address?: string;
-  position?: string;
-  skills?: string;
+  position?: string[];
+  skills?: string[];
 }
 
 const SignUp = () => {
@@ -27,8 +31,8 @@ const SignUp = () => {
 
   const [pwd, setPwd] = useState("");
   const [address, setAdress] = useState("");
-  const [position, setPosition] = useState("");
-  const [skills, setSkills] = useState("");
+  const [position, setPosition] = useState<string[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
 
   const addressList: string[] = [
     "전체",
@@ -54,20 +58,6 @@ const SignUp = () => {
     "시스템/네트워크",
     "빅데이터",
   ];
-  const skillList: string[] = [
-    "전체",
-    "Java",
-    "C/C++",
-    "JavaScript",
-    "React",
-    "Vue",
-    "Python",
-    "안드로이드",
-    "iOS",
-    "DevOps",
-    "Node.js",
-    "PHP",
-  ];
 
   const onValid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const pwdConfirm = e.target.value;
@@ -81,7 +71,9 @@ const SignUp = () => {
   };
 
   const handleSignSubmit: SubmitHandler<SignProps> = (data) => {
-    // console.log({ ...data, address, position, skills });
+    const skillToString = skills.join(",");
+    const positionToString = position.join(",");
+    // console.log({ ...data, address, positionToString, skillToString });
     if (data.password !== data.pwConfirm) {
       setError(
         "pwConfirm",
@@ -93,7 +85,7 @@ const SignUp = () => {
     axios
       .post(
         `${URL}/api/auth/register`,
-        { ...data, address, position, skills },
+        { ...data, address, position: positionToString, skills: skillToString },
         {
           headers: {
             "Content-Type": "application/json",
@@ -198,16 +190,32 @@ const SignUp = () => {
             </div>
             <label className="mt-4 text-xs">거주지</label>
             <Options label="거주지" lists={addressList} setState={setAdress} />
-            <label className="mt-4 text-xs">원하는 직무</label>
-            <Options
-              label="원하는 직무"
+            <div className="flex justify-between">
+              <label className="mt-4 text-xs">원하는 직무</label>
+              <span className="mt-4 text-xs font-thin">최대 5개 선택 가능</span>
+            </div>
+            <MultiOptions
+              label="직무"
               lists={positionList}
+              state={position}
               setState={setPosition}
             />
-            <label className="mt-4 text-xs">주요 기술</label>
-            <Options label="주요 기술" lists={skillList} setState={setSkills} />
+            <div className="flex justify-between">
+              <label className="mt-4 text-xs">주요 기술</label>
+              <span className="mt-4 text-xs font-thin">
+                최대 10개 선택 가능
+              </span>
+            </div>
+            <TagInput
+              tags={skills}
+              setTags={setSkills}
+              placeholder="예시) React, Java, Python (보유 기술명 입력)"
+            />
 
-            <button type="submit" className="form_submit_btn">
+            <button
+              type="submit"
+              className="sign_form_submit_btn bg-accent-400"
+            >
               회원가입
             </button>
             <div className="flex justify-between font-light">
@@ -221,6 +229,14 @@ const SignUp = () => {
             </div>
           </div>
         </form>
+
+        <div className="flex justify-center mt-20 mb-8 font-light">
+          소셜 계정으로 회원가입
+        </div>
+        <div className="flex justify-center">
+          <NaverOauthBtn />
+          <GoogleOauthBtn />
+        </div>
       </div>
     </div>
   );

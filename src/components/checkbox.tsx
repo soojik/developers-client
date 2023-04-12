@@ -32,7 +32,7 @@ const Checkbox: React.FC = () => {
 
     return (
         <>
-            <div className="flex flex-col">
+            <div className="flex-col md:grid grid-cols-3 gap-0.5 w-full h-10">
                 <div className="flex items-center justify-center my-2">
                 <input
                     type="checkbox"

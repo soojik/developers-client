@@ -1,24 +1,39 @@
-import { Fragment, useState } from "react"
+import { Fragment, useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface SelectDropdownProps {
     selectName: string;
     options: string[];
     paramName: string;
-  }
-   
+}
 
-  const SelectDropdown: React.FC<SelectDropdownProps> = ({ selectName, options, paramName }) => {
+
+const SelectDropdown: React.FC<SelectDropdownProps> = ({ selectName, options, paramName }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectDropValue, setSelectDropValue] = useState('Level을 선택하세요')
+    const location = useLocation(); // useLocation 함수 바깥으로 이동
+    const navigate = useNavigate(); // useNavigate 함수 바깥으로 이동
+
     const toggleSelect = () => {
         setIsOpen(!isOpen);
     }
 
     const menuSelect = (value: string | null) => {
         if (value) {
-            setSelectDropValue(value);
-            setIsOpen(false); 
+            setIsOpen(false);
+            const searchParams = new URLSearchParams(location.search);
+            if (value === "Gold") {
+                searchParams.set(paramName, "Gold");
+                fetchProblems("Gold");
+            } else if (value === "Silver") {
+                searchParams.set(paramName, "Silver");
+                fetchProblems("Silver");
+            } else if (value === "Bronze") {
+                searchParams.set(paramName, "Bronze");
+                fetchProblems("Bronze");
+            }
+            navigate(`?${searchParams.toString()}`);
         }
     };
     const fetchProblems = async (language: string) => {
@@ -35,27 +50,44 @@ interface SelectDropdownProps {
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Axios error:", error.message, "Code:", error.code);
-              } else {
+            } else {
                 console.error("Unknown error:", error);
-              }
+            }
         }
     };
 
     const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
         const value = e.currentTarget.getAttribute("data-value");
         if (value) {
+            setSelectDropValue(value);
             menuSelect(value);
-            fetchProblems(value); // 3. handleMenuClick 함수에서 fetchProblems 함수를 호출합니다.
         }
     };
     const handleClear = () => {
         setSelectDropValue("Level을 선택하세요");
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(paramName);
+        navigate(`?${searchParams.toString()}`);
     };
+
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [dropdownRef]);
 
 
 
     return (
-        <div>
+        <div ref={dropdownRef}>
             <style>{`
     .top-100 {top: 100%}
     .bottom-100 {bottom: 100%}

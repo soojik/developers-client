@@ -1,0 +1,15 @@
+/* src/styles/mainList.css */
+
+.group:hover span:first-child {
+    --tw-translate-y: 0px;
+  }
+  
+  .group:hover div {
+    --tw-translate-x: 0.5rem;
+    --tw-translate-y: -0.5rem;
+  }
+  
+  .group:hover span:last-child {
+    --tw-translate-x: 0px;
+  }
+  

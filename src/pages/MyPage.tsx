@@ -7,6 +7,7 @@ import MenuCloseIcon from "components/icons/MenuCloseIcon";
 import PwdInput from "components/mypage/PwdInput";
 import NicknameInput from "components/mypage/NicknameInput";
 import AddressInput from "components/mypage/AddressInput";
+import CareerEdit from "components/mypage/CareerEdit";
 
 const MyPage = () => {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -104,7 +105,6 @@ const MyPage = () => {
           <div className="transition-all rounded-md p-2 flex justify-between">
             이메일 <span className=" text-slate-400">{`email`}</span>
           </div>
-
           {userInfoMunu?.map((el) => (
             <div
               className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between cursor-pointer"
@@ -132,9 +132,10 @@ const MyPage = () => {
         <div className="font-extrabold text-zinc-500 mb-2">
           커리어 정보 관리
         </div>
+        <CareerEdit />
         {careerInfoMenu?.map((el) => (
           <div
-            className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between h-96"
+            className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between"
             key={el}
           >
             {el} <RightArrowIcon />

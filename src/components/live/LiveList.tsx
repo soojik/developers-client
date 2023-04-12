@@ -16,7 +16,7 @@ const LiveList: React.FC = () => {
 
     const fetchRooms = async (lastTime: Date | null) => {
         const lastDateTimeParam = lastTime ? `/next?lastDateTime=${lastTime}` : '';
-        const url = `http://localhost:9002/room${lastDateTimeParam}`;
+        const url = `http://localhost:9002/api/room${lastDateTimeParam}`;
         const data = await axios.get(url);
         return data.data.data;
       };
@@ -69,7 +69,7 @@ const LiveList: React.FC = () => {
 
     const handleSearch = async (query: string) => {
         console.log(`Searching for "${query}"...`);
-        const url = `http://localhost:9002/room/${query}`;
+        const url = `http://localhost:9002/api/room/${query}`;
         const data = await axios.get(url);
         setRoomList(data.data.data);
         setCurrentPage(1);

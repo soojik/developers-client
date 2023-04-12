@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ShowSchedule from 'components/live/ShowSchedule';
+import ShowSchedule from '../components/live/ShowSchedule';
 import LiveList from '../components/live/LiveList';
 
 const Mentoring = () => {
@@ -13,10 +13,6 @@ const Mentoring = () => {
   const handleClickRoomList = () => {
     setShowScheduler(false);
   }
-
-  const togglePopup = () => {
-    setShowPopup(!showPopup);
-  };
 
   const events = [
     {

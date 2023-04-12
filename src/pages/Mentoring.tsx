@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import ShowSchedule from 'components/Live/ShowSchedule';
-import LiveList from '../components/Live/LiveList';
+import ShowSchedule from 'components/live/ShowSchedule';
+import LiveList from '../components/live/LiveList';
 
 const Mentoring = () => {
   const [showPopup, setShowPopup] = useState(false); // 팝업 창 취소

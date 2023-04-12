@@ -4,6 +4,7 @@ import CreateRoomModal from './CreateRoomModal';
 import SearchBar from './SearchBar';
 import RoomList, {Room} from './RoomList';
 import React from 'react';
+import axios from 'axios';
 
 const LiveList: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,10 +17,11 @@ const LiveList: React.FC = () => {
     const fetchRooms = async (lastTime: Date | null) => {
         const lastDateTimeParam = lastTime ? `/next?lastDateTime=${lastTime}` : '';
         const url = `http://localhost:9002/room${lastDateTimeParam}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        return data.data;
+        const data = await axios.get(url);
+        return data.data.data;
       };
+
+      let flag = false;
 
       useEffect(() => {
         const fetchData = async () => {
@@ -27,26 +29,29 @@ const LiveList: React.FC = () => {
           setRoomList(data);
           setCurrentPage(1);
         };
-    
-        fetchData();
+
+        if(flag===false){
+            fetchData()
+            flag = true;
+        }
       }, []);
 
       useEffect(() => {
         const sliceEndIndex = currentPage * PAGE_SIZE;
         setDisplayedRooms(roomList.slice(0, sliceEndIndex));
+        console.log("검색 이후의 갯수"+roomList.length)
+        console.log(roomList)
       }, [roomList, currentPage]);
 
       const handleScroll = async () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-          if ((currentPage + 1) * PAGE_SIZE < roomList.length) {
+          if ((currentPage + 1) * PAGE_SIZE <=roomList.length) {
             setCurrentPage(currentPage + 1);
-          } else {
+          } else { 
             const lastRoom = roomList[roomList.length - 1];
             const newRooms = await fetchRooms(lastRoom.createdAt);
-            if (newRooms.length > 0 && newRooms.length<100) {
               setRoomList((prevRooms) => [...prevRooms, ...newRooms]);
               setCurrentPage(currentPage+1);
-            }
           }
         }
       };
@@ -62,9 +67,12 @@ const LiveList: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    const handleSearch = (query: string) => {
+    const handleSearch = async (query: string) => {
         console.log(`Searching for "${query}"...`);
-        // Perform search using query parameter
+        const url = `http://localhost:9002/room/${query}`;
+        const data = await axios.get(url);
+        setRoomList(data.data.data);
+        setCurrentPage(1);
     };
 
     return (

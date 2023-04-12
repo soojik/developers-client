@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Popup from 'components/Live/PopUp';
-import MentorProfile from 'components/Live/MentorProfile';
-import CalendarPopUp from "components/Live/CalendarPopUp";
+import Popup from 'components/live/PopUp';
+import MentorProfile from 'components/live/MentorProfile';
+import CalendarPopUp from "components/live/CalendarPopUp";
 
 interface ShowMentoringProps {
   handleClose : () => void,

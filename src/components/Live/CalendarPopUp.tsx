@@ -1,5 +1,5 @@
 import React, {useState} from 'react'; // 임의 시간 변수 상태값
-import Popup from '../../components/Live/PopUp';
+import Popup from './PopUp';
 import {
   Scheduler,
   WeekView,

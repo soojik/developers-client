@@ -1,5 +1,6 @@
 import MultiOptions from "components/MultiOptions";
 import TagInput from "components/TagInput";
+import DownArrowIcon from "components/icons/DownArrowIcon";
 import { positionList } from "libs/options";
 import { useEffect, useState } from "react";
 
@@ -23,11 +24,14 @@ const CareerEdit = () => {
 
   return (
     <div className="mb-20">
+      <div className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between items-center">
+        이력 <DownArrowIcon stroke="black" />
+      </div>
       <div className="text-lg font-bold mt-5 border-b py-1 mb-2">소개</div>
       <textarea
         name="contents"
         placeholder="자기소개를 3~5줄로 적어주세요!"
-        className="w-full sign_input h-[100px] bg-slate-200 border-none"
+        className="w-full sign_input h-[100px]"
         //   ref={secondRef}
         //   onChange={handleText}
         minLength={1}
@@ -50,9 +54,7 @@ const CareerEdit = () => {
           //   min={getToday()}
           onBlur={(e) => (e.target.type = "text")}
           onFocus={(e) => (e.target.type = "month")}
-          onChange={(e) => {
-            // dispatch(filterActions.setDate(e.target.value));
-          }}
+          onChange={(e) => {}}
         />
         -
         <input
@@ -61,12 +63,10 @@ const CareerEdit = () => {
           placeholder="YYYY-MM"
           aria-required="true"
           max="2032-12-31"
-          //   min={getToday()}
+          //   min={'이전날짜 이후'}
           onBlur={(e) => (e.target.type = "text")}
           onFocus={(e) => (e.target.type = "month")}
-          onChange={(e) => {
-            // dispatch(filterActions.setDate(e.target.value));
-          }}
+          onChange={(e) => {}}
         />
         <input
           type="text"

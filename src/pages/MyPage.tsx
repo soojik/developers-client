@@ -8,12 +8,13 @@ import PwdInput from "components/mypage/PwdInput";
 import NicknameInput from "components/mypage/NicknameInput";
 import AddressInput from "components/mypage/AddressInput";
 import CareerEdit from "components/mypage/CareerEdit";
+import DownArrowIcon from "components/icons/DownArrowIcon";
 
 const MyPage = () => {
   const URL = process.env.REACT_APP_DEV_URL;
   const { memberId } = useParams();
   const navigate = useNavigate();
-  const careerInfoMenu = ["이력", "멘토", "후기"];
+  const careerInfoMenu = ["멘토", "후기"];
   const userInfoMunu = [
     { menu: "닉네임", url: "nickname" },
     { menu: "거주지", url: "address" },
@@ -53,8 +54,14 @@ const MyPage = () => {
           },
         }
       )
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        alert("저장에 성공했습니다");
+        console.log(res);
+      })
+      .catch((err) => {
+        alert("저장에 실패했습니다");
+        console.log(err);
+      });
   };
 
   const handleUserInfoModal = (path: string) => {
@@ -128,7 +135,7 @@ const MyPage = () => {
           </button>
         </div>
       </div>
-      <div className="bg-zinc-50 rounded-3xl md:col-span-2 h-auto shadow-lg">
+      <div className="bg-zinc-50 rounded-3xl md:col-span-2 h-auto shadow-lg p-4">
         <div className="font-extrabold text-zinc-500 mb-2">
           커리어 정보 관리
         </div>
@@ -138,7 +145,7 @@ const MyPage = () => {
             className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between"
             key={el}
           >
-            {el} <RightArrowIcon />
+            {el} <DownArrowIcon stroke="black" />
           </div>
         ))}
       </div>

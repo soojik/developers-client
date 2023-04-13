@@ -53,11 +53,14 @@ const PwdInput = ({ memberId }: { memberId?: string }) => {
         }
       )
       .then((res) => {
+        alert("저장에 성공했습니다");
         console.log("비밀번호 응답", res);
-        alert("작성 완료되었습니다.");
         // navigate("/login");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        alert("저장에 실패했습니다");
+        console.log(err);
+      });
   };
 
   return (

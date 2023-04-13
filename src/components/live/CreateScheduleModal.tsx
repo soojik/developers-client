@@ -44,13 +44,17 @@ const resources = [{
 const baseURL = 'http://localhost:9002/api/schedules';
 const memberId = 1;
 
+const today: Date = new Date();
+const maxDate: Date = new Date(today.setDate(today.getDate() + 6) - (today.getTimezoneOffset() * 60000));
+
 const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentoringRoomId }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     // 현재는 각각 events 라는 상수로 지정해서 사용
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
-    useEffect(()=>console.log(events))
+    console.log(today);
+
     useEffect(() => {
         if (selectedDate) {
             // 예약 가능한 시간대 계산
@@ -135,6 +139,8 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
                                     value={selectedDate}
                                     onChange={(newValue: any) => setSelectedDate(newValue)}
                                     renderInput={(params: any) => <TextField {...params} />}
+                                    minDate={new Date()}
+                                    maxDate={maxDate}
                                 />
                             </LocalizationProvider>
                         </div>

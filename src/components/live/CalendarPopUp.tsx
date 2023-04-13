@@ -9,16 +9,25 @@ import {
   DateNavigator
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { ViewState } from '@devexpress/dx-react-scheduler';
+import axios from 'axios';
 
 interface CalendarPopupProps {
   events: any[];
   handleClose: () => void;
 }
 
+let memberId = 2;
 const CustomAppointment = (props: any) => {
     const handleEventClick = () => {
-      if (window.confirm('해당 시간에 입장하시겠습니까?')) {
-        alert('입장이 완료되었습니다.');
+      if (window.confirm('해당 시간에 신청하시겠습니까?')) {
+        const url = `http://localhost:9002/api/register`
+        axios.post(url,{
+          scheduleId:props.data.scheduleId,
+          menteeId:memberId
+        })
+        .then(res=>console.log(res.data))
+        .catch(err=>console.log(err));
+        // alert('입장이 완료되었습니다.');
       }
     };
   

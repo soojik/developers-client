@@ -1,60 +1,74 @@
-import React, { useState } from 'react';
-import Popup from 'components/Live/PopUp';
-import MentorProfile from 'components/Live/MentorProfile';
-import CalendarPopUp from "components/Live/CalendarPopUp";
+import React, { useEffect, useState } from 'react';
+import ShowSchedule from '../components/live/ShowSchedule';
+import LiveList from '../components/live/LiveList';
 
 const Mentoring = () => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [showCalendarPopup, setShowCalendarPopup] = useState(false);
-  const [showMentorPopup, setShowMentorPopup] = useState(true);
+  const [showPopup, setShowPopup] = useState(false); // 팝업 창 취소
+  const [showScheduler, setShowScheduler] = useState(true); // 보여주는 창 변경
 
-  const handleClose = () => {
-    setShowPopup(false);
-    setShowMentorPopup(true);
-    setShowCalendarPopup(false);
+  const handleClickScheduler = () => {
+    setShowScheduler(true);
   };
 
-  const togglePopup = () => {
-    setShowPopup(!showPopup);
-    setShowCalendarPopup(false);
-    setShowMentorPopup(true);
-  };
-  const toggleCalendarPopup = () => {
-    setShowCalendarPopup(!showCalendarPopup);
-  };
-  const toggleMentorPopup = () => {
-    setShowMentorPopup(!showMentorPopup);
-  };
-  
+  const handleClickRoomList = () => {
+    setShowScheduler(false);
+  }
+
   const events = [
     {
-      title: '예약 가능한 시간',
-      startDate: new Date(),
-      endDate: new Date(new Date().setHours(new Date().getHours() + 1)),
+      title: '테스트 1',
+      startDate: new Date(new Date().setHours(new Date().getHours() - 5)),
+      endDate: new Date(new Date().setHours(new Date().getHours() - 3)),
     },
     {
-      title: '예약 가능한 시간',
-      startDate: new Date(new Date().setHours(new Date().getHours() + 2)),
-      endDate: new Date(new Date().setHours(new Date().getHours() + 3)),
+      title: '테스트 2',
+      startDate: new Date(new Date().setHours(new Date().getHours())),
+      endDate: new Date(new Date().setHours(new Date().getHours()+1)),
     },
-  ];
+    {
+      title: '테스트 3',
+      startDate: new Date(new Date().setHours(new Date().getHours() + 12)),
+      endDate: new Date(new Date().setHours(new Date().getHours() + 14)),
+      location:"test-Room"
+    },
+    {
+      title: '테스트 3',
+      startDate: new Date(new Date().setHours(new Date().getHours() + 48)),
+      endDate: new Date(new Date().setHours(new Date().getHours() + 49)),
+      location:"test-Room"
+    },
+    {
+      title: '테스트 3',
+      startDate: new Date(new Date().setHours(new Date().getHours() + 75)),
+      endDate: new Date(new Date().setHours(new Date().getHours() + 77)),
+      location:"test-Room"
+    },
+  ]; // 임의의 스케쥴 event 값
+
   return (
-    <div>
-      <button onClick={togglePopup}>Show Popup</button>
-      {showPopup && (
-        <Popup>
-          {showMentorPopup ? (
-            <div className="roomDescription">
-              <h2>방 제목</h2>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur, ipsum minima soluta iste reiciendis ex, perferendis saepe voluptatem voluptates minus odio deserunt fugiat commodi impedit nemo. Amet neque exercitationem mollitia.</p>
-              <MentorProfile imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" bio="멘토에 대한 소개가 들어가는 페이지" />
-              <button onClick={togglePopup}>Cancel</button>
-              <button onClick={() => { toggleMentorPopup(); toggleCalendarPopup(); }}>Next</button>
-            </div>
-          ) : (
-            <CalendarPopUp events={events} handleClose={() => { toggleCalendarPopup(); togglePopup(); }} />
-          )}
-        </Popup>
+    <div className="container mx-auto">
+      <div className="flex mt-5 mb-3 justify-center">
+        <button
+          className={`flex-1 py-2 px-4 border border-blue-500 text-center ${
+            showScheduler ? 'bg-blue-500' : 'bg-blue-300'
+          }`}
+          onClick={handleClickScheduler}
+        >
+          일정 관리
+        </button>
+        <button
+          className={`flex-1 py-2 px-4 border border-blue- text-center ${
+            showScheduler ? 'bg-blue-300' : 'bg-blue-500'
+          }`}
+          onClick={handleClickRoomList}
+        >
+          전체 방 목록
+        </button>
+      </div>
+      {showScheduler ? (
+        <ShowSchedule events={events} />
+      ) : ( 
+        <LiveList></LiveList>
       )}
     </div>
   );

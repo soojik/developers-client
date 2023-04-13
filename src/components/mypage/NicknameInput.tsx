@@ -1,3 +1,4 @@
+import ConfirmBtn from "components/buttons/CofirmBtn";
 import { useState } from "react";
 
 const NicknameInput = ({
@@ -21,14 +22,13 @@ const NicknameInput = ({
         defaultValue={`닉네임`}
         onChange={handleNicknameChange}
       />
-      <div className="flex justify-end">
-        <button
+      <div className="flex justify-end mt-10">
+        <ConfirmBtn
           type="submit"
-          className="px-4 py-1.5 text-accent-100 rounded-md border border-accent-100 font-bold  hover:bg-accent-100 hover:text-slate-200 transition mt-10"
           onClick={() => editUserInfo("nickname", nickname)}
         >
           저장
-        </button>
+        </ConfirmBtn>
       </div>
     </>
   );

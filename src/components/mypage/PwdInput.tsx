@@ -1,4 +1,5 @@
 import axios from "axios";
+import ConfirmBtn from "components/buttons/CofirmBtn";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -133,13 +134,8 @@ const PwdInput = ({ memberId }: { memberId?: string }) => {
         <div className="text-xs text-red-500">
           {errors?.pwdConfirm && errors?.pwdConfirm?.message}
         </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="px-4 py-1.5 text-accent-100 rounded-md border border-accent-100 font-bold  hover:bg-accent-100 hover:text-slate-200 transition mt-10"
-          >
-            저장
-          </button>
+        <div className="flex justify-end mt-10">
+          <ConfirmBtn type="submit">저장</ConfirmBtn>
         </div>
       </form>
     </>

@@ -7,14 +7,14 @@ import MenuCloseIcon from "components/icons/MenuCloseIcon";
 import PwdInput from "components/mypage/PwdInput";
 import NicknameInput from "components/mypage/NicknameInput";
 import AddressInput from "components/mypage/AddressInput";
-import CareerEdit from "components/mypage/CareerEdit";
+import ResumeEdit from "components/mypage/ResumeEdit";
 import DownArrowIcon from "components/icons/DownArrowIcon";
 
 const MyPage = () => {
   const URL = process.env.REACT_APP_DEV_URL;
   const { memberId } = useParams();
   const navigate = useNavigate();
-  const careerInfoMenu = ["멘토", "후기"];
+  const careerInfoMenu = ["이력", "후기"];
   const userInfoMunu = [
     { menu: "닉네임", url: "nickname" },
     { menu: "거주지", url: "address" },
@@ -26,10 +26,15 @@ const MyPage = () => {
   const [nicknameEditOpend, setNicknameEditOpend] = useState(false);
   const [adressEditOpend, setAdressEditOpend] = useState(false);
 
+  const [activeIndex, setActiveIndex] = useState(0);
+  const onMenuClick = (idx: number): any => {
+    setActiveIndex(idx);
+  };
+
   useEffect(() => {
     const getUserProfile = async () => {
       await axios
-        .get(`${URL}/api/profile/${memberId}`, {
+        .get(`${URL}/api/member/${memberId}`, {
           headers: {
             "Content-type": "application/json",
           },
@@ -88,6 +93,7 @@ const MyPage = () => {
 
   return (
     <div className="md:grid grid-cols-3 gap-2 h-auto">
+      {/* 왼쪽 - 내정보 관리 */}
       <div className=" bg-zinc-50 rounded-3xl mb-4 md:mr-4 shadow-lg p-4 pb-10 md:sticky md:top-20 md:h-fit">
         <div className="flex pb-4 mb-4 border-b ">
           <div className="w-[100px] h-[100px] rounded-3xl bg-slate-200"></div>
@@ -135,20 +141,30 @@ const MyPage = () => {
           </button>
         </div>
       </div>
+      {/* 오른쪽 - 커리어 정보관리 */}
       <div className="bg-zinc-50 rounded-3xl md:col-span-2 h-auto shadow-lg p-4">
         <div className="font-extrabold text-zinc-500 mb-2">
           커리어 정보 관리
         </div>
-        <CareerEdit />
-        {careerInfoMenu?.map((el) => (
-          <div
-            className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between"
-            key={el}
-          >
-            {el} <DownArrowIcon stroke="black" />
-          </div>
-        ))}
+        {careerInfoMenu?.map((el, idx) => {
+          const active = idx === activeIndex ? true : false;
+          return (
+            <div key={el}>
+              <div
+                className={`hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between font-bold text-xl ${
+                  active ? "font-extrabold" : "text-gray-500"
+                }
+          }`}
+                onClick={() => onMenuClick(idx)}
+              >
+                {el} <DownArrowIcon stroke="black" />
+              </div>
+              {el === "이력" ? <ResumeEdit active={active} /> : <>후기</>}
+            </div>
+          );
+        })}
       </div>
+
       {modalOpened ? (
         <Popup>
           <div className="w-[400px] h-fit relative">

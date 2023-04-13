@@ -1,8 +1,6 @@
-import React from "react";
-
 interface SubmitProps {
   onClick: () => void;
-  text : string;
+  text: string;
 }
 
 const Submit = ({ onClick, text }: SubmitProps) => {

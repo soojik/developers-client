@@ -1,21 +1,22 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Popup from './PopUp';
+import ModifyRoomInfo from './ModifyRoomInfo';
 
 export interface Room {
-    mentoringRoomId: Number,
-    title: String,
-    mentorName: String,
-    description: String,
+    mentoringRoomId: number,
+    title: string,
+    mentorName: string,
+    description: string,
     createdAt: Date
 }
 
 const memberId = 1;
 
 const MentorScheduling: React.FC = () => {
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
-    const [selectedRoom, setSelectedRoom] = useState<Room>();
-    const [step, setStep] = useState<number>(1);
+    const [selectedRoom, setSelectedRoom] = useState<Room>(null as any);
 
     useEffect(() => {
         axios({
@@ -29,8 +30,8 @@ const MentorScheduling: React.FC = () => {
     console.log(roomList);
 
     const handleClickRoom = (room: Room) => {
+        setIsModalOpen(true);
         setSelectedRoom(room);
-        setStep(2);
     }
 
     let num = 1;
@@ -44,12 +45,13 @@ const MentorScheduling: React.FC = () => {
                     <h3 className=''>{room.mentorName}</h3>
                 </div>
             ))}
-            {step == 2 && (
+            {isModalOpen && (
                 <Popup>
-                    <div>
+                    {/* <div>
                         방 수정 및 일정 추가
                     </div>
-                    <button onClick={() => setStep(1)}>나가기</button>
+                    <button onClick={() => setStep(1)}>나가기</button> */}
+                    <ModifyRoomInfo room={selectedRoom} onClose={() => setIsModalOpen(false)}></ModifyRoomInfo>
                 </Popup>
             )}
         </div>

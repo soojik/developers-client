@@ -5,40 +5,48 @@ import axios from 'axios';
 
 type CreateRoomModalProps = {
   onClose: () => void;
+  events: EventProp[]
 };
 
-const baseURL = 'http://localhost:9002/api/room'
+interface EventProp {
+  title: string;
+  startDate: Date;
+  endDate: Date;
+  type: string;
+};
 
-const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose }) => {
+const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [step, setStep] = useState(1);
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value);
-  };
+  const [mentoringRoomId, setMentoringRoomId] = useState<number>();
 
   const handleNextClick = () => {
-    // axios로 방 데이터 추가
-    axios({
-      url: `${baseURL}`,
-      method: 'post',
-      data: {
-        title: title,
-        description: description,
-        // mentor Id 수정 필요
-        mentorId: 1
-      }
-    })
-    .then((res) => {
-      console.log(res);
-    })
-    console.log({ title, description });
-    setStep(2);
+    if (title === '' || description === '') {
+      window.alert('방 제목과 소개글을 채워주세요.');
+    }
+    else {
+      // axios로 방 데이터 추가
+      axios({
+        url: `http://localhost:9002/api/room`,
+        method: 'post',
+        data: {
+          title: title,
+          description: description,
+          // mentor Id 수정 필요
+          mentorId: 1
+        }
+      })
+        .then((res) => {
+          setMentoringRoomId(res.data['data']);
+          console.log(res);
+          setStep(2);
+        })
+        .catch((err) => {
+          window.alert('방이 정상적으로 생성되지 못했습니다.');
+          console.log(err);
+        })
+    }
   };
 
   return (
@@ -57,6 +65,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose }) => {
                   type="text"
                   className="w-full border-gray-300 rounded-md px-4 py-2"
                   onChange={(e) => setTitle(e.target.value)}
+                  required
                 />
               </div>
               <div className="mb-4">
@@ -68,6 +77,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose }) => {
                   type="text"
                   className="w-full border-gray-300 rounded-md px-4 py-2"
                   onChange={(e) => setDescription(e.target.value)}
+                  required
                 />
               </div>
               <div className="flex justify-end">
@@ -82,7 +92,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose }) => {
           </div>
         </div>
       )}
-      {step === 2 && <CreateScheduleModal onClose={onClose} />}
+      {step === 2 && <CreateScheduleModal onClose={onClose} events={events} mentoringRoomId={mentoringRoomId} />}
     </div>
   );
 };

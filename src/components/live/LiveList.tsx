@@ -2,11 +2,22 @@ import { useEffect, useState } from 'react';
 
 import CreateRoomModal from './CreateRoomModal';
 import SearchBar from './SearchBar';
-import RoomList, {Room} from './RoomList';
+import RoomList, { Room } from './RoomList';
 import React from 'react';
 import axios from 'axios';
 
-const LiveList: React.FC = () => {
+interface EventProp {
+    title: string;
+    startDate: Date;
+    endDate: Date;
+    type: string;
+};
+
+interface LiveListProps {
+    events: EventProp[];
+}
+
+const LiveList: React.FC<LiveListProps> = ({ events }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
 
@@ -19,49 +30,49 @@ const LiveList: React.FC = () => {
         const url = `http://localhost:9002/api/room${lastDateTimeParam}`;
         const data = await axios.get(url);
         return data.data.data;
-      };
+    };
 
-      let flag = false;
+    let flag = false;
 
-      useEffect(() => {
+    useEffect(() => {
         const fetchData = async () => {
-          const data = await fetchRooms(null);
-          setRoomList(data);
-          setCurrentPage(1);
+            const data = await fetchRooms(null);
+            setRoomList(data);
+            setCurrentPage(1);
         };
 
-        if(flag===false){
+        if (flag === false) {
             fetchData()
             flag = true;
         }
-      }, []);
+    }, []);
 
-      useEffect(() => {
+    useEffect(() => {
         const sliceEndIndex = currentPage * PAGE_SIZE;
         setDisplayedRooms(roomList.slice(0, sliceEndIndex));
-        console.log("검색 이후의 갯수"+roomList.length)
+        console.log("검색 이후의 갯수" + roomList.length)
         console.log(roomList)
-      }, [roomList, currentPage]);
+    }, [roomList, currentPage]);
 
-      const handleScroll = async () => {
+    const handleScroll = async () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-          if ((currentPage + 1) * PAGE_SIZE <=roomList.length) {
-            setCurrentPage(currentPage + 1);
-          } else { 
-            const lastRoom = roomList[roomList.length - 1];
-            const newRooms = await fetchRooms(lastRoom.createdAt);
-              setRoomList((prevRooms) => [...prevRooms, ...newRooms]);
-              setCurrentPage(currentPage+1);
-          }
+            if ((currentPage + 1) * PAGE_SIZE <= roomList.length) {
+                setCurrentPage(currentPage + 1);
+            } else {
+                const lastRoom = roomList[roomList.length - 1];
+                const newRooms = await fetchRooms(lastRoom.createdAt);
+                setRoomList((prevRooms) => [...prevRooms, ...newRooms]);
+                setCurrentPage(currentPage + 1);
+            }
         }
-      };
+    };
 
-      useEffect(() => {
+    useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => {
-          window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('scroll', handleScroll);
         };
-      }, [handleScroll]);
+    }, [handleScroll]);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -76,22 +87,22 @@ const LiveList: React.FC = () => {
     };
 
     return (
-       <div className="flex flex-col justify-center items-center">
-        <div className="w-1/2">
-            <SearchBar onSearch={handleSearch}></SearchBar>
+        <div className="flex flex-col justify-center items-center">
+            <div className="w-1/2">
+                <SearchBar onSearch={handleSearch}></SearchBar>
+            </div>
+            <div className="h-32 flex items-center">
+                <button
+                    className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                    onClick={handleOpenModal}>
+                    방 생성
+                </button>
+            </div>
+            <div>
+                <RoomList rooms={displayedRooms}></RoomList>
+            </div>
+            {isModalOpen && <CreateRoomModal onClose={() => setIsModalOpen(false)} events={events} />}
         </div>
-        <div className="h-32 flex items-center">
-            <button
-                className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                onClick={handleOpenModal}>
-                방 생성
-            </button>
-        </div>
-        <div>
-            <RoomList rooms={displayedRooms}></RoomList>
-        </div>
-        {isModalOpen && <CreateRoomModal onClose={() => setIsModalOpen(false)} />}
-    </div>
     );
 };
 

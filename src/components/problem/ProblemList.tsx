@@ -1,5 +1,5 @@
 import axios from "axios";
-import MainListTitle from "../components/MainListTitle";
+import MainListTitle from "../MainListTitle";
 
 interface MainListProps {
   nickname: string;

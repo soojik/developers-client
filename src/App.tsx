@@ -8,7 +8,7 @@ import SignUp from "pages/SignUp";
 import Mentoring from "pages/Mentoring";
 import Problem from "pages/Problem";
 import MyPage from "pages/MyPage";
-import ProblemRegister from "problempages/ProblemRegister";
+import ProblemRegister from "components/problem/ProblemRegister";
 
 const App: React.FC = () => {
   return (

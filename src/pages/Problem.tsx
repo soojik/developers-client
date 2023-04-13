@@ -1,5 +1,5 @@
 
-import ProblemList from "problempages/ProblemList";
+import ProblemList from "components/problem/ProblemList";
 import SearchBox from "components/SearchBox";
 import DropBoxStack from "components/dropbox/DropBoxStack";
 import DropBoxLevel from "components/dropbox/DropBoxLevel";

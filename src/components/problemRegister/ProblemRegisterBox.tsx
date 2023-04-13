@@ -5,7 +5,7 @@ import LevelDropdown from "./LevelDropdown";
 import Checkbox from "./TypeBox";
 import ObjectiveAnswer from "./ObjectiveAnswer";
 import SubjectiveAnswer from "./SubjectiveAnswer";
-import ProblemRegister from "problempages/ProblemRegister";
+import ProblemRegister from "components/problem/ProblemRegister";
 import Submit from "./\bSubmitButton";
 import SubmitButton from "./\bSubmitButton";
 import PointBox from "./PointBox";
@@ -120,8 +120,6 @@ const handleDeleteHashTagClick=(i:Number,item:string)=>{
 handleDeleteHashTagClick(index+1,item);
 }} className="ml-5">x</button>
 </div>
-
-
       </div>)}</div>}
       <div>
         

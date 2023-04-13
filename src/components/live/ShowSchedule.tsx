@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Popup from './PopUp';
+import axios from 'axios';
 import {
   Scheduler,
   WeekView,
   Appointments,
   Toolbar,
   TodayButton,
-  DateNavigator
+  DateNavigator,
+  Resources
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { ViewState } from '@devexpress/dx-react-scheduler';
 
@@ -18,6 +20,15 @@ interface CancelEventPopupProps {
   handleClose: () => void;
   event: any;
 }
+
+const resources = [{
+  fieldName: 'type',
+  title: 'Type',
+  instances: [
+      { id: 'mentor', text: 'as mentor', color: '#EC407A' },
+      { id: 'mentee', text: 'as mentee', color: '#7E57C2' },
+  ],
+}];
 
 const CustomAppointment = (props: any) => {
   const handleEventClick = () => {
@@ -70,11 +81,14 @@ const ShowSchedule: React.FC<CalendarProps> = ({ events }) => {
     <div className="calendar">
       <Scheduler data={events} height={window.innerHeight-250}>
         <ViewState currentDate={currentDate} onCurrentDateChange={currentDateChange} />
-        <WeekView startDayHour={9} endDayHour={22} cellDuration={60} />
+        <WeekView startDayHour={7} endDayHour={23} cellDuration={60} />
         <Toolbar />
         <DateNavigator />
         <TodayButton />
         <Appointments appointmentComponent={(props) => <CustomAppointment {...props} onClick={handleEventClick} />} />
+        <Resources
+                                data={resources}
+                            />
       </Scheduler>
       {showCancelEventPopup && (
         <CancelEventPopup event={selectedEvent} handleClose={handleClosePopup} />

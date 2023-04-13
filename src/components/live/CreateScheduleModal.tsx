@@ -5,62 +5,62 @@ import { TextField, Button, Grid } from "@mui/material";
 import {
     Scheduler,
     WeekView,
-    Appointments
+    Appointments,
+    Toolbar,
+    TodayButton,
+    AppointmentTooltip,
+    Resources
 } from "@devexpress/dx-react-scheduler-material-ui";
+
+import axios from "axios";
 import { ViewState } from '@devexpress/dx-react-scheduler';
 
 interface CalendarProps {
     onClose: () => void;
+    events: EventProp[];
 };
 
-const events = [
-    {
-        title: '멘토링1',
-        startDate: new Date(),
-        endDate: new Date(new Date().setHours(new Date().getHours() + 1)),
-    },
-    {
-        title: '멘토링2',
-        startDate: new Date(new Date().setHours(new Date().getHours() + 2)),
-        endDate: new Date(new Date().setHours(new Date().getHours() + 3)),
-    },
+interface EventProp {
+    title: string;
+    startDate: Date;
+    endDate: Date;
+    type: string;
+};
+
+const allTimeSlots = [
+    '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'
 ];
 
-const availableTimeSlots = [
-    '7:00 AM',
-    '8:00 AM',
-    '9:00 AM',
-    '10:00 AM',
-    '11:00 AM',
-    '12:00 PM',
-    '1:00 PM',
-    '2:00 PM',
-    '3:00 PM',
-    '4:00 PM',
-    '5:00 PM',
-    '6:00 PM',
-    '7:00 PM',
-    '8:00 PM',
-    '9:00 PM',
-    '10:00 PM',
-    '11:00 PM',
-    '00:00 AM',
-];
+const resources = [{
+    fieldName: 'type',
+    title: 'Type',
+    instances: [
+        { id: 'mentor', text: 'as mentor', color: '#EC407A' },
+        { id: 'mentee', text: 'as mentee', color: '#7E57C2' },
+    ],
+}];
 
-const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose }) => {
+const baseURL = 'http://localhost:9002/api/schedules';
+const memberId = 1;
+
+const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-    // 현재는 각각 events, availableTimeSlots 라는 상수로 지정해서 사용
-    // const [mySchedules, setMySchedules] = useState<Date | null>(null);
-    // const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>();
+    // 현재는 각각 events 라는 상수로 지정해서 사용
+    const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
     useEffect(() => {
         if (selectedDate) {
-            // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
-            // 해당 날짜에 대한 예약 가능한 시간대(availableTimeSlots)를 계산해서 출력
-            console.log(selectedDate);
+            // 예약 가능한 시간대 계산
+            const reservedTimes = events
+                .filter((event) => event.startDate.toDateString() === selectedDate.toDateString())
+                .map((event) => event.startDate.getHours().toString());
+            const availableTimes = availableTimeSlots.filter(
+                (time) => !reservedTimes.includes(time)
+            );
+            setAvailableTimeSlots(availableTimes);
         }
-    }, [selectedDate]);
+    }, [selectedDate, events]);
 
     // 예약 가능한 시간대 버튼을 동적으로 생성해주는 함수
     const renderTimeSlotButtons = () => {
@@ -71,7 +71,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose }) => {
         return availableTimeSlots.map((timeSlot, index) => (
             <Grid item key={index}>
                 <Button variant="contained" onClick={() => handleSelectTimeSlot(timeSlot)}>
-                    {timeSlot}
+                    {timeSlot}:00
                 </Button>
             </Grid>
         ));
@@ -79,7 +79,31 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose }) => {
 
     // 예약 가능한 시간대 버튼을 클릭했을 때의 동작
     const handleSelectTimeSlot = (timeSlot: string) => {
-        console.log(`Selected time slot: ${timeSlot}`);
+        if (selectedDate) {
+            if (window.confirm(`${timeSlot}:00 에 멘토링 일정을 추가하시겠습니까?`)) {
+                // UTC 시간대로 맞춰주기
+                selectedDate.setHours(parseInt(timeSlot));
+                const startAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
+                selectedDate.setHours(parseInt(timeSlot) + 1);
+                const endAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
+                axios({
+                    url: `${baseURL}`,
+                    method: 'post',
+                    data: {
+                        mentoringRoomId: 1,
+                        mentorId: memberId,
+                        start: startAt,
+                        end: endAt
+                    }
+                }).then((res) => {
+                    console.log(`Selected time: ${selectedDate}`);
+                    console.log(res);
+                    onClose();
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }
+        }
     };
 
     return (
@@ -91,8 +115,14 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose }) => {
                     <div>
                         <Scheduler data={events} height={500}>
                             <ViewState defaultCurrentDate={new Date()} />
-                            <WeekView startDayHour={0} endDayHour={23} />
-                            <Appointments/>
+                            <WeekView startDayHour={7} endDayHour={23} />
+                            <Toolbar />
+                            <TodayButton />
+                            <Appointments />
+                            <AppointmentTooltip />
+                            <Resources
+                                data={resources}
+                            />
                         </Scheduler>
                     </div>
                     <div className="flex flex-wrap justify-between">
@@ -113,7 +143,6 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose }) => {
                         </div>
                     </div>
                 </div>
-
                 <div className="text-right">
                     <button type="button" className="mt-4 ml-auto" onClick={onClose}>
                         완료

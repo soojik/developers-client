@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import RightArrowIcon from "components/icons/RightArrowIcon";
-import Popup from "components/Live/PopUp";
+import Popup from "components/live/PopUp";
 import MenuCloseIcon from "components/icons/MenuCloseIcon";
 import PwdInput from "components/mypage/PwdInput";
 import NicknameInput from "components/mypage/NicknameInput";

@@ -3,8 +3,13 @@ import TagInput from "components/TagInput";
 import { positionList } from "libs/options";
 import { useEffect, useState } from "react";
 import CareerInput from "./CareerInput";
+import ConfirmBtn from "components/buttons/CofirmBtn";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const ResumeEdit = ({ active }: { active: any }) => {
+  const URL = process.env.REACT_APP_DEV_URL;
+
   const careerInfo = [
     {
       intro: "나는 아무개입니다!",
@@ -12,14 +17,19 @@ const ResumeEdit = ({ active }: { active: any }) => {
       position: "프론트엔드,iOS",
     },
   ];
+
+  const { memberId } = useParams();
+  const [introduce, setIntroduce] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [position, setPosition] = useState<string[]>([]);
+  const newSkill = skills.join(",");
+  const newPos = position.join(",");
 
-  const data = {
-    memberId: 1,
-    introduce: "간단 소개 ..",
-    positions: "Software Engineer,Backend,",
-    skills: "Spring,Java",
+  const reqBody = {
+    memberId: Number(memberId),
+    introduce,
+    position: newPos,
+    skills: newSkill,
   };
 
   useEffect(() => {
@@ -28,6 +38,24 @@ const ResumeEdit = ({ active }: { active: any }) => {
     setSkills(prevSkills);
     setPosition(prevPos);
   }, []);
+
+  const handleBtnClick = () => {
+    // console.log(reqBody);
+    axios
+      .patch(
+        `${URL}/api/resume`,
+        { reqBody },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        // console.log("전체저장 응답", res);
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className={`mb-20 px-6 ${active || "hidden"}`}>
@@ -38,8 +66,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
         name="contents"
         placeholder="자기소개를 3~5줄로 적어주세요!"
         className="w-full sign_input h-[100px]"
-        //   ref={secondRef}
-        //   onChange={handleText}
+        onChange={(e) => setIntroduce(e.target.value)}
         minLength={1}
         maxLength={1000}
         wrap="hard"
@@ -68,6 +95,11 @@ const ResumeEdit = ({ active }: { active: any }) => {
         state={position}
         setState={setPosition}
       />
+      <div className="flex justify-end mt-20">
+        <ConfirmBtn type="submit" onClick={handleBtnClick}>
+          전체 저장
+        </ConfirmBtn>
+      </div>
     </div>
   );
 };

@@ -37,17 +37,17 @@ const CareerInput = ({}: {}) => {
     // const newDate = (career[idx][keyname] = target.value);
     // setCareer([newDate]);
     setCareer([{ ...career[idx], ...obj }]);
-    console.log(" /// ", { ...career[idx], ...obj }); //매개변수 name이 아닌 객체의 키'name'으로 인식해서 안됨;;
+    // console.log(" /// ", { ...career[idx], ...obj }); //매개변수 name이 아닌 객체의 키'name'으로 인식해서 안됨;;
     // console.log(target.value, idx, career[idx]);
 
     // setNewCareer([newCareer[idx]]);
   };
   const handleBtnClick = () => {
-    console.log("저장 career : ", career);
+    // console.log("저장 career : ", career);
   };
 
   useEffect(() => {
-    console.log("저장후", career);
+    // console.log("저장후", career);
   }, [career]);
 
   return (

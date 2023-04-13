@@ -4,8 +4,11 @@ import PersonIcon from "./icons/PersonIcon";
 import MenuBarIcon from "./icons/MenuBarIcon";
 import { useState } from "react";
 import MenuCloseIcon from "./icons/MenuCloseIcon";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 const Nav = () => {
+  const { isLoggedIn } = useRecoilValue(memberInfoState);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const navigate = useNavigate();
   const sideBarMenu = [
@@ -13,11 +16,11 @@ const Nav = () => {
     { title: "문제 풀이", href: "/problem" },
     { title: "멘토링", href: "/mentoring" },
   ];
-  const isLoggedIn = false; // 임시 로그인 상태
 
   const handleOpenMenuBar = () => {
     setIsOpenMenu(!isOpenMenu);
   };
+  console.log("리코일", isLoggedIn);
 
   return (
     <nav className="px-4 py-3 bg-gray-800 sticky top-0 z-50">

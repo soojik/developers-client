@@ -3,14 +3,17 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import NaverOauthBtn from "components/buttons/NaverOauthBtn";
 import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
+import { useRecoilState } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface LoginProps {
-  memberId: string;
-  password: string;
+  loginEmail: string;
+  loginPassword: string;
 }
 
 const Login = () => {
-  const URL = "http://localhost";
+  const URL = process.env.REACT_APP_DEV_URL;
+  const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
   const navigate = useNavigate();
   const {
     register,
@@ -21,7 +24,6 @@ const Login = () => {
   } = useForm<LoginProps>({ mode: "onChange" });
 
   const handleLoginSubmit: SubmitHandler<LoginProps> = (data) => {
-    console.log("보낸값", data);
     axios
       .post(`${URL}/api/auth/local`, data, {
         headers: {
@@ -35,6 +37,12 @@ const Login = () => {
         axios.defaults.headers.common["Authorization"] = `${accessToken}`;
 
         console.log("로그인 응답", res);
+        // const resData = {
+        //   memberInfo: { res },
+        //   loginEmail: undefined,
+        //   isLoggedIn: true,
+        // };
+        setMemberInfo({ ...memberInfo, ...res });
         // navigate("/");
       })
       .catch((err) => console.log(err));
@@ -53,7 +61,7 @@ const Login = () => {
               type="email"
               placeholder="example@developers.com"
               className="sign_input"
-              {...register("memberId", {
+              {...register("loginEmail", {
                 required: "이메일을 올바르게 입력해주세요.",
                 pattern: {
                   value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
@@ -62,7 +70,7 @@ const Login = () => {
               })}
             />
             <div className="text-xs text-red-500">
-              {errors?.memberId?.message}
+              {errors?.loginEmail?.message}
             </div>
 
             <label className="mt-4 text-xs">비밀번호</label>
@@ -70,7 +78,7 @@ const Login = () => {
               type="password"
               placeholder="******"
               className="sign_input"
-              {...register("password", {
+              {...register("loginPassword", {
                 required: "비밀번호를 입력해주세요.",
                 minLength: {
                   value: 6,
@@ -83,7 +91,7 @@ const Login = () => {
               })}
             />
             <div className="text-xs text-red-500">
-              {errors?.password?.message}
+              {errors?.loginPassword?.message}
             </div>
 
             <button

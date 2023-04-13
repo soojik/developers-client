@@ -34,7 +34,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
           title: title,
           description: description,
           // mentor Id 수정 필요
-          mentorId: 1
+          mentorId: 2
         }
       })
         .then((res) => {

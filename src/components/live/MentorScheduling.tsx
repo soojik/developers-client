@@ -34,6 +34,21 @@ const MentorScheduling: React.FC = () => {
         setSelectedRoom(room);
     }
 
+    const handleRemoveSchedule = (room: Room) => {
+        if (window.confirm('멘토링 방을 삭제하시겠습니까?')) {
+            console.log("room", room);
+            axios({
+                url: `http://localhost:9002/api/room/${room.mentoringRoomId}`,
+                method: 'delete'
+            }).then((res) => {
+                window.alert(res.data['msg']);
+                console.log(res.data);
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+    }
+
     let num = 1;
 
     return (
@@ -43,6 +58,7 @@ const MentorScheduling: React.FC = () => {
                     <h2 className="text-lg font-semibold mt-2" onClick={() => handleClickRoom(room)}>{idx + 1}{room.title}</h2>
                     <h3 className=''>{room.description}</h3>
                     <h3 className=''>{room.mentorName}</h3>
+                    <button className='bg-blue-500 text-white px-4 py-2 rounded-md' onClick={() => handleRemoveSchedule(room)}>삭제</button>
                 </div>
             ))}
             {isModalOpen && (

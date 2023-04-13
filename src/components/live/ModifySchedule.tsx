@@ -24,8 +24,8 @@ interface CalendarProps {
 
 interface EventProp {
     title: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     type: string;
 };
 
@@ -75,18 +75,20 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
     // 현재는 각각 events 라는 상수로 지정해서 사용
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
-    console.log(today);
-
     useEffect(() => {
         if (selectedDate) {
-            // 예약 가능한 시간대 계산
-            const reservedTimes = events
-                .filter((event) => event.startDate.toDateString() === selectedDate.toDateString())
-                .map((event) => event.startDate.getHours().toString());
-            const availableTimes = availableTimeSlots.filter(
-                (time) => !reservedTimes.includes(time)
-            );
-            setAvailableTimeSlots(availableTimes);
+            if (events.length) {
+                // 예약 가능한 시간대 계산
+                const reservedTimes = events
+                    .filter((event) => new Date(event.startDate).toDateString() === selectedDate.toDateString())
+                    .map((event) => new Date(event.startDate).getHours().toString());
+
+                console.log(reservedTimes);
+                const availableTimes = availableTimeSlots.filter(
+                    (time) => !reservedTimes.includes(time)
+                );
+                setAvailableTimeSlots(availableTimes);
+            }
         }
     }, [selectedDate, events]);
 

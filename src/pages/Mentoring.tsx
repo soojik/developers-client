@@ -56,7 +56,7 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
   return events;
 }
 
-const memberId = 2
+const memberId = 1
 
 const Mentoring = () => {
   const [showScheduler, setShowScheduler] = useState(true); // 보여주는 창 변경

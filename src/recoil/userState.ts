@@ -1,26 +1,17 @@
-import axios from "axios";
-import { atom, selector, selectorFamily } from "recoil";
+import { atom, selector } from "recoil";
 import { recoilPersist } from "recoil-persist";
 const { persistAtom } = recoilPersist();
 
 export interface MemberInfoProps {
+  memberInfo: any;
   memberId: number | undefined;
   isLoggedIn: boolean;
 }
 
-const URL = process.env.REACT_APP_DEV_URL;
-
-export const userInfo = selectorFamily({
-  key: "userInfo",
-  get: (memberId: number) => async () => {
-    const { data } = await axios.get(`${URL}/api/member/${memberId}`);
-    return data;
-  },
-});
-
 export const memberInfoState = atom<MemberInfoProps>({
   key: "memberInfo",
   default: {
+    memberInfo: {},
     memberId: undefined,
     isLoggedIn: false,
   },

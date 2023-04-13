@@ -38,7 +38,7 @@ const Login = () => {
 
         console.log("로그인 응답", res);
         const resData = {
-          memberInfo: 1, // 임시 memberId: res.data
+          memberId: 1, // 임시 memberId: Number(res.data)
           isLoggedIn: true,
         };
         setMemberInfo({ ...memberInfo, ...resData });

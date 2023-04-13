@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useRecoilValue } from "recoil";
-import { MemberInfoProps, userInfo } from "recoil/userState";
+import { useRecoilState } from "recoil";
+import { memberInfoState } from "recoil/userState";
 import RightArrowIcon from "components/icons/RightArrowIcon";
 import Popup from "components/live/PopUp";
 import MenuCloseIcon from "components/icons/MenuCloseIcon";
@@ -16,8 +16,8 @@ import ConfirmBtn from "components/buttons/CofirmBtn";
 const MyPage = () => {
   const URL = process.env.REACT_APP_DEV_URL;
   const { memberId } = useParams();
-  const userProfile = useRecoilValue<MemberInfoProps>(userInfo(1)); // 임시 memberId
-  // console.log(userProfile);
+  const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
+  // console.log(memberInfo);
   const navigate = useNavigate();
   const careerInfoMenu = ["이력", "후기"];
   const userInfoMunu = [
@@ -48,6 +48,12 @@ const MyPage = () => {
         .then((res) => {
           // console.log(res.data);
           setProfile(res.data);
+          const resData = {
+            memberInfo: {}, // 임시 memberId: res.data
+            memberId: Number(memberId),
+            isLoggedIn: true,
+          };
+          setMemberInfo({ ...memberInfo, ...resData });
         });
     };
     // getUserProfile();

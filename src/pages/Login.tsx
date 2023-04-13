@@ -1,10 +1,10 @@
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import NaverOauthBtn from "components/buttons/NaverOauthBtn";
-import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 import { useRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import NaverOauthBtn from "components/buttons/NaverOauthBtn";
+import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 
 interface LoginProps {
   loginEmail: string;
@@ -37,12 +37,12 @@ const Login = () => {
         axios.defaults.headers.common["Authorization"] = `${accessToken}`;
 
         console.log("로그인 응답", res);
-        // const resData = {
-        //   memberInfo: { res },
-        //   loginEmail: undefined,
-        //   isLoggedIn: true,
-        // };
-        setMemberInfo({ ...memberInfo, ...res });
+        const resData = {
+          memberInfo: 1, // 임시 memberId: res.data
+          isLoggedIn: true,
+        };
+        setMemberInfo({ ...memberInfo, ...resData });
+
         // navigate("/");
       })
       .catch((err) => console.log(err));

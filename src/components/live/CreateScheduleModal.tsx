@@ -50,6 +50,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
     // 현재는 각각 events 라는 상수로 지정해서 사용
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
+    useEffect(()=>console.log(events))
     useEffect(() => {
         if (selectedDate) {
             // 예약 가능한 시간대 계산

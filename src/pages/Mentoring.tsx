@@ -4,23 +4,25 @@ import LiveList from '../components/live/LiveList';
 
 import axios from 'axios';
 
-interface ScheduleProps {
+export interface ScheduleProps {
   scheduleId: number;
   mentoringRoomTitle: string;
   mentorName: string;
   menteeName: string;
   startDate: string;
   endDate: string;
+  roomId:Number; // 방 id로 조회
 };
 
-interface EventProp {
+export interface EventProp {
   title: string;
   startDate: Date;
   endDate: Date;
   type: string;
+  roomId: Number; // 방 id 로 조회
 };
 
-const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean): EventProp[] => {
+export const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean): EventProp[] => {
   const events: EventProp[] = [];
 
   if (isMentor) {
@@ -29,7 +31,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
         title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
         startDate: new Date(schedule.startDate),
         endDate: new Date(schedule.endDate),
-        type: 'mentor'
+        type: 'mentor',
+        roomId:schedule.roomId
       };
       events.push(event);
     });
@@ -40,7 +43,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
         title: `Mentoring with ${schedule.menteeName}`,
         startDate: new Date(schedule.startDate),
         endDate: new Date(schedule.endDate),
-        type: 'mentee'
+        type: 'mentee',
+        roomId:schedule.roomId
       };
       events.push(event);
     });
@@ -49,7 +53,7 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
   return events;
 }
 
-const memberId = 1;
+const memberId = 2
 
 const Mentoring = () => {
   const [showScheduler, setShowScheduler] = useState(true); // 보여주는 창 변경
@@ -68,6 +72,7 @@ const Mentoring = () => {
       url: `http://localhost:9002/api/schedules/mentee/${memberId}`,
       method: 'get'
     }).then((res) => {
+      // 멘티 일정 처리
       setMySchedulesAsMentee(res.data['data']);
     })
   }, [])

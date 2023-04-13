@@ -19,6 +19,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [step, setStep] = useState(1);
+  const [mentoringRoomId, setMentoringRoomId] = useState<number>();
 
   const handleNextClick = () => {
     if (title === '' || description === '') {
@@ -37,12 +38,14 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
         }
       })
         .then((res) => {
+          setMentoringRoomId(res.data['data']);
           console.log(res);
+          setStep(2);
         })
         .catch((err) => {
+          window.alert('방이 정상적으로 생성되지 못했습니다.');
           console.log(err);
         })
-      setStep(2);
     }
   };
 
@@ -89,7 +92,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
           </div>
         </div>
       )}
-      {step === 2 && <CreateScheduleModal onClose={onClose} events={events} />}
+      {step === 2 && <CreateScheduleModal onClose={onClose} events={events} mentoringRoomId={mentoringRoomId} />}
     </div>
   );
 };

@@ -18,6 +18,7 @@ import { ViewState } from '@devexpress/dx-react-scheduler';
 interface CalendarProps {
     onClose: () => void;
     events: EventProp[];
+    mentoringRoomId: number | undefined;
 };
 
 interface EventProp {
@@ -43,7 +44,7 @@ const resources = [{
 const baseURL = 'http://localhost:9002/api/schedules';
 const memberId = 1;
 
-const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events }) => {
+const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentoringRoomId }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     // 현재는 각각 events 라는 상수로 지정해서 사용
@@ -90,7 +91,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events }) => {
                     url: `${baseURL}`,
                     method: 'post',
                     data: {
-                        mentoringRoomId: 1,
+                        mentoringRoomId: mentoringRoomId,
                         mentorId: memberId,
                         start: startAt,
                         end: endAt

@@ -8,7 +8,7 @@ import SignUp from "pages/SignUp";
 import Mentoring from "pages/Mentoring";
 import Problem from "pages/Problem";
 import MyPage from "pages/MyPage";
-import ProblemRegister from "components/problem/ProblemRegister";
+import ProblemRegister from "pages/ProblemRegister";
 
 const App: React.FC = () => {
   return (
@@ -23,7 +23,7 @@ const App: React.FC = () => {
             <Route path="/profile/:memberId" element={<MyPage />} />
             <Route path="/problem" element={<Problem />} />
             <Route path="/mentoring" element={<Mentoring />} />
-            <Route path="/problems" element = {<ProblemRegister />} />
+            <Route path="/problem/register" element={<ProblemRegister />} />
           </Routes>
         </Layout>
       </BrowserRouter>

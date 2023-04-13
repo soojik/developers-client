@@ -1,9 +1,9 @@
-import React from "react";
-
+import ProblemRegisterBox from "components/problemRegister/ProblemRegisterBox";
 const ProblemRegister = () => {
-    return(
-        <div>Problem Register</div> 
-    );
-};
-
-export default ProblemRegister;  
+    return <>
+    <div className="bg-white p-4">
+  <ProblemRegisterBox  />
+    </div>
+    </>
+}
+export default ProblemRegister;

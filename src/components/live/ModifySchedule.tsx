@@ -10,10 +10,7 @@ import {
     TodayButton,
     AppointmentTooltip,
     Resources,
-<<<<<<< HEAD
-=======
     DateNavigator
->>>>>>> 6e1f8329e1d5c5326a3c4a802da8c7191c107866
 } from "@devexpress/dx-react-scheduler-material-ui";
 
 import axios from "axios";
@@ -120,11 +117,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
             if (window.confirm('해당 시간을 취소하시겠습니까?')) {
                 console.log("event", event);
                 axios({
-<<<<<<< HEAD
-                    url:`http://localhost:9002/api/schedules/mentor/${event.scheduleId}`,
-=======
                     url: `http://localhost:9002/api/schedules/mentor/${event.scheduleId}`,
->>>>>>> 6e1f8329e1d5c5326a3c4a802da8c7191c107866
                     method: 'delete'
                 }).then((res) => {
                     console.log(res.data);
@@ -202,10 +195,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
                             <ViewState defaultCurrentDate={new Date()} />
                             <WeekView startDayHour={7} endDayHour={23} />
                             <Toolbar />
-<<<<<<< HEAD
-=======
                             <DateNavigator />
->>>>>>> 6e1f8329e1d5c5326a3c4a802da8c7191c107866
                             <TodayButton />
                             <Appointments appointmentComponent={(props) => <CustomAppointment {...props} onClick={handleEventClick} />} />
                             <AppointmentTooltip />

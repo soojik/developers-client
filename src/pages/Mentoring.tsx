@@ -21,6 +21,7 @@ export interface EventProp {
   endDate: Date;
   type: string;
   roomId: Number; // 방 id 로 조회
+  scheduleId:Number; //일정 삭제 필요
 };
 
 const isMentor: boolean = true;
@@ -35,7 +36,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
         startDate: new Date(schedule.startDate),
         endDate: new Date(schedule.endDate),
         type: 'mentor',
-        roomId:schedule.roomId
+        roomId:schedule.roomId,
+        scheduleId: schedule.scheduleId
       };
       events.push(event);
     });
@@ -47,7 +49,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
         startDate: new Date(schedule.startDate),
         endDate: new Date(schedule.endDate),
         type: 'mentee',
-        roomId:schedule.roomId
+        roomId:schedule.roomId,
+        scheduleId: schedule.scheduleId
       };
       events.push(event);
     });
@@ -56,10 +59,9 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
   return events;
 }
 
-const memberId = 1
+const memberId = 2
 
 const Mentoring = () => {
-  const [showScheduler, setShowScheduler] = useState(true); // 보여주는 창 변경
   const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
   const [mySchedulesAsMentee, setMySchedulesAsMentee] = useState<ScheduleProps[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);

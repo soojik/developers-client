@@ -7,3 +7,4 @@ const ProblemRegister = () => {
     </>
 }
 export default ProblemRegister;
+

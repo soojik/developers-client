@@ -44,7 +44,7 @@ const MultiOptions = ({
           onClick={handleOptionClick}
         >
           <span className="leading-4 line_wrap">{labelName.join(",")}</span>
-          <DownArrowIcon fill="black" />
+          <DownArrowIcon stroke="black" />
         </button>
         {isClicked && (
           <ul className="absolute z-10 flex flex-wrap h-40 p-2 overflow-scroll bg-white shadow-lg border_base scrollbar_option">

@@ -1,228 +1,179 @@
-import ProblemListupdate from "components/problem/ProblemListupdate";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import useIntersect from "hooks/useIntersect";
 import SearchBox from "components/SearchBox";
 import DropBoxStack from "components/dropbox/DropBoxCondition";
 import DropBoxLevel from "components/dropbox/DropBoxLevel";
 import DropBoxType from "components/dropbox/DropBoxType";
 import DropBoxSolved from "components/dropbox/DropBoxSolved";
-
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import HashTagComponent from "../components/problem/HashTagComponent";
+import ConfirmBtn from "components/buttons/CofirmBtn";
+import ViewIcon from "components/icons/ViewIcon";
+import LikesIcon from "components/icons/LikesIcon";
+import { testData } from "libs/options";
+import LevelIcon from "components/icons/LevelIcon";
+import Tags from "components/Tags";
+import CheckIcon from "components/icons/CheckIcon";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
-const ProblemMain = () => {
-  const section = [
-    {
-      nickname: "유저1",
-      type: "🔢객관식",
-      views: 0,
-      title: "제목입니다",
-      likes: 0,
-    },
-    {
-      nickname: "유저2",
-      type: "🔢객관식",
-      views: 0,
-      title: "제목입니다2",
-      likes: 0,
-    },
-    {
-      nickname: "유저3",
-      type: "🔢객관식",
-      views: 0,
-      title: "제목입니다3",
-      likes: 0,
-    },
-    {
-      nickname: "유저4",
-      type: "🔢객관식",
-      views: 0,
-      title: "제목입니다4",
-      likes: 0,
-    },
-    {
-      nickname: "유저5",
-      type: "✍️단답형",
-      views: 0,
-      title: "제목입니다5",
-      likes: 0,
-    },
-    {
-      nickname: "유저6",
-      type: "✍️단답형",
-      views: 0,
-      title: "제목입니다5",
-      likes: 0,
-    },
-    {
-      nickname: "유저7",
-      type: "✍️단답형",
-      views: 0,
-      title: "제목입니다5",
-      likes: 0,
-    },
-    {
-      nickname: "유저8",
-      type: "✍️단답형",
-      views: 0,
-      title: "제목입니다5",
-      likes: 0,
-    },
-  ].slice(0, 5);
-  const [isHovered, setIsHovered] = React.useState(false);
+interface ProblemProps {
+  problemId: number;
+  type: string;
+  writer: string;
+  title: string;
+  content: string;
+  answer: string;
+  level: string;
+  views: number;
+  likes: number;
+  createdTime: string;
+  hashTag: string;
+  tag?: null | string;
+}
+
+const Problem = () => {
+  const URL = process.env.REACT_APP_DEV_URL;
 
   const navigate = useNavigate();
+  const { memberInfo } = useRecoilValue(memberInfoState); // nickname 받기
+  const nickname = "alibaba"; // 테스트: 임시로 nickname 설정해둠
+  const [resData, setResData] = useState<ProblemProps[]>([]);
+  const [problemList, setProblemList] = useState<ProblemProps[]>([]);
+  const [page, setPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const SIZE = 5;
 
-  const navigateToRegister = () => {
-    navigate("/problem/register");
+  const loadedData = async () => {
+    setIsLoading(true);
+    const totalCount = resData.length;
+    const totalPages = Math.round(totalCount / SIZE);
+    if (totalPages >= page) {
+      setPage(page + 1);
+      const nextList = resData.slice(page * SIZE, (page + 1) * SIZE);
+      setProblemList([...problemList, ...nextList]);
+    }
+    setIsLoading(false);
   };
 
-  const navigatorToDetail = () =>{
-    navigate("/problem/detail/sb")
-  }
+  const target = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    if (!isLoading) {
+      loadedData();
+    }
+  });
+
+  useEffect(() => {
+    const getProblemList = async () => {
+      setResData([...testData]); // 임시 더미데이터
+      /* await axios
+      .get(`${URL}/api/problem/list/{sortcondition}`)
+      .then(({ data }) => {
+        console.log(data);
+        setResData(data); // 초기 100개 받기
+      })
+      .catch((err) => console.log(err)); */
+    };
+    getProblemList();
+  }, []);
 
   return (
-    <>
-      {/* 모바일 */}
-      <div className="md:hidden flex flex-col gap-3">
-        <div className="md:hidden flex flex-col gap-3">
-          <DropBoxLevel
-            selectName="Level을 선택하세요"
-            options={["Gold", "Silver", "Bronze"]}
-            paramName="level"
-          />
-          <DropBoxSolved
-            selectName="solved를 선택하세요"
-            options={["Solved", "Solve"]}
-            paramName="solved"
-          />
-          <DropBoxType
-            selectName="Type을 선택하세요"
-            options={["Choice", "Answer"]}
-            paramName="type"
-          />
-        </div>
-
-        <div className=" flex-col md:grid grid-cols-1 gap-1 w-full">
-          <SearchBox />
-          <HashTagComponent />
-          <DropBoxStack
-            selectName="조건을 선택하세요"
-            options={["최신순", "추천순", "조회순"]}
-            paramName=""
-          />
-        </div>
-        <h2
-          className="bg-gray-400 relative group-slate-300 rounded-lg font-bold text-xl text-white text-center"
-          style={{
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          Problem
-        </h2>
-        <ProblemListupdate section={section} sectionHeader={""} />
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="group rounded-2xl h-10 w-24 bg-blue-500 font-bold text-10 text-white relative overflow-hidden"
-            onClick={navigateToRegister}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            문제 등록
-            <div
-              className={`absolute duration-200 inset-0 w-full h-full transition-all scale-0 ${
-                isHovered ? "scale-100 bg-white/30" : ""
-              } rounded-2xl`}
-            />
-          </button>
-        </div>
+    <div className="md:m-auto w-full md:w-4/5">
+      <div className="flex justify-end mt-5 mb-10">
+        <ConfirmBtn type="submit" onClick={() => navigate("/problem/register")}>
+          문제 등록
+        </ConfirmBtn>
       </div>
-      {/* 데스크탑 */}
-      <div className="hidden md:grid grid-cols-1 gap-4 w-full">
-        <div className="hidden md:grid grid-cols-4 gap-4 w-full  ">
-          <DropBoxLevel
-            selectName="Level을 선택하세요"
-            options={["Gold", "Silver", "Bronze"]}
-            paramName="level"
-          />
-          <DropBoxSolved
-            selectName="solved를 선택하세요"
-            options={["Solved", "Solve"]}
-            paramName="solved"
-          />
-          <DropBoxType
-            selectName="Type을 선택하세요"
-            options={["Choice", "Answer"]}
-            paramName="type"
-          />
-        </div>
-        <div className="hidden flex-col md:grid grid-cols-1 gap-1 w-full">
+      <div className="flex justify-center mb-10">
+        <div className="flex flex-col w-full">
           <SearchBox />
-
-          <HashTagComponent />
-
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <DropBoxStack
-              selectName="조건을 선택하세요"
-              options={["최신순", "추천순", "조회순"]}
-              paramName=""
+          <div className="flex w-full justify-between">
+            <DropBoxLevel
+              selectName="Level을 선택하세요"
+              options={["Gold", "Silver", "Bronze"]}
+              paramName="level"
+            />
+            <DropBoxSolved
+              selectName="solved를 선택하세요"
+              options={["Solved", "Solve"]}
+              paramName="solved"
+            />
+            <DropBoxType
+              selectName="Type을 선택하세요"
+              options={["Choice", "Answer"]}
+              paramName="type"
             />
           </div>
-        </div>
-        <h2
-          className="bg-gray-400 relative group-slate-300 rounded-lg font-bold text-xl text-white text-center"
-          style={{
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          Problem
-        </h2>
-
-        <ProblemListupdate section={section} sectionHeader={""} />
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="group rounded-2xl h-10 w-24 bg-blue-500 font-bold text-10 text-white relative overflow-hidden"
-            onClick={navigateToRegister}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            문제 등록
-            <div
-              className={`absolute duration-200 inset-0 w-full h-full transition-all scale-0 ${
-                isHovered ? "scale-100 bg-white/30" : ""
-              } rounded-2xl`}
-            />
-          </button>
-          {/* test */}
-          <button
-            type="button"
-            className="group rounded-2xl h-10 w-24 bg-blue-500 font-bold text-10 text-white relative overflow-hidden"
-            onClick={navigatorToDetail}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            문제 상세페이지 이동
-            <div
-              className={`absolute duration-200 inset-0 w-full h-full transition-all scale-0 ${
-                isHovered ? "scale-100 bg-white/30" : ""
-              } rounded-2xl`}
-            />
-          </button>
-                    {/* test */}
-
-
-          
+          <HashTagComponent />
         </div>
       </div>
-    </>
+      <div className="flex justify-between items-center my-4">
+        <h2 className="text-accent-500 font-bold text-xl">
+          총 {resData.length} 문제
+        </h2>
+        <DropBoxStack
+          selectName="조건을 선택하세요"
+          options={["최신순", "추천순", "조회순"]}
+          paramName=""
+        />
+        {/* <div className="w-[90px]">
+          <Options label="조건" lists={conditionList} setState={setCondition} />
+        </div> */}
+      </div>
+      <div className="grid grid-cols-10 text-slate-400 font-bold text-sm border-b pb-3 my-2">
+        <div className="flex justify-center">상태</div>
+        <div className="col-span-7 flex justify-center">제목</div>
+        <div className="flex justify-center">난이도</div>
+        <div className="flex justify-center">문제 유형</div>
+      </div>
+
+      {problemList?.map((el, idx) => (
+        <Link to={`/problem/${el.problemId}/${nickname}`} key={idx}>
+          <div className="grid grid-cols-10 bg-gray-100 rounded-lg py-2.5 mb-2 shadow">
+            <div className="flex justify-center items-center">
+              {el.answer.length >= 1 ? (
+                <CheckIcon fill="blue" width={25} height={25} />
+              ) : null}
+            </div>
+            <div className="col-span-7 text-xl ">
+              <h1 className="font-semibold">{el.title}</h1>
+
+              <div className="flex items-center justify-between">
+                <div className="flex">
+                  <div className="flex text-sm text-slate-600">
+                    {el.writer} &nbsp;
+                  </div>
+                  <div className="flex text-sm mr-4 items-center text-gray-400">
+                    <ViewIcon fill="lightGray" width={18} height={18} />
+                    &nbsp;{el.views}
+                  </div>
+                  <div className="flex text-sm mr-4 items-center text-gray-400">
+                    <LikesIcon fill="lightGray" width={14} height={14} />
+                    &nbsp;{el.likes}
+                  </div>
+                </div>
+                <Tags tagList={el.hashTag.split(",")} />
+              </div>
+            </div>
+            <div className="flex justify-center items-center">
+              {el.level === "gold" ? (
+                <LevelIcon fill="#D9B600" width={22} height={22} />
+              ) : el.level === "silver" ? (
+                <LevelIcon fill="gray" width={22} height={22} />
+              ) : (
+                <LevelIcon fill="#AD5600" width={22} height={22} />
+              )}
+            </div>
+            <div className="flex justify-center items-center text-sm">
+              {el.type === "answer" ? "주관식" : "객관식"}
+            </div>
+          </div>
+        </Link>
+      ))}
+      <div ref={target}>{isLoading && <div>Loading...</div>}</div>
+    </div>
   );
 };
 
-export default ProblemMain;
+export default Problem;

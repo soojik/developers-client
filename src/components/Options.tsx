@@ -30,10 +30,10 @@ const Options = ({
           onClick={handleOptionClick}
         >
           {labelName}
-          <DownArrowIcon fill="black" />
+          <DownArrowIcon stroke="black" />
         </button>
         {isClicked && (
-          <ul className="absolute z-10 w-full overflow-scroll bg-white border_base scrollbar_option h-52">
+          <ul className="absolute z-10 w-full overflow-scroll bg-white border_base scrollbar_option max-h-52">
             {lists.map((el) => (
               <li
                 key={el}

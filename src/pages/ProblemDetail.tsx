@@ -56,7 +56,7 @@ const ProblemDetail = () => {
 
   return (
     <div>
-      문제 상세페이지
+      문제 상세페이지 pages/ProblemDetail
       {problemDetail && problemDetail.type === "answer" ? (
         <div>주관식 컴포넌트</div>
       ) : (

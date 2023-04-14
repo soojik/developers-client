@@ -1,4 +1,4 @@
-import React, {useState} from 'react'; // 임의 시간 변수 상태값
+import React, {useState} from 'react';
 import Popup from './PopUp';
 import {
   Scheduler,
@@ -17,6 +17,7 @@ interface CalendarPopupProps {
 }
 
 let memberId = 2;
+let memberName = "멘토2";
 
 const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) => {  
   const [currentDate, setCurrentDate ] = useState(new Date()); // 시간 변수를 상태값으로 두어 변경 가능
@@ -27,19 +28,24 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
 
   const CustomAppointment = (props: any) => {
     const handleEventClick = () => {
-      if (window.confirm('해당 시간에 신청하시겠습니까?')) {
-        const url = `http://localhost:9002/api/register`
-        axios.post(url,{
-          scheduleId:props.data.scheduleId,
-          menteeId:memberId
-        })
-        .then(res=>{
-          if(res.status === 200){
-            alert("신청이 완료되었습니다");
-            handleClose();
-          }
-        })
-        .catch(err=>console.log(err));
+      if(props.data.mentorName === memberName){
+        alert("자신의 방에는 신청할 수 없습니다");
+        handleClose();
+      }else{
+        if (window.confirm('해당 시간에 신청하시겠습니까?')) {
+          const url = `http://localhost:9002/api/register`
+          axios.post(url,{
+            scheduleId:props.data.scheduleId,
+            menteeId:memberId
+          })
+          .then(res=>{
+            if(res.status === 200){
+              alert("신청이 완료되었습니다");
+              handleClose();
+            }
+          })
+          .catch(err=>console.log(err));
+        }
       }
     };
   

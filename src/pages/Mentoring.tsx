@@ -22,9 +22,16 @@ export interface EventProp {
   type: string;
   roomId: Number; // 방 id 로 조회
   scheduleId:Number; //일정 삭제 필요
+  owner: String; // 방 주인 확인
 };
 
-const isMentor: boolean = true;
+/**
+ * 테스트를 위한 상태값
+ * @isMentor boolean 값으로 멘토 여부 체크
+ * @memberId Long 값으로 사용자 아이디 조회
+ */
+const isMentor: boolean = true; 
+const memberId = 1
 
 const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean): EventProp[] => {
   const events: EventProp[] = [];
@@ -37,7 +44,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
         endDate: new Date(schedule.endDate),
         type: 'mentor',
         roomId:schedule.roomId,
-        scheduleId: schedule.scheduleId
+        scheduleId: schedule.scheduleId,
+        owner: schedule.mentorName
       };
       events.push(event);
     });
@@ -50,7 +58,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
         endDate: new Date(schedule.endDate),
         type: 'mentee',
         roomId:schedule.roomId,
-        scheduleId: schedule.scheduleId
+        scheduleId: schedule.scheduleId,
+        owner: schedule.mentorName
       };
       events.push(event);
     });
@@ -58,8 +67,6 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
 
   return events;
 }
-
-const memberId = 2
 
 const Mentoring = () => {
   const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
@@ -123,7 +130,7 @@ const Mentoring = () => {
         }
       </div>
       {currentPage == 1 && (
-        <ShowSchedule events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(convertScheduleToEvents(mySchedulesAsMentee, false))} />
+        <ShowSchedule events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(convertScheduleToEvents(mySchedulesAsMentee, false))} isMentor={isMentor} />
       )}
 
       {currentPage == 2 && (

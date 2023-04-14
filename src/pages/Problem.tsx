@@ -15,6 +15,8 @@ import { testData } from "libs/options";
 import LevelIcon from "components/icons/LevelIcon";
 import Tags from "components/Tags";
 import CheckIcon from "components/icons/CheckIcon";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface ProblemProps {
   problemId: number;
@@ -35,6 +37,8 @@ const Problem = () => {
   const URL = process.env.REACT_APP_DEV_URL;
 
   const navigate = useNavigate();
+  const { memberInfo } = useRecoilValue(memberInfoState); // nickname 받기
+  const nickname = "alibaba"; // 테스트: 임시로 nickname 설정해둠
   const [resData, setResData] = useState<ProblemProps[]>([]);
   const [problemList, setProblemList] = useState<ProblemProps[]>([]);
   const [page, setPage] = useState(0);
@@ -73,14 +77,6 @@ const Problem = () => {
     };
     getProblemList();
   }, []);
-
-  const navigateToRegister = () => {
-    navigate("/problem/register");
-  };
-
-  const navigatorToDetail = () => {
-    navigate("/problem/detail/sb");
-  };
 
   return (
     <div className="md:m-auto w-full md:w-4/5">
@@ -133,7 +129,7 @@ const Problem = () => {
       </div>
 
       {problemList?.map((el, idx) => (
-        <Link to={`/problem/${el.problemId}/{member}`} key={idx}>
+        <Link to={`/problem/${el.problemId}/${nickname}`} key={idx}>
           <div className="grid grid-cols-10 bg-gray-100 rounded-lg py-2.5 mb-2 shadow">
             <div className="flex justify-center items-center">
               {el.answer.length >= 1 ? (

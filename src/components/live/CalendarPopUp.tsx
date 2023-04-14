@@ -17,24 +17,6 @@ interface CalendarPopupProps {
 }
 
 let memberId = 2;
-const CustomAppointment = (props: any) => {
-    const handleEventClick = () => {
-      if (window.confirm('해당 시간에 신청하시겠습니까?')) {
-        const url = `http://localhost:9002/api/register`
-        axios.post(url,{
-          scheduleId:props.data.scheduleId,
-          menteeId:memberId
-        })
-        .then(res=>console.log(res.data))
-        .catch(err=>console.log(err));
-        // alert('입장이 완료되었습니다.');
-      }
-    };
-  
-    return (
-      <Appointments.Appointment {...props} onClick={handleEventClick} />
-    );
-  };
 
 const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) => {  
   const [currentDate, setCurrentDate ] = useState(new Date()); // 시간 변수를 상태값으로 두어 변경 가능
@@ -42,6 +24,29 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
   const currentDateChange = (newDate:Date) => {
     setCurrentDate(newDate);
   }
+
+  const CustomAppointment = (props: any) => {
+    const handleEventClick = () => {
+      if (window.confirm('해당 시간에 신청하시겠습니까?')) {
+        const url = `http://localhost:9002/api/register`
+        axios.post(url,{
+          scheduleId:props.data.scheduleId,
+          menteeId:memberId
+        })
+        .then(res=>{
+          if(res.status === 200){
+            alert("신청이 완료되었습니다");
+            handleClose();
+          }
+        })
+        .catch(err=>console.log(err));
+      }
+    };
+  
+    return (
+      <Appointments.Appointment {...props} onClick={handleEventClick} />
+    );
+  };
 
   return (
     <Popup>

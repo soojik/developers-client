@@ -41,18 +41,51 @@ const CustomAppointment = (props: any) => {
 };
 
 const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event }) => {
-  const handleCancelEvent = () => {
+  // 일정 취소 이벤트
+  const handleCancelEvent = async () => {
     if (window.confirm('해당 시간을 취소하시겠습니까?')) {
-      alert('취소가 완료되었습니다.');
+      const url = `http://localhost:9002/api/schedules/mentee/${event.scheduleId}`;
+      const res = await axios.delete(url);
+      if(res.status === 200){
+        alert('취소가 완료되었습니다.');
+      }
       handleClose();
     }
-  };
+  }; 
+  // 방 입장 이벤트
+  const handleJoinEvent = async () => {
+    // 멘토링 룸 입장 시 세션이 만들어져있는지 확인(멘토 우선 입장)
+    // 멘토 입장 시 dailyco 와 세션 저장
+    // 멘티 입장 시 dailyco url 반환 및 세션 저장2
+    if(window.confirm('멘토링 룸에 입장하시겠습니까?')){
+      const sessionUrl = `http://localhost:8080/api/live-session/list`;
+      const lives = await axios.get(sessionUrl);
+      if(lives.status === 400){
+        alert("멘토가 아직 입장하지 않았습니다");
+        handleClose();
+      }
+      
+      const sessionRooms = JSON.parse(lives.data.data)
+      const sessionRoomsArray = Object.keys(sessionRooms);
+      console.log(sessionRoomsArray)
+      if(sessionRoomsArray.includes(event.title)){
+        alert("멘티 입장 성공");
+        handleClose();
+      }else{
+        alert("멘토가 아직 입장하지 않았습니다");
+        handleClose();
+      }
+    }
+  }
 
   return (
     <Popup>
       <div className="cancelEventPopup">
-        <h2>{event.title}</h2>
-        <button  className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleCancelEvent}>취소하기</button>
+        <h2><strong>{event.title}</strong></h2>
+        <div>
+          <button  className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleJoinEvent}>입장하기</button>
+          <button  className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleCancelEvent}>취소하기</button>
+        </div>
         <button  className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
       </div>
     </Popup>

@@ -63,10 +63,6 @@ const MentorScheduling: React.FC = () => {
             ))}
             {isModalOpen && (
                 <Popup>
-                    {/* <div>
-                        방 수정 및 일정 추가
-                    </div>
-                    <button onClick={() => setStep(1)}>나가기</button> */}
                     <ModifyRoomInfo room={selectedRoom} onClose={() => setIsModalOpen(false)}></ModifyRoomInfo>
                 </Popup>
             )}

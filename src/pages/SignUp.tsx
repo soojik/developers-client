@@ -69,7 +69,7 @@ const SignUp = () => {
         }
       )
       .then((res) => {
-        console.log("회원가입 응답", res);
+        console.log("회원가입 응답", res.data.memberId);
         navigate("/login");
       })
       .catch((err) => console.log(err));

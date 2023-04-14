@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 import NotificationIcon from "./icons/NotificationIcon";
 import PersonIcon from "./icons/PersonIcon";
 import MenuBarIcon from "./icons/MenuBarIcon";
-import { useState } from "react";
 import MenuCloseIcon from "./icons/MenuCloseIcon";
 
 const Nav = () => {
+  const { memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+  // console.log("리코일 로그인 후 저장값", memberId, isLoggedIn);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const navigate = useNavigate();
   const sideBarMenu = [
@@ -13,7 +17,6 @@ const Nav = () => {
     { title: "문제 풀이", href: "/problem" },
     { title: "멘토링", href: "/mentoring" },
   ];
-  const isLoggedIn = false; // 임시 로그인 상태
 
   const handleOpenMenuBar = () => {
     setIsOpenMenu(!isOpenMenu);
@@ -110,7 +113,15 @@ const Nav = () => {
                   >
                     마이페이지
                   </Link>
-                ) : null}
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block pb-1 mb-2 text-xl font-light border-b border-solid border-slate-200 hover:font-normal"
+                    onClick={() => setIsOpenMenu(false)}
+                  >
+                    로그인
+                  </Link>
+                )}
               </div>
             </div>
           </div>

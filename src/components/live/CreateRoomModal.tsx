@@ -34,13 +34,18 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
           title: title,
           description: description,
           // mentor Id 수정 필요
-          mentorId: 1
+          mentorId: 2
         }
       })
         .then((res) => {
-          setMentoringRoomId(res.data['data']);
-          console.log(res);
-          setStep(2);
+          if (res.data['code'] == '200 OK') {
+            setMentoringRoomId(res.data['data']);
+            console.log(res);
+            setStep(2);
+          }
+          else {
+            window.alert(res.data['msg']);
+          }
         })
         .catch((err) => {
           window.alert('방이 정상적으로 생성되지 못했습니다.');

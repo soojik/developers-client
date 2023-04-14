@@ -1,4 +1,5 @@
 import Options from "components/Options";
+import ConfirmBtn from "components/buttons/CofirmBtn";
 import { addressList } from "libs/options";
 import { useState } from "react";
 
@@ -18,14 +19,13 @@ const AddressInput = ({
         </span>
         <Options label="거주지" lists={addressList} setState={setAdress} />
       </div>
-      <div className="flex justify-end">
-        <button
+      <div className="flex justify-end mt-10">
+        <ConfirmBtn
           type="submit"
-          className="px-4 py-1.5 text-accent-100 rounded-md border border-accent-100 font-bold  hover:bg-accent-100 hover:text-slate-200 transition"
           onClick={() => editUserInfo("address", adress)}
         >
           저장
-        </button>
+        </ConfirmBtn>
       </div>
     </div>
   );

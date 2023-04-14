@@ -1,47 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Popup from 'components/live/PopUp';
 import MentorProfile from 'components/live/MentorProfile';
 import CalendarPopUp from "components/live/CalendarPopUp";
 import { Room } from './RoomList';
+import { EventProp, ScheduleProps } from 'pages/Mentoring';
+import axios from 'axios';
 
 interface ShowMentoringProps {
+  mySchedule: EventProp[];
   room: Room;
   handleClose : () => void,
 }
 
-const ShowMentoring: React.FC<ShowMentoringProps> = ({room, handleClose}) => {
+const ShowMentoring: React.FC<ShowMentoringProps> = ({mySchedule, room, handleClose}) => {
   const [showCalendarPopup, setShowCalendarPopup] = useState(false); // 다음 버튼을 누를 때
-  
-  const events = [
-    {
-      title: '테스트 1',
-      startDate: new Date(new Date().setHours(new Date().getHours() - 5)),
-      endDate: new Date(new Date().setHours(new Date().getHours() - 3)),
-    },
-    {
-      title: '테스트 2',
-      startDate: new Date(new Date().setHours(new Date().getHours())),
-      endDate: new Date(new Date().setHours(new Date().getHours()+1)),
-    },
-    {
-      title: '테스트 3',
-      startDate: new Date(new Date().setHours(new Date().getHours() + 12)),
-      endDate: new Date(new Date().setHours(new Date().getHours() + 14)),
-      location:"test-Room"
-    },
-    {
-      title: '테스트 3',
-      startDate: new Date(new Date().setHours(new Date().getHours() + 48)),
-      endDate: new Date(new Date().setHours(new Date().getHours() + 49)),
-      location:"test-Room"
-    },
-    {
-      title: '테스트 3',
-      startDate: new Date(new Date().setHours(new Date().getHours() + 75)),
-      endDate: new Date(new Date().setHours(new Date().getHours() + 77)),
-      location:"test-Room"
-    },
-  ];
+  const [roomSchedules, setRoomSchedules] = useState<ScheduleProps[]>([]);
+
+  let newSchedule: any[] = [];
+  const handleShowSchedule = () => {
+    const url = `http://localhost:9002/api/schedules/${room.mentoringRoomId}`;
+  // 방 아이디로 스케쥴 조회
+  axios.get(url)
+  .then(res=>{
+    setRoomSchedules(res.data.data)
+  })
+  .catch(err=>console.log(err));
+  }
+
+  if(roomSchedules.length !== 0){
+    newSchedule = roomSchedules.filter(roomSchedule => 
+      !mySchedule.some(my => my.startDate.toString() === roomSchedule.startDate)
+    );  
+  }
+
   return (
     <div>
         <Popup>
@@ -52,10 +43,10 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({room, handleClose}) => {
               <MentorProfile  name={room.mentorName} bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!" />
               {/* imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" */}
               <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
-              <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 rounded" onClick={() => setShowCalendarPopup(!showCalendarPopup)}>Next</button>
+              <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 rounded" onClick={() => {setShowCalendarPopup(!showCalendarPopup); handleShowSchedule()}}>Next</button>
             </div>
           ) : (
-            <CalendarPopUp events={events} handleClose={ handleClose } />
+            <CalendarPopUp events={newSchedule} handleClose={ handleClose } />
           )}
         </Popup>
     </div>

@@ -5,17 +5,13 @@ import SearchBar from './SearchBar';
 import RoomList, { Room } from './RoomList';
 import React from 'react';
 import axios from 'axios';
-
-interface EventProp {
-    title: string;
-    startDate: Date;
-    endDate: Date;
-    type: string;
-};
+import {EventProp} from "../../pages/Mentoring"
 
 interface LiveListProps {
-    events: EventProp[];
+    events: EventProp[];  // 내 기준으로 조회된 모든 스케쥴
 }
+
+const isMentor: boolean = true;
 
 const LiveList: React.FC<LiveListProps> = ({ events }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,8 +46,6 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
     useEffect(() => {
         const sliceEndIndex = currentPage * PAGE_SIZE;
         setDisplayedRooms(roomList.slice(0, sliceEndIndex));
-        console.log("검색 이후의 갯수" + roomList.length)
-        console.log(roomList)
     }, [roomList, currentPage]);
 
     const handleScroll = async () => {
@@ -92,14 +86,16 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
                 <SearchBar onSearch={handleSearch}></SearchBar>
             </div>
             <div className="h-32 flex items-center">
-                <button
-                    className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                    onClick={handleOpenModal}>
-                    방 생성
-                </button>
+                {isMentor && (
+                    <button
+                        className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                        onClick={handleOpenModal}>
+                        방 생성
+                    </button>
+                )}
             </div>
             <div>
-                <RoomList rooms={displayedRooms}></RoomList>
+                <RoomList events={events} rooms={displayedRooms}></RoomList>
             </div>
             {isModalOpen && <CreateRoomModal onClose={() => setIsModalOpen(false)} events={events} />}
         </div>

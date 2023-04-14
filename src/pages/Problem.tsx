@@ -1,12 +1,11 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import ProblemListupdate from "components/problem/ProblemListupdate";
 import SearchBox from "components/SearchBox";
 import DropBoxStack from "components/dropbox/DropBoxCondition";
 import DropBoxLevel from "components/dropbox/DropBoxLevel";
 import DropBoxType from "components/dropbox/DropBoxType";
 import DropBoxSolved from "components/dropbox/DropBoxSolved";
-
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import HashTagComponent from "../components/problem/HashTagComponent";
 
 const ProblemMain = () => {

@@ -9,24 +9,31 @@ import {
     Toolbar,
     TodayButton,
     AppointmentTooltip,
-    Resources
+    Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 
 import axios from "axios";
 import { ViewState } from '@devexpress/dx-react-scheduler';
 
+import Popup from "./PopUp";
+
 interface CalendarProps {
     onClose: () => void;
-    events: EventProp[];
     mentoringRoomId: number | undefined;
 };
 
 interface EventProp {
     title: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     type: string;
 };
+
+interface CancelEventPopupProps {
+    handleClose: () => void;
+    event: any;
+}
+
 
 const allTimeSlots = [
     '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'
@@ -47,26 +54,90 @@ const memberId = 1;
 const today: Date = new Date();
 const maxDate: Date = new Date(today.setDate(today.getDate() + 6) - (today.getTimezoneOffset() * 60000));
 
-const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentoringRoomId }) => {
+const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [events, setEvents] = useState<EventProp[]>([]);
+    const [showCancelEventPopup, setShowCancelEventPopup] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<any>(null);
+
+    useEffect(() => {
+        axios({
+            url: `http://localhost:9002/api/schedules/${mentoringRoomId}`,
+            method: 'get'
+        }).then((res) => {
+            console.log(res.data);
+            setEvents(res.data['data'])
+        }).catch((err) => {
+            console.log(err);
+        })
+    }, [])
 
     // 현재는 각각 events 라는 상수로 지정해서 사용
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
-    console.log(today);
-
     useEffect(() => {
         if (selectedDate) {
-            // 예약 가능한 시간대 계산
-            const reservedTimes = events
-                .filter((event) => event.startDate.toDateString() === selectedDate.toDateString())
-                .map((event) => event.startDate.getHours().toString());
-            const availableTimes = availableTimeSlots.filter(
-                (time) => !reservedTimes.includes(time)
-            );
-            setAvailableTimeSlots(availableTimes);
+            if (events.length) {
+                // 예약 가능한 시간대 계산
+                const reservedTimes = events
+                    .filter((event) => new Date(event.startDate).toDateString() === selectedDate.toDateString())
+                    .map((event) => new Date(event.startDate).getHours().toString());
+
+                console.log(reservedTimes);
+                const availableTimes = availableTimeSlots.filter(
+                    (time) => !reservedTimes.includes(time)
+                );
+                setAvailableTimeSlots(availableTimes);
+            }
         }
     }, [selectedDate, events]);
+
+    const handleEventClick = (event: any) => {
+        setSelectedEvent(event);
+        setShowCancelEventPopup(true);
+    };
+
+    const handleClosePopup = () => {
+        setShowCancelEventPopup(false);
+    };
+
+    const CustomAppointment = (props: any) => {
+        const handleEventClick = () => {
+            props.onClick(props.data);
+        };
+
+        return (
+            <Appointments.Appointment {...props} onClick={handleEventClick} />
+        );
+    };
+
+    const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event }) => {
+        const handleCancelEvent = () => {
+            if (window.confirm('해당 시간을 취소하시겠습니까?')) {
+                console.log("event", event);
+                axios({
+                    url:`http://localhost:9002/api/schedules/mentor/${event.scheduleId}`,
+                    method: 'delete'
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.log(err);
+                })
+                handleClose();
+            }
+        };
+
+        return (
+            <Popup>
+                <div className="cancelEventPopup">
+                    <h2>{event.title}</h2>
+                    <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleCancelEvent}>취소하기</button>
+                    <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
+                </div>
+            </Popup>
+        );
+    };
+
 
     // 예약 가능한 시간대 버튼을 동적으로 생성해주는 함수
     const renderTimeSlotButtons = () => {
@@ -116,15 +187,15 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
         <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-10">
             <div className="bg-white p-5 rounded-lg max-w-4xl h-500 overflow-y-auto flex flex-col justify-between">
                 <div>
-                    <h2 className="text-lg font-bold mb-4">방 생성</h2>
-                    <h3 className="italic mb-4">생성하신 멘토링을 진행하실 시각을 선택해주세요! (한시간 단위)</h3>
+                    <h2 className="text-lg font-bold mb-4">방 수정</h2>
+                    <h3 className="italic mb-4">멘토링 일정을 추가해주세요 (한시간 단위)</h3>
                     <div>
                         <Scheduler data={events} height={500}>
                             <ViewState defaultCurrentDate={new Date()} />
                             <WeekView startDayHour={7} endDayHour={23} />
                             <Toolbar />
                             <TodayButton />
-                            <Appointments />
+                            <Appointments appointmentComponent={(props) => <CustomAppointment {...props} onClick={handleEventClick} />} />
                             <AppointmentTooltip />
                             <Resources
                                 data={resources}
@@ -157,8 +228,11 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
                     </button>
                 </div>
             </div>
+            {showCancelEventPopup && (
+                <CancelEventPopup event={selectedEvent} handleClose={handleClosePopup} />
+            )}
         </div>
     );
 }
 
-export default CreateScheduleDate;
+export default ModifySchedule;

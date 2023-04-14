@@ -11,6 +11,8 @@ interface LiveListProps {
     events: EventProp[];  // 내 기준으로 조회된 모든 스케쥴
 }
 
+const isMentor: boolean = true;
+
 const LiveList: React.FC<LiveListProps> = ({ events }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
@@ -84,11 +86,13 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
                 <SearchBar onSearch={handleSearch}></SearchBar>
             </div>
             <div className="h-32 flex items-center">
-                <button
-                    className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                    onClick={handleOpenModal}>
-                    방 생성
-                </button>
+                {isMentor && (
+                    <button
+                        className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                        onClick={handleOpenModal}>
+                        방 생성
+                    </button>
+                )}
             </div>
             <div>
                 <RoomList events={events} rooms={displayedRooms}></RoomList>

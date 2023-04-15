@@ -65,51 +65,59 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
   }; 
   
   const handleJoinEvent = async () => {
+    // 전체 방 리스트 조회
+    const sessionUrl = `http://localhost:8080/api/live-session/list`;
+    const lives = await axios.get(sessionUrl);
+    // 방 리스트의 데이터가 있다면 변환
+    const sessionRooms = JSON.parse(lives.data.data)
+    const sessionRoomsArray = Object.keys(sessionRooms);
+    // 방 리스트의 데이터가 있다면 무조건 조회
     if(window.confirm('멘토링 룸에 입장하시겠습니까?')){
       const enterUrl = `http://localhost:8080/api/live-session/enter`
-      if(isMentor){
-        const enterRes = await axios.post(enterUrl, {
-          roomName: event.title,
-          userName: memberName,
-          time:60
-        }) //live-session에 등록
-        if(enterRes.status===200){ //정상적으로 등록되었을 경우 url 반환
-          const enterUrl = "http://localhost:8080/api/dailyco"
-          const createRes = await axios.post(enterUrl,{
-            name:event.title.replace(/방제목 with 멘토/g, "roomtitle-with-mentor3"), 
-            privacy:"public",
-            properties:{
-              // nbf: Math.floor(new Date(event.startDate).getTime()/1000),
-              exp:Math.floor(new Date(event.endDate).getTime()/1000),
+      if(lives.status === 400){
+        // 방이 없는데 멘토면?
+        if(isMentor){
+            // 방 생성 로직
+          const enterRes = await axios.post(enterUrl, {
+            roomName: event.title,
+            userName: memberName,
+            time:60
+          }) //live-session에 등록
+          if(enterRes.status===200){ //정상적으로 등록되었을 경우 url 반환
+            const enterUrl = "http://localhost:8080/api/dailyco"
+            const createRes = await axios.post(enterUrl,{
+              name:event.title.replace(/방제목 with 멘토/g, "roomtitle-with-mentor3"), 
+              privacy:"public",
+              properties:{
+                // nbf: Math.floor(new Date(event.startDate).getTime()/1000),
+                exp:Math.floor(new Date(event.endDate).getTime()/1000),
+              }
+            })
+            if(createRes.status === 200){ //url 반환되면 사용자 자동 연결
+              alert("방에 입장하셨습니다");
+              setRoomUrls(prevRoomUrls => ({...prevRoomUrls, [event.title]: createRes.data.data.url}));
+              console.log(createRes.data.data.url)
+              window.open(createRes.data.data.url,"_blank");
             }
-          })
-          if(createRes.status === 200){ //url 반환되면 사용자 자동 연결
-            alert("방에 입장하셨습니다");
-            setRoomUrls(prevRoomUrls => ({...prevRoomUrls, [event.title]: createRes.data.url}));
-            console.log(createRes.data.data.url)
-            window.open(createRes.data.data.url,"_blank");
           }
-        }
-        handleClose();
-      }else{
-        const sessionUrl = `http://localhost:8080/api/live-session/list`;
-        const lives = await axios.get(sessionUrl);
-        if(lives.status === 400){
-          alert("멘토가 아직 입장하지 않았습니다");
           handleClose();
-        }
-        
-        const sessionRooms = JSON.parse(lives.data.data)
-        const sessionRoomsArray = Object.keys(sessionRooms);
-        console.log(sessionRoomsArray)
+          }else{
+            // 방이 없는데 멘토가 아니라면?
+              if(sessionRoomsArray.includes(event.title)){
+                alert("입장 성공하였습니다");
+                window.open(roomUrls[event.title], "_blank")
+                handleClose();
+              }
+          }
+      }else if(lives.status===200){
+        // 방이 있다면?
         if(sessionRoomsArray.includes(event.title)){
           window.open(roomUrls[event.title], "_blank")
           alert("입장 성공하였습니다");
           handleClose();
-        }else{
-          alert("멘토가 아직 입장하지 않았습니다");
-          handleClose();
         }
+      }else{
+        const err = `${lives.status}:${lives.data}`
       }
     }
   }

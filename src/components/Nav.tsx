@@ -58,7 +58,7 @@ const Nav = () => {
             <button
               className="p-2"
               onClick={() =>
-                navigate(isLoggedIn ? "/profile/:memberId" : "/login")
+                navigate(isLoggedIn ? `/profile/${memberId}` : "/login")
               }
             >
               <PersonIcon fill="white" />
@@ -107,7 +107,7 @@ const Nav = () => {
 
                 {isLoggedIn ? (
                   <Link
-                    to="/profile/:memberId"
+                    to={`/profile/${memberId}`}
                     className="block pb-1 mb-2 text-xl font-light border-b border-solid border-slate-200 hover:font-normal"
                     onClick={() => setIsOpenMenu(false)}
                   >

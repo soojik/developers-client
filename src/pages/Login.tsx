@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import NaverOauthBtn from "components/buttons/NaverOauthBtn";
 import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
+import { setLocalStorage } from "libs/localStorage";
 
 interface LoginProps {
   loginEmail: string;
@@ -25,25 +26,29 @@ const Login = () => {
 
   const handleLoginSubmit: SubmitHandler<LoginProps> = (data) => {
     axios
-      .post(`${URL}/api/auth/local`, data, {
+      .post(`${URL}/api/auth/login`, data, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((res) => {
-        let accessToken = res.headers.authorization;
-        let refreshToken = res.headers.refresh;
+        let accessToken = res.data.accessToken;
+        let refreshToken = res.data.refreshToken;
+        setLocalStorage("access_token", accessToken); // 임시
+        setLocalStorage("refresh_token", refreshToken);
 
-        axios.defaults.headers.common["Authorization"] = `${accessToken}`;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
 
         console.log("로그인 응답", res);
         const resData = {
-          memberId: 1, // 임시 memberId: Number(res.data)
+          memberId: Number(res.data.memberId),
           isLoggedIn: true,
         };
         setMemberInfo({ ...memberInfo, ...resData });
 
-        // navigate("/");
+        navigate("/");
       })
       .catch((err) => console.log(err));
   };

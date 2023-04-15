@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import RightArrowIcon from "components/icons/RightArrowIcon";
 import Popup from "components/live/PopUp";
@@ -12,11 +12,13 @@ import AddressInput from "components/mypage/AddressInput";
 import ResumeEdit from "components/mypage/ResumeEdit";
 import DownArrowIcon from "components/icons/DownArrowIcon";
 import ConfirmBtn from "components/buttons/CofirmBtn";
+import { removeLocalStorage } from "libs/localStorage";
 
 const MyPage = () => {
   const URL = process.env.REACT_APP_DEV_URL;
   const { memberId } = useParams();
   const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
+  const resetMemberInfo = useResetRecoilState(memberInfoState);
   // console.log(memberInfo);
   const navigate = useNavigate();
   const careerInfoMenu = ["이력", "후기"];
@@ -56,7 +58,7 @@ const MyPage = () => {
           setMemberInfo({ ...memberInfo, ...resData });
         });
     };
-    // getUserProfile();
+    getUserProfile();
   });
 
   const editUserInfo = async (path: string, data: string) => {
@@ -103,6 +105,15 @@ const MyPage = () => {
       return;
     }
   };
+
+  const handleLogout = () => {
+    removeLocalStorage("access_token");
+    removeLocalStorage("refresh_token");
+    // resetMemberInfo(); // 둘다  persist에서 삭제가 안됨
+    setMemberInfo({ memberInfo: {}, memberId: undefined, isLoggedIn: false });
+    navigate("/");
+  };
+
   const handleMentorBtnClick = () => {
     axios
       .patch(
@@ -174,7 +185,10 @@ const MyPage = () => {
         </div>
 
         <div className="flex justify-around">
-          <button className="py-2 px-4 text-xs bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300">
+          <button
+            className="py-2 px-4 text-xs bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300"
+            onClick={handleLogout}
+          >
             로그아웃
           </button>
           <button

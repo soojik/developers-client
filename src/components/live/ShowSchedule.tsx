@@ -74,25 +74,20 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
           time:60
         }) //live-session에 등록
         if(enterRes.status===200){ //정상적으로 등록되었을 경우 url 반환
-          const enterUrl = `/v1/rooms`
+          const enterUrl = "http://localhost:8080/api/dailyco"
           const createRes = await axios.post(enterUrl,{
-            name:event.title.replace(/방제목 with 멘토/g, "roomtitle-with-mentor"),
+            name:event.title.replace(/방제목 with 멘토/g, "roomtitle-with-mentor3"), 
             privacy:"public",
             properties:{
-              nbf: Math.floor(new Date(event.startDate).getTime()/1000),
+              // nbf: Math.floor(new Date(event.startDate).getTime()/1000),
               exp:Math.floor(new Date(event.endDate).getTime()/1000),
             }
-          },{
-            headers: {
-              "Content-Type": 'application/json',
-              Authorization:"Bearer 17885ccd0a16f1c5e4d642075773a775fc45b46b020cfac4023c3fb88f7aba01" // 이 부분은 바꿔야 할 필요성이 있음
-            },
           })
           if(createRes.status === 200){ //url 반환되면 사용자 자동 연결
             alert("방에 입장하셨습니다");
             setRoomUrls(prevRoomUrls => ({...prevRoomUrls, [event.title]: createRes.data.url}));
-            console.log(createRes)
-            // window.open(createRes.data.url, "_blank");
+            console.log(createRes.data.data.url)
+            window.open(createRes.data.data.url,"_blank");
           }
         }
         handleClose();

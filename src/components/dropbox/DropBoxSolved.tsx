@@ -3,15 +3,13 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface SelectDropdownProps {
-  selectName: string;
-  options: string[];
-  paramName: string;
+  selectFn: (value: string) => void;
+  handleResetTemp: (type: string) => void; // 추가
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
-  selectName,
-  options,
-  paramName,
+  selectFn,
+  handleResetTemp,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectDropValue, setSelectDropValue] = useState("solved를 선택하세요");
@@ -24,45 +22,29 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 
   const menuSelect = (value: string | null) => {
     if (value) {
+      const paramName = "solved"
       setIsOpen(false);
       const searchParams = new URLSearchParams(location.search);
       if (value === "푼 문제") {
         searchParams.set(paramName, "true");
-        fetchProblems("true");
+        // fetchProblems("true");
       } else {
         if (value === "안 푼문제") {
           searchParams.set(paramName, "false");
-          fetchProblems("false");
-        } else {
-          alert("옳지 않은 문제 타입");
+          // fetchProblems("false");
         }
       }
       navigate(`?${searchParams.toString()}`);
     }
   };
 
-  const fetchProblems = async (language: string) => {
-    try {
-      const response = await axios.get("http://localhost/problem/list", {
-        params: {
-          solved: language,
-          // writer: "your-writer-name", // 필요한 경우 실제 작성자 값으로 변경하세요.
-        },
-      });
-      console.log(response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error:", error.message, "Code:", error.code);
-      } else {
-        console.error("Unknown error:", error);
-      }
-    }
-  };
+ 
 
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const value = e.currentTarget.getAttribute("data-value");
     if (value) {
       setSelectDropValue(value);
+      selectFn(value);
       menuSelect(value);
     }
   };
@@ -70,8 +52,10 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   const handleClear = () => {
     setSelectDropValue("solved를 선택하세요");
     const searchParams = new URLSearchParams(location.search);
-    searchParams.delete(paramName);
+    searchParams.delete("solved");
     navigate(`?${searchParams.toString()}`);
+    handleResetTemp("solved"); // props로 받은 handleResetTemp 호출
+
   };
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -172,7 +156,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="푼 문제"
+                    data-value="solved=true"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 hover:border-teal-600">
@@ -186,7 +170,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="안 푼문제"
+                    data-value="solved=false"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 border-teal-600">

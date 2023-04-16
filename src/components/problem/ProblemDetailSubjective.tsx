@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import ProblemPointModal from "components/problem/ProblemPointModal";
+
 
 interface ProblemBoxProps {
   problemId: number;
@@ -28,7 +29,9 @@ const ProblemDetail = () => {
   const [pointAdd, setPointAdd] = useState(0); // 포인트
   const [isEditing, setIsEditing] = useState(false); // 수정 모드인지 여부
   const [originalAnswer, setOriginalAnswer] = useState(""); // 수정 모드 진입 시 기존 답변 저장
-
+  const [btnVisible, setBtnVisible]= useState(false); //문제 작성자는 문제 풀수없도록 하기 위한 속성===
+  const [answerWriter, setAnswerWriter] = useState(''); //문제 작성자를 받아오기 위한값===
+  const navigate = useNavigate(); 
 
   //세션에 저장되어있는 값을 가져오기
   const sessionAnswer = sessionStorage.getItem('answer') || '';
@@ -48,11 +51,10 @@ const ProblemDetail = () => {
   useEffect(() => {
     const fetchProblemDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:80/api/problem/2/lango`)
-        // const response = await axios.get(`http://localhost:80/problem/${problemId}/{member}`)
-        console.log(response);
+        const response = await axios.get(`http://localhost:80/api/problem/3/writer`);
         setDetail(response.data.data);
         setAnswer(response.data.data.answer);
+        setAnswerWriter(response.data.data.writer);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error("Axios error:", error.message, "Code:", error.code);
@@ -63,6 +65,15 @@ const ProblemDetail = () => {
     };
     fetchProblemDetail();
   }, [problemId, member]);
+  
+  useEffect(() => {
+    if (answerWriter === "lango") { //memberId받아오기
+      setBtnVisible(false);
+    } else {
+      setBtnVisible(true);
+    }
+  }, [answerWriter]);
+  
 
   if (!detail) {
     return <div>Loading...</div>;
@@ -97,6 +108,23 @@ const ProblemDetail = () => {
     
   };
 
+  const deleteProblem = async() =>{
+    try{
+      const response = await axios.delete(`http://localhost:80/api/problem/2`);
+      if(response.status===200){
+        alert("문제가 성공적으로 삭제되었습니다.");
+        navigate("/problem");//삭제 완료후 리다이렉트
+      }else{
+        alert("문제 삭제에 실패하였습니다.");
+      }
+    }catch(error){
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message, "Code:", error.code);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
 
   return (
 
@@ -122,7 +150,7 @@ const ProblemDetail = () => {
           </div>
         </div>
       </div>
-
+      
       <div className="mt-4">
         <label htmlFor="answer" className="block text-sm font-medium text-gray-700">
           답변
@@ -138,6 +166,14 @@ const ProblemDetail = () => {
           ></textarea>
         </div>   
       </div>
+      <p>조회수: {detail.views}</p>
+      <p>좋아요: {detail.likes}</p>
+      <p>해시태그: {detail.hashTag}</p>
+
+
+
+      <div>
+        {btnVisible ? (<>
       <div className="flex flex-col justify-center items-end">
         {isEditing ? (
           <div className="h-32 flex items-center">
@@ -175,21 +211,32 @@ const ProblemDetail = () => {
               />
             )}
           </div>
-
-
-
-
-
-        )
-
+          ) 
         }
+        </div>
+        </>):(<>
+          <div className="flex flex-col justify-center items-end">
+            <div className="h-32 flex items-center">
+              <button
+                className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                onClick={()=>{navigate("http://localhost:3000/problem/register")}}
+              >
+                문제 수정
+              </button>
+              <button
+                className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                onClick={deleteProblem}
+              >
+                문제 삭제
+              </button>
+            </div>
+          </div>
+        </>)}
+
       </div>
     </>
-  );
+  )
 
-
-
-  // );
 };
 
 export default ProblemDetail;

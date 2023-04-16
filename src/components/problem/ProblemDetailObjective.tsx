@@ -1,22 +1,22 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import ProblemPointModal from "components/problem/ProblemPointModal";
 
-interface ProblemBoxProps {
-  problemId: number;
-  nickname: string;
-  writer: string;
-  type: string;
-  views: number;
-  title: string;
-  level: string;
-  likes: number;
-  content: string;
-  hashTag: string;
-  answer: string;
-  answerCandidate: string[]; // answerCandidate 추가
-  solved: boolean;
+interface ProblemBoxProps { 
+  problemId: number; //>>
+  nickname: string; //>>
+  writer: string; //>>
+  type: string; //>>
+  views: number;  //>>
+  title: string; //>>
+  level: string; //>>
+  likes: number; //>>
+  content: string; //>>
+  hashTag: string; //>>
+  answer: string; //>>
+  answerCandidate: string[]; // answerCandidate 추가  //>>
+  solved: boolean; //>>
 
 }
 
@@ -29,8 +29,12 @@ const ProblemDetail = () => {
   const [modalTitle, setModalTitle] = useState(''); //모달 타이틀 전송
   const [pointAdd , setPointAdd] = useState(0); // 포인트 -> 연산값이 실제로 연산된 후 보내져야한다.
   const [isEditing, setIsEditing] = useState(false); // 수정 모드인지 여부
+  const [radioDisabled, setRadioDisabled] = useState(false);
   const [originalAnswer, setOriginalAnswer] = useState(""); // 수정 모드 진입 시 기존 답변 저장
-  const [problemSolved, setProblemSolved] = useState(false);
+  const [problemSolved, setProblemSolved] = useState(false); // 문제 풀이 유무 DB저장을 위해서 만듦
+  const [btnVisible, setBtnVisible]= useState(false); //문제 작성자는 문제 풀수없도록 하기 위한 속성===
+  const [answerWriter, setAnswerWriter] = useState(''); //문제 작성자를 받아오기 위한값===
+  const navigate = useNavigate(); 
 
 
 
@@ -50,7 +54,7 @@ const ProblemDetail = () => {
     const fetchProblemDetail = async () => {
       try {
         const response = await axios.get(`http://localhost:80/api/problem/1089/lango`)
-
+ 
         // console.log(response);
         const answerCandidateString = response.data.data.answerCandidate;
         const answer = response.data.data.answer; //정답 저장
@@ -63,6 +67,7 @@ const ProblemDetail = () => {
         // console.log(setAnswerCandidate);
 
         setDetail(response.data.data);
+        setAnswerWriter(response.data.data.writer);
 
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -74,6 +79,15 @@ const ProblemDetail = () => {
     };
     fetchProblemDetail();
   }, [problemId, member]);
+
+  useEffect(() => {
+    if (answerWriter === "lango") { //memberId받아오기
+      setBtnVisible(false);
+    } else {
+      setBtnVisible(true);
+    }
+  }, [answerWriter]);
+  
 
   if (!detail) {
     return <div>Loading...</div>;
@@ -107,6 +121,25 @@ const ProblemDetail = () => {
 
   const handleSave = () => {
     setIsEditing(false);
+    setRadioDisabled(true);
+  };
+
+  const deleteProblem = async() =>{
+    try{
+      const response = await axios.delete(`http://localhost:80/api/problem/2`);
+      if(response.status===200){
+        alert("문제가 성공적으로 삭제되었습니다.");
+        navigate("/problem");//삭제 완료후 리다이렉트
+      }else{
+        alert("문제 삭제에 실패하였습니다.");
+      }
+    }catch(error){
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message, "Code:", error.code);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
   };
 
   return (
@@ -148,6 +181,7 @@ const ProblemDetail = () => {
                 value={candidate}
                 className="mr-2"
                 onChange={() => handleRadioClick(candidate)} // Call the new function when a radio button is clicked
+                disabled={radioDisabled}
               />
               <label htmlFor={`option${index}`} className="text-sm">
                 {/* {index + 1}.  */}
@@ -163,6 +197,8 @@ const ProblemDetail = () => {
       <p>좋아요: {detail.likes}</p>
       <p>해시태그: {detail.hashTag}</p>
 
+      <div>
+        {btnVisible ? (<>
       <div className="flex flex-col justify-center items-end">
         {isEditing ? (
           <div className="h-32 flex items-center">
@@ -200,15 +236,29 @@ const ProblemDetail = () => {
               />
             )}
           </div>
-
-
-
-
-
-        )
-
+          ) 
         }
-      </div>    
+        </div>
+        </>):(<>
+          <div className="flex flex-col justify-center items-end">
+            <div className="h-32 flex items-center">
+              <button
+                className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                onClick={()=>{navigate("http://localhost:3000/problem/register")}}
+              >
+                문제 수정
+              </button>
+              <button
+                className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                onClick={deleteProblem}
+              >
+                문제 삭제
+              </button>
+            </div>
+          </div>
+        </>)}
+
+      </div>
     </>
   );
 };

@@ -15,7 +15,6 @@ interface DropBoxProps {
 const DropBox = ({ selectName, options, paramName, onSelect }: DropBoxProps) => {
   const [selectedOption, setSelectedOption] = useState<string>('');
 
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -47,9 +46,12 @@ interface PopularTag {
   name: string;
 }
 
-interface PopularTagsProps {}
+interface PopularTagsProps {
+  selectFn: (value: string) => void;
+  handleResetTemp: (type: string) => void;
+}
 
-const PopularTags = ({}: PopularTagsProps) => {
+const PopularTags = ({ selectFn, handleResetTemp}: PopularTagsProps) => {
   const popularTags: PopularTag[] = [
     { id: 1, name: 'JavaScript' },
     { id: 2, name: 'React' },
@@ -67,15 +69,6 @@ const PopularTags = ({}: PopularTagsProps) => {
   const navigate = useNavigate();
 
 
-  const handleDeleteTag = (id: number) => {
-    const updatedTags = tags.filter(tag => tag.id !== id);
-    setTags(updatedTags);
-  
-    // URL에서 삭제할 태그를 제거합니다.
-    const hashtags = updatedTags.map(tag => tag.name).join(",");
-    window.history.pushState({}, "", `/list?hashtag=${hashtags}`);
-
-  };
   const handleSelectTag = (value: string) => {
     const selectedPopularTag = popularTags.find(tag => tag.name === value);
     if (selectedPopularTag) {
@@ -84,30 +77,49 @@ const PopularTags = ({}: PopularTagsProps) => {
       setContent("");
       console.log(`검색어: ${content}`);
       const hashtags = tags.concat(selectedPopularTag).map(tag => tag.name).join(",");
-      window.history.pushState({}, "", `/list?hashtag=${hashtags}`);
+      // window.history.pushState({}, "", `/problem/list?hashtag=${hashtags}`);
     }
   };
+  
+  const handleSubmit = () => {
+    const hashtags = tags.map(tag => tag.name).join(",");
+    selectFn(`hashtag=${hashtags}`); // selectFn 호출
+  };
+  
+
+  const handleDeleteTag = (id: number) => {
+    const updatedTags = tags.filter(tag => tag.id !== id);
+    setTags(updatedTags);
+
+    // URL에서 삭제할 태그를 제거합니다.
+    const hashtags = updatedTags.map(tag => tag.name).join(",");
+    window.history.pushState({}, "", `/list?hashtag=${hashtags}`);
+    handleResetTemp(`hashtag=${hashtags}`); // handleResetTemp 호출
+  };
+
   const handleClick = (content: string) => {
     const hashtags = [content].join(",");
     navigate(`/list?hashtag=${hashtags}`);
   }
 
   return (
-    <div>
-      <DropBox
-        selectName="인기태그"
-        options={popularTags.map(tag => tag.name)}
-        onSelect={handleSelectTag}
+      <div>
+    <DropBox
+      selectName="인기태그"
+      options={popularTags.map(tag => tag.name)}
+      onSelect={handleSelectTag}
+    />
+    {tags.map(tag => (
+      <Hashtag
+        key={tag.id}
+        content={tag.name}
+        onClick={() => handleClick(tag.name)}
+        onClickDelete={() => handleDeleteTag(tag.id)}
       />
-      {tags.map(tag => (
-        <Hashtag
-          key={tag.id}
-          content={tag.name}
-          onClick={() => handleClick(tag.name)}
-          onClickDelete={() => handleDeleteTag(tag.id)}
-        />
-      ))}
-    </div>
+    ))}
+    <button onClick={handleSubmit}>검색</button>
+  </div>
+
   );
   
 };

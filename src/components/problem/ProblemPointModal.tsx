@@ -30,15 +30,6 @@ const Modal: React.FC<ModalProps> = ({ title,point, isOpen, onClose }) => { //St
   
   const[pointAdd, setPointAdd] = useState(""); // 점수 값 저장
 
-  // const solutionResult = () =>{
-  //   let title = "정답입니다."
-  //   if (value === "true"){
-  //     title = "정답입니다."
-  //   }else{
-  //     title = "오답입니다."
-  //   }
-  // }
-
   console.log(setVisible)
   const handleClose = () => {
     setVisible(false);

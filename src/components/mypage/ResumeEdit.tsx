@@ -12,14 +12,6 @@ const ResumeEdit = ({ active }: { active: any }) => {
   const URL = process.env.REACT_APP_DEV_URL;
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
-  const careerInfo = [
-    {
-      intro: "나는 아무개입니다!",
-      skill: "React,Java,Python",
-      position: "프론트엔드,iOS",
-    },
-  ];
-
   const [introduce, setIntroduce] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [position, setPosition] = useState<string[]>([]);
@@ -34,18 +26,22 @@ const ResumeEdit = ({ active }: { active: any }) => {
   };
 
   useEffect(() => {
-    const prevSkills = memberInfo.skills.split(",");
-    const prevPos = memberInfo.position.split(",");
-    setSkills(prevSkills);
-    setPosition(prevPos);
+    if (memberInfo.skills.length > 0) {
+      const prevSkills = memberInfo.skills.split(",");
+      setSkills(prevSkills);
+    }
+    if (memberInfo.position.length > 0) {
+      const prevPos = memberInfo.position.split(",");
+      setPosition(prevPos);
+    }
   }, []);
 
   const handleBtnClick = () => {
     // console.log(reqBody);
     axios
       .patch(
-        `${URL}/api/resume`,
-        { reqBody },
+        `/api/member/resume`,
+        { ...reqBody },
         {
           headers: {
             "Content-Type": "application/json",
@@ -91,7 +87,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
         직무
       </div>
       <MultiOptions
-        label={memberInfo.position}
+        label={memberInfo.position.length > 0 ? memberInfo.position : "직무"}
         lists={positionList}
         state={position}
         setState={setPosition}

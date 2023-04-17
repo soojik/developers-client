@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import RightArrowIcon from "components/icons/RightArrowIcon";
@@ -28,7 +27,6 @@ const MyPage = () => {
     { menu: "거주지", url: "address" },
   ];
 
-  const [profile, setProfile] = useState();
   const [modalOpened, setModalOpened] = useState(false);
   const [pwdEditOpend, setPwdEditOpend] = useState(false);
   const [nicknameEditOpend, setNicknameEditOpend] = useState(false);
@@ -41,11 +39,10 @@ const MyPage = () => {
   };
 
   const editUserInfo = async (path: string, data: string) => {
-    // console.log(`${path} ${data}`);
     await axiosInstance
       .patch(
-        `/api/${path}`,
-        { memberId, path: data },
+        `/api/member/${path}`,
+        { memberId, [path]: data },
         {
           headers: {
             "Content-type": "application/json",
@@ -73,7 +70,7 @@ const MyPage = () => {
   const handleUserDelete = () => {
     if (window.confirm("확인을 누르면 회원 정보가 삭제됩니다.")) {
       axiosInstance
-        .delete(`/api/member/${memberId}`)
+        .delete(`/api/auth/${memberId}`)
         .then(() => {
           localStorage.clear();
           alert("그동안 이용해주셔서 감사합니다.");

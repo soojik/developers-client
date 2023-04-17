@@ -45,7 +45,7 @@ const PwdInput = ({ memberId }: { memberId?: string }) => {
     // console.log('전달값',data, data.prevPassword, data.nextPassword);
     axios
       .patch(
-        `${URL}/api/password`,
+        `${URL}/api/member/password`,
         { memberId, password: data.nextPassword },
         {
           headers: {

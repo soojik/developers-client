@@ -19,8 +19,8 @@ const MyPage = () => {
   const { memberId } = useParams();
   const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
   const resetMemberInfo = useResetRecoilState(memberInfoState);
-  // console.log(memberInfo);
   const navigate = useNavigate();
+
   const careerInfoMenu = ["이력", "후기"];
   const userInfoMunu = [
     { menu: "닉네임", url: "nickname" },
@@ -59,7 +59,7 @@ const MyPage = () => {
         });
     };
     getUserProfile();
-  });
+  }, []);
 
   const editUserInfo = async (path: string, data: string) => {
     // console.log(`${path} ${data}`);
@@ -107,10 +107,9 @@ const MyPage = () => {
   };
 
   const handleLogout = () => {
+    resetMemberInfo();
     removeLocalStorage("access_token");
     removeLocalStorage("refresh_token");
-    // resetMemberInfo(); // 둘다  persist에서 삭제가 안됨
-    setMemberInfo({ memberInfo: {}, memberId: undefined, isLoggedIn: false });
     navigate("/");
   };
 

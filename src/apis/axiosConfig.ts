@@ -29,26 +29,23 @@ const onRequest = (
 ): InternalAxiosRequestConfig => {
   const { method, url } = config;
   logOnDev(`👉 Req [${method?.toUpperCase()}] | ${url}`);
-  if (method === "get") {
-    config.params = {
-      ...config.params,
-    };
-    config.timeout = 15000;
 
-    const accessToken = getLocalStorage("access_token");
-    const refreshToken = getLocalStorage("refresh_token");
-    if (accessToken) {
-      /** 2. access토큰 있으면 만료됐는지 체크 */
-      if (CheckJWTExp(accessToken, refreshToken) === ACCESS_EXP_MESSAGE) {
-        /** 3. 만료되면 만료된 access, refresh 같이 헤더 담아서 요청 */
-        // console.log('만료됨! refresh 토큰 담기'); ////
-        config.headers!.Authorization = `Bearer ${accessToken}`;
-        config.headers!.Refresh = `${refreshToken}`;
-      } else {
-        config.headers!.Authorization = `Bearer ${accessToken}`;
-      }
+  config.timeout = 15000;
+
+  const accessToken = getLocalStorage("access_token");
+  const refreshToken = getLocalStorage("refresh_token");
+  if (accessToken) {
+    /** 2. access 토큰 있으면 만료됐는지 체크 */
+    if (CheckJWTExp(accessToken, refreshToken) === ACCESS_EXP_MESSAGE) {
+      /** 3. 만료되면 만료된 access, refresh 같이 헤더 담아서 요청 */
+      // console.log('만료됨! refresh 토큰 담기'); ////
+      config.headers!.Authorization = `Bearer ${accessToken}`;
+      config.headers!.Refresh = `${refreshToken}`;
+    } else {
+      config.headers!.Authorization = `Bearer ${accessToken}`;
     }
   }
+
   return config;
 };
 

@@ -6,6 +6,7 @@ export interface MemberInfoProps {
   memberInfo: any;
   memberId: number | undefined;
   isLoggedIn: boolean;
+
 }
 
 export const memberInfoState = atom<MemberInfoProps>({
@@ -14,6 +15,7 @@ export const memberInfoState = atom<MemberInfoProps>({
     memberInfo: {},
     memberId: undefined,
     isLoggedIn: false,
+
   },
   effects_UNSTABLE: [persistAtom],
 });

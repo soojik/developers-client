@@ -1,17 +1,28 @@
 import { useState } from "react";
 import axios from "axios";
 
-const SearchBox = () => {
+interface SearchProps {
+  // paramName: (value: string) => void
+  searchFn: (value: string) => void;
+
+
+}
+
+const SearchBox:React.FC<SearchProps>= ({
+  searchFn,
+
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    searchFn(searchTerm);
   };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.get("http://localhost/problem", {
+      const response = await axios.get("http://localhost/api/problem", {
         params: {
           search: searchTerm,
         },
@@ -43,7 +54,7 @@ const SearchBox = () => {
         </button>
         <input
           type="text"
-          className="w-full pl-8 outline-0 placeholder:text-slate-500 placeholder:font-thin"
+          className="w-full pl-8 outline-0 placeholder:text-slate-500 placeholder:font-semibold"
           placeholder="검색어를 입력해주세요"
           id=""
           value={searchTerm}

@@ -26,7 +26,9 @@ const DropBox = ({ selectName, options, paramName, onSelect }: DropBoxProps) => 
   };
 
   return (
-    <div>
+    <div className='font-semibold' 
+    style={{ color: "black", fontSize: "12pt" }}
+    >
       <label htmlFor={selectName}>{selectName}</label>
       <select name={paramName} id={selectName} onChange={handleChange}>
         <option value="">전체</option>
@@ -105,7 +107,7 @@ const PopularTags = ({ selectFn, handleResetTemp}: PopularTagsProps) => {
   return (
       <div>
     <DropBox
-      selectName="인기태그"
+      selectName="인기태그 :"
       options={popularTags.map(tag => tag.name)}
       onSelect={handleSelectTag}
     />
@@ -117,7 +119,9 @@ const PopularTags = ({ selectFn, handleResetTemp}: PopularTagsProps) => {
         onClickDelete={() => handleDeleteTag(tag.id)}
       />
     ))}
-    <button onClick={handleSubmit}>검색</button>
+    <button className="text-xs py-1 px-3 bg-transparent text-blue-600 font-bold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+
+    onClick={handleSubmit}>검색</button>
   </div>
 
   );

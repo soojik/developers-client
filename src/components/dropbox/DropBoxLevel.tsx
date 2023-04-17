@@ -5,7 +5,7 @@ interface SelectDropdownProps {
   // paramName: (value: string) => void
   selectFn: (value: string) => void;
   handleResetTemp: (type: string) => void; // 추가
-  
+
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -14,10 +14,10 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   handleResetTemp,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectDropValue, setSelectDropValue] = useState("Level을 선택하세요");
+  const [selectDropValue, setSelectDropValue] = useState("");
   const location = useLocation(); // useLocation 함수 바깥으로 이동
   const navigate = useNavigate(); // useNavigate 함수 바깥으로 이동
-    const [selectTemp, setSelectTemp] = useState<string[]>([]); // 상태를 정의하세요
+  const [selectTemp, setSelectTemp] = useState<string[]>([]); // 상태를 정의하세요
 
 
   const toggleSelect = () => {
@@ -63,10 +63,20 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const value = e.currentTarget.getAttribute("data-value");
-    if (value) {
-      setSelectDropValue(value);
+    if(value === "level=gold"){
+      setSelectDropValue("Gold");
+      console.log(selectDropValue)
       selectFn(value);
-      // paramName("level")
+      menuSelect(value);
+      }
+      else if(value === "level=silver"){
+      setSelectDropValue("Silver");
+      selectFn(value);
+      menuSelect(value);
+    }
+    else if(value === "level=bronze"){
+      setSelectDropValue("Bronze");
+      selectFn(value);
       menuSelect(value);
     }
   };
@@ -75,17 +85,18 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     const searchParams = new URLSearchParams(location.search);
     searchParams.delete("level");
     navigate(`?${searchParams.toString()}`);
-  
+
     // handleResetTemp("level"); 기존 코드 주석 처리
     handleResetTemp("level"); // props로 받은 handleResetTemp 호출
   };
-  
+
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
 
-  
+
   useEffect(() => {
+    setSelectDropValue("Level을 선택하세요")
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -121,12 +132,12 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   style={{
                     color:
                       selectDropValue === "Level을 선택하세요"
-                        ? "gray"
+                        ? "black"
                         : "black",
                     fontSize:
                       selectDropValue === "Level을 선택하세요"
-                        ? "9pt"
-                        : "inherit",
+                        ? "10pt"
+                        : "10pt",
                   }}
                 />{" "}
                 <div>

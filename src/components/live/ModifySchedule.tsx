@@ -49,7 +49,7 @@ const resources = [{
     ],
 }];
 
-const baseURL = 'http://localhost:9002/api/schedules';
+const baseURL = 'http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules';
 const memberId = 1;
 
 const today: Date = new Date();
@@ -63,7 +63,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
 
     useEffect(() => {
         axios({
-            url: `http://localhost:9002/api/schedules/${mentoringRoomId}`,
+            url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/${mentoringRoomId}`,
             method: 'get'
         }).then((res) => {
             console.log(res.data);
@@ -117,7 +117,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
             if (window.confirm('해당 시간을 취소하시겠습니까?')) {
                 console.log("event", event);
                 axios({
-                    url: `http://localhost:9002/api/schedules/mentor/${event.scheduleId}`,
+                    url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentor/${event.scheduleId}`,
                     method: 'delete'
                 }).then((res) => {
                     console.log(res.data);

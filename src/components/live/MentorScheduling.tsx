@@ -11,7 +11,7 @@ export interface Room {
     createdAt: Date
 }
 
-const memberId = 1;
+const memberId = 3
 
 const MentorScheduling: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -20,7 +20,7 @@ const MentorScheduling: React.FC = () => {
 
     useEffect(() => {
         axios({
-            url: `http://localhost:9002/api/room/mentor/${memberId}`,
+            url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room/mentor/${memberId}`,
             method: 'get'
         }).then((res) => {
             setRoomList(res.data['data']);
@@ -38,7 +38,7 @@ const MentorScheduling: React.FC = () => {
         if (window.confirm('멘토링 방을 삭제하시겠습니까?')) {
             console.log("room", room);
             axios({
-                url: `http://localhost:9002/api/room/${room.mentoringRoomId}`,
+                url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room/${room.mentoringRoomId}`,
                 method: 'delete'
             }).then((res) => {
                 window.alert(res.data['msg']);

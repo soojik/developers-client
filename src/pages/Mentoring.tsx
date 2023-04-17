@@ -31,7 +31,7 @@ export interface EventProp {
  * @memberId Long 값으로 사용자 아이디 조회
  */
 const isMentor: boolean = true; 
-const memberId = 1
+const memberId = 3
 
 const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean): EventProp[] => {
   const events: EventProp[] = [];
@@ -72,18 +72,29 @@ const Mentoring = () => {
   const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
   const [mySchedulesAsMentee, setMySchedulesAsMentee] = useState<ScheduleProps[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [sse, setSse] = useState<EventSource | null>(null);
 
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     axios({
-      url: `http://localhost:9002/api/schedules/mentor/${memberId}`,
-      method: 'get'
+      url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentor/${memberId}`,
+      method: 'get',
+      data:{
+        headers:{
+          Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
+        }
+      }
     }).then((res) => {
       setMySchedulesAsMentor(res.data['data']);
     })
     axios({
-      url: `http://localhost:9002/api/schedules/mentee/${memberId}`,
-      method: 'get'
+      url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentee/${memberId}`,
+      method: 'get',
+      data:{
+        headers:{
+          Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
+        }
+      }
     }).then((res) => {
       // 멘티 일정 처리
       setMySchedulesAsMentee(res.data['data']);

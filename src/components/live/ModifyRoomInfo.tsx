@@ -23,7 +23,7 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({ room, onClose }) => {
     const handleNextClick = () => {
         if (room.title !== title || room.description !== description) {
             axios({
-                url: `http://localhost:9002/api/room/update`,
+                url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room/update`,
                 method: 'post',
                 data: {
                     mentoringRoomId: room.mentoringRoomId,

@@ -16,9 +16,6 @@ interface CalendarPopupProps {
   handleClose: () => void;
 }
 
-let memberId = 2;
-let memberName = "멘토2";
-
 const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) => {  
   const [currentDate, setCurrentDate ] = useState(new Date()); // 시간 변수를 상태값으로 두어 변경 가능
   
@@ -28,15 +25,15 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
 
   const CustomAppointment = (props: any) => {
     const handleEventClick = () => {
-      if(props.data.mentorName === memberName){
+      if(props.data.mentorName === "테스트계정2"){ // 직접 입력으로 추후 수정 필요
         alert("자신의 방에는 신청할 수 없습니다");
         handleClose();
       }else{
         if (window.confirm('해당 시간에 신청하시겠습니까?')) {
-          const url = `http://localhost:9002/api/register`
+          const url = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/register`
           axios.post(url,{
             scheduleId:props.data.scheduleId,
-            menteeId:memberId
+            menteeId:3 // 변수로 직접 지정
           })
           .then(res=>{
             if(res.status === 200){

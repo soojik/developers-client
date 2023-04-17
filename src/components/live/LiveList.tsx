@@ -11,7 +11,7 @@ interface LiveListProps {
     events: EventProp[];  // 내 기준으로 조회된 모든 스케쥴
 }
 
-const isMentor: boolean = true;
+const isMentor: boolean = true; // 직접 선언 수정 필요
 
 const LiveList: React.FC<LiveListProps> = ({ events }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +23,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
     const fetchRooms = async (lastTime: Date | null) => {
         const lastDateTimeParam = lastTime ? `/next?lastDateTime=${lastTime}` : '';
-        const url = `http://localhost:9002/api/room${lastDateTimeParam}`;
+        const url = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room${lastDateTimeParam}`;
         const data = await axios.get(url);
         return data.data.data;
     };
@@ -74,7 +74,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
     const handleSearch = async (query: string) => {
         console.log(`Searching for "${query}"...`);
-        const url = `http://localhost:9002/api/room/${query}`;
+        const url = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room/${query}`;
         const data = await axios.get(url);
         setRoomList(data.data.data);
         setCurrentPage(1);

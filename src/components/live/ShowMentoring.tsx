@@ -18,7 +18,7 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({mySchedule, room, handleCl
 
   let newSchedule: any[] = [];
   const handleShowSchedule = () => {
-    const url = `http://localhost:9002/api/schedules/${room.mentoringRoomId}`;
+    const url = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/${room.mentoringRoomId}`;
   // 방 아이디로 스케쥴 조회
   axios.get(url)
   .then(res=>{
@@ -40,7 +40,7 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({mySchedule, room, handleCl
             <div className="roomDescription">
                 <h2 className="text-2xl pb-1 border-b border-gray-300"> {room.title}</h2>
               <p className='py-3'>{room.description}</p>
-              <MentorProfile  name={room.mentorName} bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!" />
+              <MentorProfile  name={room.mentorName} bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!" userName='테스트계정2' email='amonsg1230@gmail.com' />
               {/* imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" */}
               <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
               <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 rounded" onClick={() => {setShowCalendarPopup(!showCalendarPopup); handleShowSchedule()}}>Next</button>

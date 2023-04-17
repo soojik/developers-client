@@ -41,8 +41,8 @@ const resources = [{
     ],
 }];
 
-const baseURL = 'http://localhost:9002/api/schedules';
-const memberId = 1;
+const baseURL = 'http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules';
+const memberId = 3; // 직접 선언 변화 필요
 
 const today: Date = new Date();
 const maxDate: Date = new Date(today.setDate(today.getDate() + 6) - (today.getTimezoneOffset() * 60000));
@@ -98,9 +98,13 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
                     data: {
                         mentoringRoomId: mentoringRoomId,
                         mentorId: memberId,
+                        mentorName:"테스트계정2", //직접 선언 수정 필ㅇ
                         start: startAt,
                         end: endAt
-                    }
+                    },
+                    headers:{
+                        Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
+                      }
                 }).then((res) => {
                     console.log(`Selected time: ${selectedDate}`);
                     console.log(res);

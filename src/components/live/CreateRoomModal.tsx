@@ -28,14 +28,18 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
     else {
       // axios로 방 데이터 추가
       axios({
-        url: `http://localhost:9002/api/room`,
+        url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room`,
         method: 'post',
         data: {
           title: title,
           description: description,
           // mentor Id 수정 필요
-          mentorId: 2
-        }
+          mentorId: 3,
+          mentorName:"테스트계정2", // 직접 선언 수정 필요
+          headers:{
+            Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
+          }
+        },
       })
         .then((res) => {
           if (res.data['code'] == '200 OK') {

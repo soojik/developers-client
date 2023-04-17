@@ -13,7 +13,7 @@ import {
 
 axios.defaults.withCredentials = true;
 
-const InstanceBase = axios.create({
+export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_DEV_URL,
   timeout: 15000,
 });
@@ -28,7 +28,7 @@ const onRequest = (
   config: InternalAxiosRequestConfig
 ): InternalAxiosRequestConfig => {
   const { method, url } = config;
-  logOnDev(`👉 Req [${method?.toUpperCase()}] | ${url}`);
+  logOnDev(`👉 Req [${method?.toUpperCase()}] | URL- ${url}`);
 
   config.timeout = 15000;
 
@@ -38,21 +38,22 @@ const onRequest = (
     /** 2. access 토큰 있으면 만료됐는지 체크 */
     if (CheckJWTExp(accessToken, refreshToken) === ACCESS_EXP_MESSAGE) {
       /** 3. 만료되면 만료된 access, refresh 같이 헤더 담아서 요청 */
-      // console.log('만료됨! refresh 토큰 담기'); ////
+      // console.log('만료됨! refresh 토큰 담기');
       config.headers!.Authorization = `Bearer ${accessToken}`;
       config.headers!.Refresh = `${refreshToken}`;
     } else {
-      config.headers!.Authorization = `Bearer ${accessToken}`;
+      config.headers.Authorization = `Bearer ${accessToken}`;
+      return config;
     }
   }
 
   return config;
 };
 
-const onResponse = (response: AxiosResponse): AxiosResponse => {
+const onResponse = async (response: AxiosResponse) => {
   const { method, url } = response.config;
   const { status } = response;
-  logOnDev(`👈 Res [${method?.toUpperCase()}] ${status} | ${url}`);
+  logOnDev(`👈 Res [${method?.toUpperCase()}] ${status} | URL- ${url}`);
 
   // 새 access 토큰 받으면 교체하기
   if (response.data.accessToken) {
@@ -70,34 +71,10 @@ const onErrorResponse = (error: AxiosError | Error): Promise<AxiosError> => {
   if (axios.isAxiosError(error)) {
     const { message } = error;
     const { method, url } = error.config as AxiosRequestConfig;
-    const { statusText, status } = error.response as AxiosResponse;
 
     logOnDev(
-      `🚨 Error [${method?.toUpperCase()}] ${status} :${message} | ${url}`
+      `🚨 Error [${method?.toUpperCase()}] ${status} :${message} | URL- ${url}`
     );
-
-    switch (status) {
-      case 401: {
-        console.error("로그인이 필요합니다.");
-        break;
-      }
-      case 403: {
-        console.error("권한이 없습니다.");
-        break;
-      }
-      case 404: {
-        console.error("잘못된 요청입니다.");
-        break;
-      }
-      case 500: {
-        console.error("서버에 문제가 발생했습니다.");
-        break;
-      }
-      default: {
-        console.error("알 수 없는 오류가 발생했습니다.");
-        break;
-      }
-    }
   } else {
     logOnDev(`🚨 Error ${error.message}`);
     console.error(error.message);
@@ -105,5 +82,5 @@ const onErrorResponse = (error: AxiosError | Error): Promise<AxiosError> => {
   return Promise.reject(error);
 };
 
-axios.interceptors.request.use(onRequest, (err) => Promise.reject(err));
-axios.interceptors.response.use(onResponse, onErrorResponse);
+axiosInstance.interceptors.request.use(onRequest, (err) => Promise.reject(err));
+axiosInstance.interceptors.response.use(onResponse, onErrorResponse);

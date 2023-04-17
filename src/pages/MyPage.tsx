@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useRecoilState, useResetRecoilState } from "recoil";
@@ -13,6 +13,7 @@ import ResumeEdit from "components/mypage/ResumeEdit";
 import DownArrowIcon from "components/icons/DownArrowIcon";
 import ConfirmBtn from "components/buttons/CofirmBtn";
 import { removeLocalStorage } from "libs/localStorage";
+import { axiosInstance } from "apis/axiosConfig";
 
 const MyPage = () => {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -39,33 +40,11 @@ const MyPage = () => {
     setActiveIndex(idx);
   };
 
-  useEffect(() => {
-    const getUserProfile = async () => {
-      await axios
-        .get(`${URL}/api/member/${memberId}`, {
-          headers: {
-            "Content-type": "application/json",
-          },
-        })
-        .then((res) => {
-          // console.log(res.data);
-          setProfile(res.data);
-          const resData = {
-            memberInfo: {}, // 임시 memberId: res.data
-            memberId: Number(memberId),
-            isLoggedIn: true,
-          };
-          setMemberInfo({ ...memberInfo, ...resData });
-        });
-    };
-    getUserProfile();
-  }, []);
-
   const editUserInfo = async (path: string, data: string) => {
     // console.log(`${path} ${data}`);
-    await axios
+    await axiosInstance
       .patch(
-        `${URL}/api/${path}`,
+        `/api/${path}`,
         { memberId, path: data },
         {
           headers: {
@@ -93,8 +72,8 @@ const MyPage = () => {
 
   const handleUserDelete = () => {
     if (window.confirm("확인을 누르면 회원 정보가 삭제됩니다.")) {
-      axios
-        .delete(`${URL}/api/member/${memberId}`)
+      axiosInstance
+        .delete(`/api/member/${memberId}`)
         .then(() => {
           localStorage.clear();
           alert("그동안 이용해주셔서 감사합니다.");
@@ -114,9 +93,9 @@ const MyPage = () => {
   };
 
   const handleMentorBtnClick = () => {
-    axios
+    axiosInstance
       .patch(
-        `${URL}/api/member/mentor`,
+        `/api/member/mentor`,
         {},
         {
           headers: {
@@ -143,11 +122,14 @@ const MyPage = () => {
           <div className="flex flex-col justify-between px-3 text-sm w-full">
             <div>
               <span className="text-accent-200 font-bold">{`<칭호/>`}</span>
-              <span> {`nickname`}</span>
+              <span> {`${memberInfo.memberInfo.nickname}`}</span>
             </div>
             <div className="font-light">
               포인트
-              <span className="font-bold"> {`000`}</span> 점
+              <span className="font-bold">
+                {` ${memberInfo.memberInfo.point} `}
+              </span>
+              점
             </div>
             <div className="flex justify-end">
               <button
@@ -170,7 +152,8 @@ const MyPage = () => {
             </button>
           </div>
           <div className="transition-all rounded-md p-2 flex justify-between">
-            이메일 <span className=" text-slate-400">{`email`}</span>
+            이메일
+            <span className=" text-slate-400">{`${memberInfo.memberInfo.email}`}</span>
           </div>
           {userInfoMunu?.map((el) => (
             <div
@@ -259,10 +242,18 @@ const MyPage = () => {
             )}
             {pwdEditOpend && <PwdInput memberId={memberId} />}
             {nicknameEditOpend && (
-              <NicknameInput memberId={memberId} editUserInfo={editUserInfo} />
+              <NicknameInput
+                memberId={memberId}
+                editUserInfo={editUserInfo}
+                prevNickname={memberInfo.memberInfo.nickname}
+              />
             )}
             {adressEditOpend && (
-              <AddressInput memberId={memberId} editUserInfo={editUserInfo} />
+              <AddressInput
+                memberId={memberId}
+                editUserInfo={editUserInfo}
+                prevAddress={memberInfo.memberInfo.address}
+              />
             )}
           </div>
         </Popup>

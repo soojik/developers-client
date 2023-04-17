@@ -8,7 +8,7 @@ import MenuBarIcon from "./icons/MenuBarIcon";
 import MenuCloseIcon from "./icons/MenuCloseIcon";
 
 const Nav = () => {
-  const { memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   // console.log("리코일 로그인 후 저장값", memberId, isLoggedIn);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const navigate = useNavigate();

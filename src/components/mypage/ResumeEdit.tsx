@@ -1,14 +1,16 @@
+import axios from "axios";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 import MultiOptions from "components/MultiOptions";
 import TagInput from "components/TagInput";
 import { positionList } from "libs/options";
 import { useEffect, useState } from "react";
 import CareerInput from "./CareerInput";
 import ConfirmBtn from "components/buttons/CofirmBtn";
-import { useParams } from "react-router-dom";
-import axios from "axios";
 
 const ResumeEdit = ({ active }: { active: any }) => {
   const URL = process.env.REACT_APP_DEV_URL;
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
   const careerInfo = [
     {
@@ -18,7 +20,6 @@ const ResumeEdit = ({ active }: { active: any }) => {
     },
   ];
 
-  const { memberId } = useParams();
   const [introduce, setIntroduce] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [position, setPosition] = useState<string[]>([]);
@@ -33,8 +34,8 @@ const ResumeEdit = ({ active }: { active: any }) => {
   };
 
   useEffect(() => {
-    const prevSkills = careerInfo[0].skill.split(",");
-    const prevPos = careerInfo[0].position.split(",");
+    const prevSkills = memberInfo.skills.split(",");
+    const prevPos = memberInfo.position.split(",");
     setSkills(prevSkills);
     setPosition(prevPos);
   }, []);
@@ -71,7 +72,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
         maxLength={1000}
         wrap="hard"
         required
-        defaultValue={careerInfo[0].intro}
+        defaultValue={memberInfo.introduce!}
       />
       <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
         경력
@@ -90,7 +91,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
         직무
       </div>
       <MultiOptions
-        label={careerInfo[0].position}
+        label={memberInfo.position}
         lists={positionList}
         state={position}
         setState={setPosition}

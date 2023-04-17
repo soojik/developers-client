@@ -1,10 +1,12 @@
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import NaverOauthBtn from "components/buttons/NaverOauthBtn";
 import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
+import { setLocalStorage } from "libs/localStorage";
+import { axiosInstance } from "apis/axiosConfig";
 
 interface LoginProps {
   loginEmail: string;
@@ -13,7 +15,7 @@ interface LoginProps {
 
 const Login = () => {
   const URL = process.env.REACT_APP_DEV_URL;
-  const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
+  const [member, setMember] = useRecoilState(memberInfoState);
   const navigate = useNavigate();
   const {
     register,
@@ -25,25 +27,39 @@ const Login = () => {
 
   const handleLoginSubmit: SubmitHandler<LoginProps> = (data) => {
     axios
-      .post(`${URL}/api/auth/local`, data, {
+      .post(`${URL}/api/auth/login`, data, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((res) => {
-        let accessToken = res.headers.authorization;
-        let refreshToken = res.headers.refresh;
+        let accessToken = res.data.accessToken;
+        let refreshToken = res.data.refreshToken;
+        setLocalStorage("access_token", accessToken); // 임시
+        setLocalStorage("refresh_token", refreshToken);
 
-        axios.defaults.headers.common["Authorization"] = `${accessToken}`;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
 
-        console.log("로그인 응답", res);
-        const resData = {
-          memberId: 1, // 임시 memberId: Number(res.data)
-          isLoggedIn: true,
+        // console.log("로그인 응답", res);
+        const getUser = async () => {
+          const { data } = await axiosInstance.get(
+            `/api/member/${res.data.memberId}`
+          );
+          const resData = {
+            memberInfo: data?.data,
+            memberId: Number(res.data.memberId),
+            isLoggedIn: true,
+          };
+          setMember({
+            ...member,
+            ...resData,
+          });
         };
-        setMemberInfo({ ...memberInfo, ...resData });
+        getUser();
 
-        // navigate("/");
+        navigate("/");
       })
       .catch((err) => console.log(err));
   };

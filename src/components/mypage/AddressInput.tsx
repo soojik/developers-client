@@ -1,14 +1,16 @@
+import { useState } from "react";
 import Options from "components/Options";
 import ConfirmBtn from "components/buttons/CofirmBtn";
 import { addressList } from "libs/options";
-import { useState } from "react";
 
 const AddressInput = ({
   memberId,
   editUserInfo,
+  prevAddress,
 }: {
   memberId?: string;
   editUserInfo: (path: string, data: string) => any;
+  prevAddress: string;
 }) => {
   const [adress, setAdress] = useState("");
   return (
@@ -17,7 +19,11 @@ const AddressInput = ({
         <span className="flex font-bold text-xl justify-center mt-2 mb-8">
           거주지
         </span>
-        <Options label="거주지" lists={addressList} setState={setAdress} />
+        <Options
+          label={prevAddress.length > 0 ? prevAddress : "거주지"}
+          lists={addressList}
+          setState={setAdress}
+        />
       </div>
       <div className="flex justify-end mt-10">
         <ConfirmBtn

@@ -1,11 +1,13 @@
-import ConfirmBtn from "components/buttons/CofirmBtn";
 import { useState } from "react";
+import ConfirmBtn from "components/buttons/CofirmBtn";
 
 const NicknameInput = ({
   editUserInfo,
+  prevNickname,
 }: {
   memberId?: string;
   editUserInfo: (path: string, data: string) => any;
+  prevNickname: string;
 }) => {
   const [nickname, setNickname] = useState("");
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +21,7 @@ const NicknameInput = ({
       <input
         placeholder="닉네임"
         className="sign_input mb-2 w-full"
-        defaultValue={`닉네임`}
+        defaultValue={`${prevNickname}`}
         onChange={handleNicknameChange}
       />
       <div className="flex justify-end mt-10">

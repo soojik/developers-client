@@ -8,7 +8,7 @@ import MenuBarIcon from "./icons/MenuBarIcon";
 import MenuCloseIcon from "./icons/MenuCloseIcon";
 
 const Nav = () => {
-  const { memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   // console.log("리코일 로그인 후 저장값", memberId, isLoggedIn);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Nav = () => {
             <button
               className="p-2"
               onClick={() =>
-                navigate(isLoggedIn ? "/profile/:memberId" : "/login")
+                navigate(isLoggedIn ? `/profile/${memberId}` : "/login")
               }
             >
               <PersonIcon fill="white" />
@@ -107,7 +107,7 @@ const Nav = () => {
 
                 {isLoggedIn ? (
                   <Link
-                    to="/profile/:memberId"
+                    to={`/profile/${memberId}`}
                     className="block pb-1 mb-2 text-xl font-light border-b border-solid border-slate-200 hover:font-normal"
                     onClick={() => setIsOpenMenu(false)}
                   >

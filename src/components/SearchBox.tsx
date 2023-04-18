@@ -1,5 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "./axiosInstance";
+import { isAxiosError } from "axios";
+
 
 interface SearchProps {
   // paramName: (value: string) => void
@@ -22,14 +24,15 @@ const SearchBox:React.FC<SearchProps>= ({
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.get("http://localhost/api/problem", {
+      const response = await axios.get("/api/problem", {
         params: {
           search: searchTerm,
         },
+        
       });
       console.log(response.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         console.error("Axios error:", error.message, "Code:", error.code);
       } else {
         console.error("Unknown error:", error);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Popup from './PopUp';
-import axios from 'axios';
 import {
   Scheduler,
   WeekView,
@@ -11,6 +10,9 @@ import {
   Resources
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { ViewState } from '@devexpress/dx-react-scheduler';
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface CalendarProps {
   events: any[];
@@ -43,13 +45,13 @@ const CustomAppointment = (props: any) => {
 };
 
 const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event, isMentor }) => {
+  const { memberInfo, memberId } = useRecoilValue(memberInfoState); 
   const [roomUrls, setRoomUrls ] = useState<{[key:string ]: string}>({});
   // 일정 취소 이벤트
   const handleCancelEvent = async () => {
     if(!isMentor){
       if (window.confirm('해당 시간을 취소하시겠습니까?')) {
-        const url = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentee/${event.scheduleId}`;
-        const res = await axios.delete(url);
+        const res = await axiosInstance.delete(`${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${event.scheduleId}`);
         if(res.status === 200){
           alert('취소가 완료되었습니다.');
         }
@@ -60,23 +62,21 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
   
   const handleJoinEvent = async () => {
     // 전체 방 리스트 조회
-    const sessionUrl = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/live-session/list`;
-    const lives = await axios.get(sessionUrl,{
+    const lives = await axiosInstance.get(`${process.env.REACT_APP_LIVE_URL}/api/live-session/list`,{
       validateStatus: function (status) {
         return status <= 500; // 상태 코드가 500 미만인 경우에만 해결
       }
     });
     // 방 리스트의 데이터가 있다면 무조건 조회
     if(window.confirm('멘토링 룸에 입장하시겠습니까?')){
-      const enterUrl = `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/live-session/enter`
       if(lives.status === 400){
         // 방이 없는데 멘토면?
         if(isMentor){
             // 방 생성 로직
-          const enterRes = await axios.post(enterUrl, {
+          const enterRes = await axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/live-session/enter`, {
             roomName: event.title,
             userName: event.owner,
-            userId:3, // 임의로 작성 수정 필요
+            userId:memberInfo.memberId,
             time:60,
             scheduleId:event.scheduleId
           },
@@ -87,15 +87,13 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
           }) //live-session에 등록
           console.log(enterRes.data)
           if(enterRes.status===200){ //정상적으로 등록되었을 경우 url 반환
-            const enterUrl = "http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/dailyco"
-            const createRes = await axios.post(enterUrl,{
+            const createRes = await axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/dailyco`,{
               scheduleId:event.scheduleId,
-              userId:3, //임의로 작성 수정 필요
-              name:event.title.replace(/방제목 with 멘토/g, "roomtitle-with-mentor3"), 
+              userId:memberInfo.memberId,
               privacy:"public",
               properties:{
                 // nbf: Math.floor(new Date(event.startDate).getTime()/1000),
-                exp:Math.floor(new Date(event.endDate).getTime()/1000),
+                // exp:Math.floor(new Date(event.endDate).getTime()/1000),
               }
             },
             {
@@ -127,6 +125,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
           handleClose();
         }
       }else{
+        console.log(lives)
         const err = `${lives.status}:${lives.data.msg}`
         console.log(err)
       }

@@ -12,11 +12,11 @@ import {
     Resources,
     DateNavigator
 } from "@devexpress/dx-react-scheduler-material-ui";
-
-import axios from "axios";
 import { ViewState } from '@devexpress/dx-react-scheduler';
-
 import Popup from "./PopUp";
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface CalendarProps {
     onClose: () => void;
@@ -49,21 +49,20 @@ const resources = [{
     ],
 }];
 
-const baseURL = 'http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules';
-const memberId = 1;
-
 const today: Date = new Date();
 const maxDate: Date = new Date(today.setDate(today.getDate() + 6) - (today.getTimezoneOffset() * 60000));
 
 const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) => {
+    const { memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+    
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [events, setEvents] = useState<EventProp[]>([]);
     const [showCancelEventPopup, setShowCancelEventPopup] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
     useEffect(() => {
-        axios({
-            url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/${mentoringRoomId}`,
+        axiosInstance({
+            url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/${mentoringRoomId}`,
             method: 'get'
         }).then((res) => {
             console.log(res.data);
@@ -116,8 +115,8 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
         const handleCancelEvent = () => {
             if (window.confirm('해당 시간을 취소하시겠습니까?')) {
                 console.log("event", event);
-                axios({
-                    url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentor/${event.scheduleId}`,
+                axiosInstance({
+                    url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentor/${event.scheduleId}`,
                     method: 'delete'
                 }).then((res) => {
                     console.log(res.data);
@@ -164,8 +163,8 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
                 const startAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
                 selectedDate.setHours(parseInt(timeSlot) + 1);
                 const endAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
-                axios({
-                    url: `${baseURL}`,
+                axiosInstance({
+                    url: `${process.env.REACT_APP_LIVE_URL}/api/schedules`,
                     method: 'post',
                     data: {
                         mentoringRoomId: mentoringRoomId,

@@ -2,6 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Popup from './PopUp';
 import ModifyRoomInfo from './ModifyRoomInfo';
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 export interface Room {
     mentoringRoomId: number,
@@ -11,16 +14,16 @@ export interface Room {
     createdAt: Date
 }
 
-const memberId = 3
-
 const MentorScheduling: React.FC = () => {
+    const { memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+    
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
     const [selectedRoom, setSelectedRoom] = useState<Room>(null as any);
 
     useEffect(() => {
-        axios({
-            url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room/mentor/${memberId}`,
+        axiosInstance({
+            url: `${process.env.REACT_APP_LIVE_URL}/api/room/mentor/${memberId}`,
             method: 'get'
         }).then((res) => {
             setRoomList(res.data['data']);
@@ -37,8 +40,8 @@ const MentorScheduling: React.FC = () => {
     const handleRemoveSchedule = (room: Room) => {
         if (window.confirm('멘토링 방을 삭제하시겠습니까?')) {
             console.log("room", room);
-            axios({
-                url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room/${room.mentoringRoomId}`,
+            axiosInstance({
+                url: `${process.env.REACT_APP_LIVE_URL}/api/room/${room.mentoringRoomId}`,
                 method: 'delete'
             }).then((res) => {
                 window.alert(res.data['msg']);

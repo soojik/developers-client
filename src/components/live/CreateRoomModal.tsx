@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import CreateScheduleModal from './CreateScheduleModal';
-
-import axios from 'axios';
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 type CreateRoomModalProps = {
   onClose: () => void;
@@ -16,6 +17,8 @@ interface EventProp {
 };
 
 const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) => {
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [step, setStep] = useState(1);
@@ -27,18 +30,14 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
     }
     else {
       // axios로 방 데이터 추가
-      axios({
-        url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/room`,
+      axiosInstance({
+        url: `${process.env.REACT_APP_LIVE_URL}/api/room`,
         method: 'post',
         data: {
           title: title,
           description: description,
-          // mentor Id 수정 필요
-          mentorId: 3,
-          mentorName:"테스트계정2", // 직접 선언 수정 필요
-          headers:{
-            Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
-          }
+          mentorId: memberId,
+          mentorName:memberInfo.nickname
         },
       })
         .then((res) => {

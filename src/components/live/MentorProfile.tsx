@@ -1,51 +1,43 @@
 import { useEffect, useState } from 'react';
-
-// MentorProfile.tsx
 import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { subscriptionState } from '../../recoil/subscriptionState';
+import { axiosInstance } from 'apis/axiosConfig';
+import { memberInfoState } from "recoil/userState";
 
 interface MentorProfileProps {
   // imgUrl: string;
   bio: string;
   name: String
-  userName: string;
-  email: string;
 }
 
-const MentorProfile: React.FC<MentorProfileProps> = ({  bio, name,userName, email }) => {
+const MentorProfile: React.FC<MentorProfileProps> = ({  bio, name}) => {
+  const { memberInfo, memberId } = useRecoilValue(memberInfoState); 
   const [subscribed, setSubscribed] = useState(false);
-  const [eventSource, setEventSource] = useState<EventSource | null>(null);
-
-  useEffect(() => {
-    if (subscribed && !eventSource) {
-      const es = new EventSource(`http://localhost:8080/api/listen?mentorName=mentor&userName=mentee&email=${email}`);
-      es.addEventListener('push', (e) => {
-        new Notification(e.data);
-        console.log(e.data);
-      });
-      setEventSource(es);
-    } else if (!subscribed && eventSource) {
-      eventSource.close();
-      setEventSource(null);
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, [subscribed, eventSource, name, userName, email]);
+  const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
 
   const handleSubscription = async () => {
-    const endpoint = subscribed ? `http://localhost:8080/api/unsubscribe?mentorName=mentor&userName=mentee` : `http://localhost:8080/api/subscribe?mentorName=mentor&userName=mentee&email=${email}`;
+    const endpoint = subscribed 
+    ?`${process.env.REACT_APP_NOTIFY_URL}/api/unsubscribe?mentorName=mentor&userName=${memberInfo.nickname}` 
+    : `${process.env.REACT_APP_NOTIFY_URL}/api/subscribe?mentorName=mentor&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
 
-    const response = await fetch(
-      `${endpoint}`,
-      {
-        method: subscribed ? 'DELETE' : 'POST',
-      }
-    );
-    if (response.ok) {
+    axiosInstance({
+      url:`${endpoint}`,
+      method: subscribed?'DELETE':'POST'
+    })
+    .then(()=>{
       setSubscribed(!subscribed);
-    }
+      setSubscriptions((prevSubscriptions: any[]) => {
+        if (subscribed) {
+          return prevSubscriptions.filter((sub) => sub.mentorName !== name);
+        } else {
+          return [
+            ...prevSubscriptions, 
+            { mentorName:name, userName: memberInfo?.nickname }];
+        }
+      });
+    })
+    .catch(err=>console.log(err.data))
   };
 
   // imgUrl,

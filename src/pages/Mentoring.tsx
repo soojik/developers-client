@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ShowSchedule from '../components/live/ShowSchedule';
 import LiveList from '../components/live/LiveList';
 import MentorScheduling from '../components/live/MentorScheduling';
+import { useRecoilState, useRecoilValue} from 'recoil';
+import { subscriptionState } from '../recoil/subscriptionState';
+import { memberInfoState } from "recoil/userState";
+import { axiosInstance } from "apis/axiosConfig";
 
 import axios from 'axios';
 
@@ -27,16 +31,47 @@ export interface EventProp {
 
 /**
  * 테스트를 위한 상태값
- * @isMentor boolean 값으로 멘토 여부 체크
- * @memberId Long 값으로 사용자 아이디 조회
  */
-const isMentor: boolean = true; 
-const memberId = 3
+const email ="" //테스트 이메일 계정
 
-const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean): EventProp[] => {
+const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): EventProp[] => {
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
   const events: EventProp[] = [];
+  const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
+ 
+  // 구독 정보 가져오는 함수
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      try {
+        const response = await axiosInstance.get(`${process.env.REACT_APP_NOTIFY_URL}/subscriptions?userName=${memberInfo.nickname}`);
+        setSubscriptions(response.data);
+      } catch (error) {
+        console.error('구독 정보를 가져오는데 실패했습니다:', error);
+      }
+    };
+    fetchSubscriptions();
+  }, [memberInfo.nickname, setSubscriptions]);
 
-  if (isMentor) {
+  // 푸시 알림 받는 로직
+  useEffect(() => {
+    const eventSources: EventSource[] = [];
+
+    subscriptions.forEach((subscription: { mentorName: any; }) => {
+      const es = new EventSource(`${process.env.REACT_APP_NOTIFY_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`);
+      es.addEventListener('push', (e) => {
+        new Notification(e.data);
+        console.log(e.data);
+      });
+
+      eventSources.push(es);
+    });
+
+    return () => {
+      eventSources.forEach((es) => es.close());
+    };
+  }, [subscriptions, memberInfo.nickname, email]);
+
+  if (memberInfo.mentor) {
     schedules.forEach((schedule) => {
       const event: EventProp = {
         title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
@@ -69,6 +104,8 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor: boolean):
 }
 
 const Mentoring = () => {
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+
   const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
   const [mySchedulesAsMentee, setMySchedulesAsMentee] = useState<ScheduleProps[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -76,25 +113,15 @@ const Mentoring = () => {
 
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
-    axios({
-      url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentor/${memberId}`,
+    axiosInstance({
+      url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentor/${memberId}`,
       method: 'get',
-      data:{
-        headers:{
-          Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
-        }
-      }
     }).then((res) => {
       setMySchedulesAsMentor(res.data['data']);
     })
     axios({
-      url: `http://aea79a87d0af44892b469487337e5f8e-699737871.ap-northeast-2.elb.amazonaws.com/api/schedules/mentee/${memberId}`,
+      url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${memberId}`,
       method: 'get',
-      data:{
-        headers:{
-          Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbkVtYWlsIjoidGVzdDJAZ21haWwuY29tIiwiZXhwIjoxNjgxNzM1NzYxLCJpYXQiOjE2ODE3MzM5NjF9.xlkFfPDZ72A6wySkrMyCppztZv09NWdk1mYXB1xN5ko"
-        }
-      }
     }).then((res) => {
       // 멘티 일정 처리
       setMySchedulesAsMentee(res.data['data']);
@@ -130,7 +157,7 @@ const Mentoring = () => {
         >
           전체 방 목록
         </button>
-        {isMentor &&
+        {memberInfo.mentor &&
           <button
           className={`flex-1 py-2 px-4 border text-center ${currentPage == 3 ? 'bg-blue-500 border-blue-500' : 'bg-blue-300'
             }`}
@@ -141,7 +168,7 @@ const Mentoring = () => {
         }
       </div>
       {currentPage == 1 && (
-        <ShowSchedule events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(convertScheduleToEvents(mySchedulesAsMentee, false))} isMentor={isMentor} />
+        <ShowSchedule events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(convertScheduleToEvents(mySchedulesAsMentee, false))} isMentor={memberInfo.mentor} />
       )}
 
       {currentPage == 2 && (

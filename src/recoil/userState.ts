@@ -19,3 +19,4 @@ export const memberInfoState = atom<MemberInfoProps>({
   },
   effects_UNSTABLE: [persistAtom],
 });
+

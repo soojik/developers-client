@@ -3,72 +3,74 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface SelectDropdownProps {
-  selectName: string;
-  options: string[];
-  paramName: string;
+  selectFn: (value: string) => void;
+  handleResetTemp: (type: string) => void; 
 }
 
 const SelectDropdown = ({
-  selectName,
-  options,
-  paramName,
+  selectFn,
+  handleResetTemp,
+
 }: SelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectDropValue, setSelectDropValue] = useState("조건을 선택하세요");
+  const [selectDropValue, setSelectDropValue] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  
   const toggleSelect = () => {
     setIsOpen(!isOpen);
   };
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const paramNameRef = useRef(paramName);
-
-  const menuSelect = (value: string | null) => {
-    if (value) {
-      setIsOpen(false);
-      const searchParams = new URLSearchParams(location.search);
-      if (value === "추천순") {
-        paramNameRef.current = "likes";
-        searchParams.set(paramNameRef.current, "likes");
-        fetchProblems("likes");
-      } else if (value === "조회순") {
-        paramNameRef.current = "views";
-        searchParams.set(paramNameRef.current, "views");
-        fetchProblems("views");
-      } else if (value === "최신순") {
-        paramNameRef.current = "order";
-        searchParams.set(paramNameRef.current, "order");
-        fetchProblems("order");
-      }
-      navigate(`?${searchParams.toString()}`);
-    }
-  };
-
-  const fetchProblems = async (param: string) => {
-    try {
-      const response = await axios.get("http://localhost/problem/list", {
-        params: {
-          [paramNameRef.current]: param,
-        },
-      });
-      console.log(response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error:", error.message, "Code:", error.code);
-      } else {
-        console.error("Unknown error:", error);
-      }
-    }
-  };
-
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const value = e.currentTarget.getAttribute("data-value");
-    if (value) {
-      setSelectDropValue(value);
-      menuSelect(value);
+  
+    // Clear the existing filters
+    handleResetTemp("likes");
+    handleResetTemp("views");
+    handleResetTemp("order");
+    
+    if (value === "order=likes") {
+      setSelectDropValue("추천순");
+      selectFn(value);
+    } else if (value === "order=views") {
+      setSelectDropValue("조회순");
+      selectFn(value);
+    } else if (value === "order=createdTime") {
+      setSelectDropValue("최신순");
+      selectFn(value);
     }
   };
+
+  // const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  //   const value = e.currentTarget.getAttribute("data-value");
+  
+  //   // Clear the existing filters
+  //   handleResetTemp("likes");
+  //   handleResetTemp("views");
+  //   handleResetTemp("order");
+  
+  //   if (value === "likes=likes") {
+  //     setSelectDropValue("추천순");
+  //   } else if (value === "views=views") {
+  //     setSelectDropValue("조회순");
+  //   } else if (value === "order=order") {
+  //     setSelectDropValue("최신순");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (selectDropValue === "추천순") {
+  //     selectFn("likes=likes");
+  //   } else if (selectDropValue === "조회순") {
+  //     selectFn("views=views");
+  //   } else if (selectDropValue === "최신순") {
+  //     selectFn("order=order");
+  //   }
+  // }, [selectDropValue]);
+  
+  
+  
 
   const handleClear = () => {
     setSelectDropValue("조건을 선택하세요");
@@ -77,11 +79,15 @@ const SelectDropdown = ({
     searchParams.delete("views");
     searchParams.delete("order");
     navigate(`?${searchParams.toString()}`);
+    handleResetTemp("likes"); // props로 받은 handleResetTemp 호출
+    handleResetTemp("views"); // props로 받은 handleResetTemp 호출
+    handleResetTemp("order"); // props로 받은 handleResetTemp 호출
   };
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setSelectDropValue("조건을 선택하세요");
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -117,12 +123,12 @@ const SelectDropdown = ({
                   style={{
                     color:
                       selectDropValue === "조건을 선택하세요"
-                        ? "gray"
+                        ? "black"
                         : "black",
                     fontSize:
                       selectDropValue === "조건을 선택하세요"
-                        ? "9pt"
-                        : "inherit",
+                        ? "10pt"
+                        : "10pt",
                   }}
                   readOnly
                 />
@@ -178,7 +184,7 @@ const SelectDropdown = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="최신순"
+                    data-value="order=createdTime"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 hover:border-teal-600">
@@ -192,7 +198,7 @@ const SelectDropdown = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="추천순"
+                    data-value="order=likes"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 border-teal-600">
@@ -206,7 +212,7 @@ const SelectDropdown = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="조회순"
+                    data-value="order=views"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 hover:border-teal-600">
@@ -225,3 +231,7 @@ const SelectDropdown = ({
   );
 };
 export default SelectDropdown;
+
+
+
+

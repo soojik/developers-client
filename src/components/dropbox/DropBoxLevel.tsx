@@ -1,22 +1,24 @@
 import { Fragment, useState, useRef, useEffect } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface SelectDropdownProps {
-  selectName: string;
-  options: string[];
-  paramName: string;
+  // paramName: (value: string) => void
+  selectFn: (value: string) => void;
+  handleResetTemp: (type: string) => void; // 추가
+
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
-  selectName,
-  options,
-  paramName,
+  // paramName,
+  selectFn,
+  handleResetTemp,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectDropValue, setSelectDropValue] = useState("Level을 선택하세요");
+  const [selectDropValue, setSelectDropValue] = useState("");
   const location = useLocation(); // useLocation 함수 바깥으로 이동
   const navigate = useNavigate(); // useNavigate 함수 바깥으로 이동
+  const [selectTemp, setSelectTemp] = useState<string[]>([]); // 상태를 정의하세요
+
 
   const toggleSelect = () => {
     setIsOpen(!isOpen);
@@ -26,56 +28,75 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     if (value) {
       setIsOpen(false);
       const searchParams = new URLSearchParams(location.search);
-      if (value === "Gold") {
-        searchParams.set(paramName, "Gold");
-        fetchProblems("Gold");
-      } else if (value === "Silver") {
-        searchParams.set(paramName, "Silver");
-        fetchProblems("Silver");
-      } else if (value === "Bronze") {
-        searchParams.set(paramName, "Bronze");
-        fetchProblems("Bronze");
+      if (value === "gold") {
+        searchParams.set("level", "gold");
+        // fetchProblems("Gold");
+      } else if (value === "silver") {
+        searchParams.set("level", "silver");
+        // fetchProblems("Silver");
+      } else if (value === "bronze") {
+        searchParams.set("level", "bronze");
+        // fetchProblems("Bronze");
       }
       navigate(`?${searchParams.toString()}`);
     }
   };
-  const fetchProblems = async (language: string) => {
-    // 2. fetchProblems 함수를 생성합니다.
-    try {
-      const response = await axios.get("http://localhost/problem/list", {
-        params: {
-          level: language,
-          //   writer: "your-writer-name", // 필요한 경우 실제 작성자 값으로 변경하세요.
-        },
-      });
+  // const fetchProblems = async (language: string) => {
+  //   // 2. fetchProblems 함수를 생성합니다.
+  //   try {
+  //     const response = await axios.get("http://localhost/problem/list", {
+  //       params: {
+  //         level: language,
+  //         //   writer: "your-writer-name", // 필요한 경우 실제 작성자 값으로 변경하세요.
+  //       },
+  //     });
 
-      console.log(response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error:", error.message, "Code:", error.code);
-      } else {
-        console.error("Unknown error:", error);
-      }
-    }
-  };
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.error("Axios error:", error.message, "Code:", error.code);
+  //     } else {
+  //       console.error("Unknown error:", error);
+  //     }
+  //   }
+  // };
 
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const value = e.currentTarget.getAttribute("data-value");
-    if (value) {
-      setSelectDropValue(value);
+    if(value === "level=gold"){
+      setSelectDropValue("Gold");
+      console.log(selectDropValue)
+      selectFn(value);
+      menuSelect(value);
+      }
+      else if(value === "level=silver"){
+      setSelectDropValue("Silver");
+      selectFn(value);
+      menuSelect(value);
+    }
+    else if(value === "level=bronze"){
+      setSelectDropValue("Bronze");
+      selectFn(value);
       menuSelect(value);
     }
   };
   const handleClear = () => {
     setSelectDropValue("Level을 선택하세요");
     const searchParams = new URLSearchParams(location.search);
-    searchParams.delete(paramName);
+    searchParams.delete("level");
     navigate(`?${searchParams.toString()}`);
+
+    // handleResetTemp("level"); 기존 코드 주석 처리
+    handleResetTemp("level"); // props로 받은 handleResetTemp 호출
   };
+
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+
+
   useEffect(() => {
+    setSelectDropValue("Level을 선택하세요")
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -111,12 +132,12 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   style={{
                     color:
                       selectDropValue === "Level을 선택하세요"
-                        ? "gray"
+                        ? "black"
                         : "black",
                     fontSize:
                       selectDropValue === "Level을 선택하세요"
-                        ? "9pt"
-                        : "inherit",
+                        ? "10pt"
+                        : "10pt",
                   }}
                 />{" "}
                 <div>
@@ -171,7 +192,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="Gold"
+                    data-value="level=gold"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 hover:border-teal-600">
@@ -185,7 +206,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="Silver"
+                    data-value="level=silver"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 border-teal-600">
@@ -199,7 +220,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="Bronze"
+                    data-value="level=bronze"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 hover:border-teal-600">

@@ -28,14 +28,14 @@ const ProblemDetail = () => {
   const [answerCandidate, setAnswerCandidate] = useState<string[]>([]); //문제 답안 목록 저장
   const [modalTitle, setModalTitle] = useState(''); //모달 타이틀 전송
   const [pointAdd , setPointAdd] = useState(0); // 포인트 -> 연산값이 실제로 연산된 후 보내져야한다.
-  const [isEditing, setIsEditing] = useState(false); // 수정 모드인지 여부
+  const [isEditing, setIsEditing] = useState(true); // 수정 모드인지 여부를 true로 변경
   const [radioDisabled, setRadioDisabled] = useState(false);
   const [originalAnswer, setOriginalAnswer] = useState(""); // 수정 모드 진입 시 기존 답변 저장
   const [problemSolved, setProblemSolved] = useState(false); // 문제 풀이 유무 DB저장을 위해서 만듦
   const [btnVisible, setBtnVisible]= useState(false); //문제 작성자는 문제 풀수없도록 하기 위한 속성===
   const [answerWriter, setAnswerWriter] = useState(''); //문제 작성자를 받아오기 위한값===
   const navigate = useNavigate(); 
-
+  const [likes, setLikes] = useState(detail?.likes || 0);
 
 
   const sessionAnswer = sessionStorage.getItem('answer') || ''; // 값 null처리
@@ -114,6 +114,7 @@ const ProblemDetail = () => {
   const handleEditing = () => {
     if (window.confirm("수정 하시겠습니까?")) {
     setIsEditing(true);
+    setRadioDisabled(false); 
     // setOriginalAnswer(inputAnswer);
     // setInputAnswer(detail.answer);
     }
@@ -124,16 +125,11 @@ const ProblemDetail = () => {
     setRadioDisabled(true);
   };
 
-  const deleteProblem = async() =>{
-    try{
-      const response = await axios.delete(`http://localhost:80/api/problem/2`);
-      if(response.status===200){
-        alert("문제가 성공적으로 삭제되었습니다.");
-        navigate("/problem");//삭제 완료후 리다이렉트
-      }else{
-        alert("문제 삭제에 실패하였습니다.");
-      }
-    }catch(error){
+  const handleLikeButtonClick = async () => {
+    try {
+      await axios.post(`http://localhost:9001/api/problem/3`);
+      setLikes(likes + 1);
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error:", error.message, "Code:", error.code);
       } else {
@@ -194,11 +190,18 @@ const ProblemDetail = () => {
 
       </div>
       <p>조회수: {detail.views}</p>
-      <p>좋아요: {detail.likes}</p>
+      {detail && (
+        <button
+          className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+          onClick={handleLikeButtonClick}
+        >
+          좋아요: {likes}
+        </button>
+      )}
       <p>해시태그: {detail.hashTag}</p>
 
       <div>
-        {btnVisible ? (<>
+        <>
       <div className="flex flex-col justify-center items-end">
         {isEditing ? (
           <div className="h-32 flex items-center">
@@ -239,24 +242,7 @@ const ProblemDetail = () => {
           ) 
         }
         </div>
-        </>):(<>
-          <div className="flex flex-col justify-center items-end">
-            <div className="h-32 flex items-center">
-              <button
-                className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                onClick={()=>{navigate("http://localhost:3000/problem/register")}}
-              >
-                문제 수정
-              </button>
-              <button
-                className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                onClick={deleteProblem}
-              >
-                문제 삭제
-              </button>
-            </div>
-          </div>
-        </>)}
+        </>
 
       </div>
     </>

@@ -3,81 +3,56 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface SelectDropdownProps {
-  selectName: string;
-  options: string[];
-  paramName: string;
+  selectFn: (value: string) => void;
+  handleResetTemp: (type: string) => void; // 추가
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
-  selectName,
-  options,
-  paramName,
+  selectFn,
+  handleResetTemp,
+
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectDropValue, setSelectDropValue] = useState("Type을 선택하세요");
+  const [selectDropValue, setSelectDropValue] = useState("");
+  const [selectTemp, setSelectTemp] = useState<string[]>([]); // 상태를 정의하세요
+  const location = useLocation();
+  const navigate = useNavigate();
+
+
   const toggleSelect = () => {
     setIsOpen(!isOpen);
   };
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const menuSelect = (value: string | null) => {
-    if (value) {
-      setIsOpen(false);
-      const searchParams = new URLSearchParams(location.search);
-      if (value === "객관식") {
-        searchParams.set(paramName, "Choice");
-        fetchProblems("Choice");
-      } else {
-        if (value === "주관식") {
-          searchParams.set(paramName, "Answer");
-          fetchProblems("Answer");
-        } else {
-          alert("옳지 않은 문제 타입");
-        }
-      }
-      navigate(`?${searchParams.toString()}`);
-    }
-  };
-
-  const fetchProblems = async (language: string) => {
-    try {
-      const response = await axios.get("http://localhost/problem/list", {
-        params: {
-          types: language,
-        },
-      });
-
-      console.log(response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error:", error.message, "Code:", error.code);
-      } else {
-        console.error("Unknown error:", error);
-      }
-    }
-  };
 
   const handleClear = () => {
     setSelectDropValue("Type을 선택하세요");
     const searchParams = new URLSearchParams(location.search);
-    searchParams.delete(paramName);
+    searchParams.delete("types");
     navigate(`?${searchParams.toString()}`);
+    handleResetTemp("types"); // props로 받은 handleResetTemp 호출
   };
 
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const value = e.currentTarget.getAttribute("data-value");
-    if (value) {
-      setSelectDropValue(value);
-      menuSelect(value);
-      //fetchProblem을 조건문으로 여기서 처리하거나
+    
+      if(value === "types=choice"){
+      setSelectDropValue("객관식");
+      console.log(selectDropValue)
+      selectFn(value);
+
+      }
+      else if(value === "types=answer"){
+      setSelectDropValue("주관식");
+      selectFn(value);
+
     }
+    
   };
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setSelectDropValue("Type을 선택하세요")
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -113,12 +88,12 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   style={{
                     color:
                       selectDropValue === "Type을 선택하세요"
-                        ? "gray"
+                        ? "black"
                         : "black",
                     fontSize:
                       selectDropValue === "Type을 선택하세요"
-                        ? "9pt"
-                        : "inherit",
+                        ? "10pt"
+                        : "10pt",
                   }}
                 />{" "}
                 <div>
@@ -173,7 +148,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="객관식"
+                    data-value="types=choice"
                     onClick={handleMenuClick}
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 border-teal-600">
@@ -187,8 +162,9 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                   <div
                     className="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100"
                     style={{ borderBottom: "1px solid #ccc" }}
-                    data-value="주관식"
+                    data-value="types=answer"
                     onClick={handleMenuClick}
+                
                   >
                     <div className="flex w-full items-center p-2 pl-2 border-transparent bg-white border-l-2 relative hover:bg-teal-600 hover:text-teal-100 hover:border-teal-600">
                       <div className="w-full items-center flex">

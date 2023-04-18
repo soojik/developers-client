@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "components/axiosInstance";
+
 
 interface ModalProps {
   title: string; 
@@ -15,41 +17,52 @@ const Modal: React.FC<ModalProps> = ({ title,point, isOpen, onClose }) => { //St
   const [visible, setVisible] = useState(isOpen);
   const navigate = useNavigate();
   
-  const bronze = {
-    key: 'bronze',
-    point: 6
-  }
-  const silver = {
-    key: 'silver',
-    point: 7 
-  }
-  const gold = {
-    key: 'gold',
-    point: 8
-  }
+  // const bronze = {
+  //   key: 'bronze',
+  //   point: 6
+  // }
+  // const silver = {
+  //   key: 'silver',
+  //   point: 7 
+  // }
+  // const gold = {
+  //   key: 'gold',
+  //   point: 8
+  // }
   
   const[pointAdd, setPointAdd] = useState(""); // 점수 값 저장
 
-  // const solutionResult = () =>{
-  //   let title = "정답입니다."
-  //   if (value === "true"){
-  //     title = "정답입니다."
-  //   }else{
-  //     title = "오답입니다."
-  //   }
-  // }
-
-  console.log(setVisible)
-  const handleClose = () => {
-    setVisible(false);
-    onClose();
-  };
 
 
   
   const navigateToList = () =>{
     navigate("/problem")
   }
+
+
+  const saveSolution = async () => {
+    try {
+      const request = {
+        problemId: 68, // 실제 문제 ID로 변경하세요. -> 해당 문제의 id를 받아와야함
+        solver: "yeop", // 실제 푼 사람의 사용자 이름으로 변경하세요. -> 나중에 사용자 값을 받아야함
+        id: 12, // 적절한 id 값을 설정하세요.
+      };
+      const response = await axios.post("http://localhost:9001/api/solution", request);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleClose = () => {
+    if (title === "정답입니다!") {
+      saveSolution();
+    }
+    setVisible(false);
+    onClose();
+  };
+
+
 
   return visible ? (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">

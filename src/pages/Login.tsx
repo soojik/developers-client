@@ -1,12 +1,13 @@
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import { axiosInstance } from "apis/axiosConfig";
+import { API } from "apis/apis";
 import NaverOauthBtn from "components/buttons/NaverOauthBtn";
 import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 import { setLocalStorage } from "libs/localStorage";
-import { axiosInstance } from "apis/axiosConfig";
 
 interface LoginProps {
   loginEmail: string;
@@ -25,43 +26,38 @@ const Login = () => {
     clearErrors,
   } = useForm<LoginProps>({ mode: "onChange" });
 
-  const handleLoginSubmit: SubmitHandler<LoginProps> = (data) => {
-    axios
-      .post(`${URL}/api/auth/login`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        let accessToken = res.data.accessToken;
-        let refreshToken = res.data.refreshToken;
-        setLocalStorage("access_token", accessToken); // 임시
-        setLocalStorage("refresh_token", refreshToken);
+  const handleLoginSubmit: SubmitHandler<LoginProps> = async (formData) => {
+    const { data } = await API.login(formData);
+    let accessToken = data.accessToken;
+    let refreshToken = data.refreshToken;
+    setLocalStorage("access_token", accessToken); // 임시
+    setLocalStorage("refresh_token", refreshToken);
 
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+    axiosInstance.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${accessToken}`;
 
-        // console.log("로그인 응답", res);
-        const getUser = async () => {
-          const { data } = await axiosInstance.get(
-            `/api/member/${res.data.memberId}`
-          );
-          const resData = {
-            memberInfo: data?.data,
-            memberId: Number(res.data.memberId),
-            isLoggedIn: true,
-          };
-          setMember({
-            ...member,
-            ...resData,
-          });
-        };
-        getUser();
+    const resData = {
+      memberId: Number(data.memberId),
+      isLoggedIn: true,
+    };
+    setMember({
+      ...member,
+      ...resData,
+    });
 
-        navigate("/");
-      })
-      .catch((err) => console.log(err));
+    /* 유저정보 조회 */
+    const userData = await API.getUser(data.memberId);
+    setMember({
+      ...member,
+      isLoggedIn: true,
+      memberId: Number(data.memberId),
+      memberInfo: userData?.data.data,
+    });
+    // console.log("로그인후 유저정보조회:", userData?.data.data);
+
+    navigate("/");
   };
   return (
     <div className="flex flex-col items-center justify-center ">

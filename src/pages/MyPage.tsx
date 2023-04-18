@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
@@ -13,9 +13,9 @@ import DownArrowIcon from "components/icons/DownArrowIcon";
 import ConfirmBtn from "components/buttons/CofirmBtn";
 import { removeLocalStorage } from "libs/localStorage";
 import { axiosInstance } from "apis/axiosConfig";
+import { API } from "apis/apis";
 
 const MyPage = () => {
-  const URL = process.env.REACT_APP_DEV_URL;
   const { memberId } = useParams();
   const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
   const resetMemberInfo = useResetRecoilState(memberInfoState);
@@ -27,11 +27,25 @@ const MyPage = () => {
     { menu: "거주지", url: "address" },
   ];
 
+  const [nickname, setNickname] = useState("");
+  const [address, setAddress] = useState("");
+
   const [modalOpened, setModalOpened] = useState(false);
   const [pwdEditOpend, setPwdEditOpend] = useState(false);
   const [nicknameEditOpend, setNicknameEditOpend] = useState(false);
   const [adressEditOpend, setAdressEditOpend] = useState(false);
   const [mentorEditOpend, setMentorEditOpend] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userData = await API.getUser(memberInfo.memberId!);
+      setMemberInfo({
+        ...memberInfo,
+        memberInfo: userData.data?.data,
+      });
+    };
+    getUser();
+  }, [nickname, address]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const onMenuClick = (idx: number): any => {
@@ -51,7 +65,14 @@ const MyPage = () => {
       )
       .then((res) => {
         alert("저장에 성공했습니다");
-        console.log(res);
+        setModalOpened(false);
+        if (path === "nickname") {
+          setNickname(data);
+          setNicknameEditOpend(false);
+        } else {
+          setAddress(data);
+          setAdressEditOpend(false);
+        }
       })
       .catch((err) => {
         alert("저장에 실패했습니다");
@@ -113,7 +134,7 @@ const MyPage = () => {
   return (
     <div className="md:grid grid-cols-3 gap-2 h-auto">
       {/* 왼쪽 - 내정보 관리 */}
-      <div className=" bg-zinc-50 rounded-3xl md:mr-4 shadow-lg p-4 md:sticky md:top-20 md:h-fit">
+      <div className=" sm:bg-zinc-50 sm:rounded-3xl sm:mr-4 sm:shadow-lg md:sticky sm:top-20 sm:h-fit sm:p-4 border-b-2 mb-20 pb-14">
         <div className="flex pb-4 mb-4 border-b ">
           <div className="w-[150px] h-[100px] rounded-3xl bg-slate-200"></div>
           <div className="flex flex-col justify-between px-3 text-sm w-full">
@@ -138,7 +159,7 @@ const MyPage = () => {
             </div>
           </div>
         </div>
-        <div className="pb-4 mb-4 border-b">
+        <div className="pb-4 mb-4 md:border-b">
           <div className="font-extrabold text-zinc-500 mb-2 flex justify-between">
             내 정보 관리
             <button
@@ -179,7 +200,7 @@ const MyPage = () => {
         </div>
       </div>
       {/* 오른쪽 - 커리어 정보관리 */}
-      <div className="bg-zinc-50 rounded-3xl md:col-span-2 h-auto shadow-lg p-4">
+      <div className="sm:bg-zinc-50 sm:rounded-3xl sm:col-span-2 h-auto sm:shadow-lg sm:p-4">
         <div className="font-extrabold text-zinc-500 mb-2">
           커리어 정보 관리
         </div>

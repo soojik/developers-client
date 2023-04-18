@@ -17,17 +17,13 @@ import Popup from "./PopUp";
 import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import { Room } from "./RoomList";
+import { EventProp } from "pages/Mentoring";
 
 interface CalendarProps {
     onClose: () => void;
-    mentoringRoomId: number | undefined;
-};
-
-interface EventProp {
-    title: string;
-    startDate: string;
-    endDate: string;
-    type: string;
+    room: Room;
+    events: EventProp[];
 };
 
 interface CancelEventPopupProps {
@@ -52,43 +48,25 @@ const resources = [{
 const today: Date = new Date();
 const maxDate: Date = new Date(today.setDate(today.getDate() + 6) - (today.getTimezoneOffset() * 60000));
 
-const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) => {
-    const { memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
-    
+const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
+    const { memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [events, setEvents] = useState<EventProp[]>([]);
     const [showCancelEventPopup, setShowCancelEventPopup] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
-
-    useEffect(() => {
-        axiosInstance({
-            url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/${mentoringRoomId}`,
-            method: 'get'
-        }).then((res) => {
-            console.log(res.data);
-            setEvents(res.data['data'])
-        }).catch((err) => {
-            console.log(err);
-        })
-    }, [])
-
-    // 현재는 각각 events 라는 상수로 지정해서 사용
+    
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
     useEffect(() => {
         if (selectedDate) {
-            if (events.length) {
-                // 예약 가능한 시간대 계산
-                const reservedTimes = events
-                    .filter((event) => new Date(event.startDate).toDateString() === selectedDate.toDateString())
-                    .map((event) => new Date(event.startDate).getHours().toString());
-
-                console.log(reservedTimes);
-                const availableTimes = availableTimeSlots.filter(
-                    (time) => !reservedTimes.includes(time)
-                );
-                setAvailableTimeSlots(availableTimes);
-            }
+            // 예약 가능한 시간대 계산
+            const reservedTimes = events
+                .filter((event) => new Date(event.startDate).toDateString() === selectedDate.toDateString())
+                .map((event) => new Date(event.startDate).getHours().toString());
+            const availableTimes = allTimeSlots.filter(
+                (time) => !reservedTimes.includes(time)
+            );
+            setAvailableTimeSlots(availableTimes);
         }
     }, [selectedDate, events]);
 
@@ -120,10 +98,13 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
                     method: 'delete'
                 }).then((res) => {
                     console.log(res.data);
+                    alert(res.data.msg)
+                    if (res.status === 200) {
+                        handleClose();
+                    }
                 }).catch((err) => {
                     console.log(err);
                 })
-                handleClose();
             }
         };
 
@@ -167,7 +148,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, mentoringRoomId }) =
                     url: `${process.env.REACT_APP_LIVE_URL}/api/schedules`,
                     method: 'post',
                     data: {
-                        mentoringRoomId: mentoringRoomId,
+                        mentoringRoomId: room.mentoringRoomId,
                         mentorId: memberId,
                         start: startAt,
                         end: endAt

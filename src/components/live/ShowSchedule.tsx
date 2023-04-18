@@ -54,8 +54,11 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
         const res = await axiosInstance.delete(`${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${event.scheduleId}`);
         if(res.status === 200){
           alert('취소가 완료되었습니다.');
+          handleClose();
         }
-        handleClose();
+        else {
+          alert(res.data.msg);
+        }
       }
     }
   }; 

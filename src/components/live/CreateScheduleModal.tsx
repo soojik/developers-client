@@ -59,7 +59,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
             const reservedTimes = events
                 .filter((event) => event.startDate.toDateString() === selectedDate.toDateString())
                 .map((event) => event.startDate.getHours().toString());
-            const availableTimes = availableTimeSlots.filter(
+            const availableTimes = allTimeSlots.filter(
                 (time) => !reservedTimes.includes(time)
             );
             setAvailableTimeSlots(availableTimes);

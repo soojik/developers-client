@@ -5,18 +5,23 @@ import ModifyRoomInfo from './ModifyRoomInfo';
 import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import { EventProp } from 'pages/Mentoring';
 
 export interface Room {
     mentoringRoomId: number,
-    title: string,
     mentorName: string,
+    title: string,
     description: string,
     createdAt: Date
 }
 
-const MentorScheduling: React.FC = () => {
-    const { memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
-    
+interface MentorSchedulingProps {
+    events: EventProp[]
+}
+
+const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
+    const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
     const [selectedRoom, setSelectedRoom] = useState<Room>(null as any);
@@ -29,8 +34,6 @@ const MentorScheduling: React.FC = () => {
             setRoomList(res.data['data']);
         })
     }, [])
-
-    console.log(roomList);
 
     const handleClickRoom = (room: Room) => {
         setIsModalOpen(true);
@@ -66,7 +69,7 @@ const MentorScheduling: React.FC = () => {
             ))}
             {isModalOpen && (
                 <Popup>
-                    <ModifyRoomInfo room={selectedRoom} onClose={() => setIsModalOpen(false)}></ModifyRoomInfo>
+                    <ModifyRoomInfo room={selectedRoom} onClose={() => setIsModalOpen(false)} events={events}></ModifyRoomInfo>
                 </Popup>
             )}
         </div>

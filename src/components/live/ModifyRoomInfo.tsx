@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ModifySchedule from './ModifySchedule';
 import { axiosInstance } from "apis/axiosConfig";
+import { EventProp } from 'pages/Mentoring';
 
 export interface Room {
     mentoringRoomId: number,
@@ -14,9 +15,10 @@ export interface Room {
 interface ModifyRoomInfoProps {
     room: Room;
     onClose: () => void;
+    events: EventProp[]
 }
 
-const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({ room, onClose }) => {
+const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({ room, onClose, events }) => {
     const [title, setTitle] = useState<string>(room.title);
     const [description, setDescription] = useState<string>(room.description);
     const [step, setStep] = useState<number>(1);
@@ -77,7 +79,7 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({ room, onClose }) => {
                 </div>
             </form>
             {step === 2 && (
-                <ModifySchedule onClose={onClose} mentoringRoomId={room.mentoringRoomId}></ModifySchedule>
+                <ModifySchedule onClose={onClose} room={room} events={events}></ModifySchedule>
             )}
         </div>
     );

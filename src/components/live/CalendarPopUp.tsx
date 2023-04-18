@@ -36,7 +36,8 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
         if (window.confirm('해당 시간에 신청하시겠습니까?')) {
           axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/register`,{
             scheduleId:props.data.scheduleId,
-            menteeId:memberId
+            menteeId:memberId,
+            menteeName: memberInfo.nickname
           })
           .then(res=>{
             if(res.status === 200){
@@ -59,7 +60,7 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
       <div className="calendarPopup">
         <Scheduler data={events} height={700}>
           <ViewState currentDate={currentDate} onCurrentDateChange={currentDateChange} />
-          <WeekView startDayHour={9} endDayHour={22} cellDuration={60} /> {/* 한 시간 간격으로 변경 */}
+          <WeekView startDayHour={7} endDayHour={23} cellDuration={60} /> {/* 한 시간 간격으로 변경 */}
           <Toolbar />
           <DateNavigator />
           <TodayButton />

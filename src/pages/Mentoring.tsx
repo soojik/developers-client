@@ -16,7 +16,7 @@ export interface ScheduleProps {
   menteeName: string;
   startDate: string;
   endDate: string;
-  roomId:Number; // 방 id로 조회
+  mentoringRoomId:number; // 방 id로 조회
 };
 
 export interface EventProp {
@@ -24,8 +24,8 @@ export interface EventProp {
   startDate: Date;
   endDate: Date;
   type: string;
-  roomId: Number; // 방 id 로 조회
-  scheduleId:Number; //일정 삭제 필요
+  mentoringRoomId: number; // 방 id 로 조회
+  scheduleId:number; //일정 삭제 필요
   owner: String; // 방 주인 확인
 };
 
@@ -78,21 +78,22 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): 
         startDate: new Date(schedule.startDate),
         endDate: new Date(schedule.endDate),
         type: 'mentor',
-        roomId:schedule.roomId,
+        mentoringRoomId:schedule.mentoringRoomId,
         scheduleId: schedule.scheduleId,
         owner: schedule.mentorName
       };
       events.push(event);
+      console.log(event);
     });
   }
   else {
     schedules.forEach((schedule) => {
       const event: EventProp = {
-        title: `Mentoring with ${schedule.menteeName}`,
+        title: `${schedule.mentoringRoomTitle} with ${schedule.menteeName}`,
         startDate: new Date(schedule.startDate),
         endDate: new Date(schedule.endDate),
         type: 'mentee',
-        roomId:schedule.roomId,
+        mentoringRoomId:schedule.mentoringRoomId,
         scheduleId: schedule.scheduleId,
         owner: schedule.mentorName
       };

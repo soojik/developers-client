@@ -6,7 +6,6 @@ export interface Room {
     title:String,
     mentorName:String,
     description:String,
-    point:Number,
     createdAt:Date
 }
 

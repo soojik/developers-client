@@ -176,7 +176,7 @@ const Mentoring = () => {
       )}
 
       {currentPage == 3 && (
-        <MentorScheduling></MentorScheduling>
+        <MentorScheduling events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(convertScheduleToEvents(mySchedulesAsMentee, false))}></MentorScheduling>
       )}
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Popup from './PopUp';
-import axios from 'axios';
 import {
   Scheduler,
   WeekView,
@@ -11,6 +10,9 @@ import {
   Resources
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { ViewState } from '@devexpress/dx-react-scheduler';
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface CalendarProps {
   events: any[];
@@ -42,20 +44,14 @@ const CustomAppointment = (props: any) => {
   );
 };
 
-/**
- * 방 입장 테스트
- * @memberName String으로 본인 여부 확인
- */
-const memberName = "테스트";
-
 const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event, isMentor }) => {
+  const { memberInfo, memberId } = useRecoilValue(memberInfoState); 
   const [roomUrls, setRoomUrls ] = useState<{[key:string ]: string}>({});
   // 일정 취소 이벤트
   const handleCancelEvent = async () => {
     if(!isMentor){
       if (window.confirm('해당 시간을 취소하시겠습니까?')) {
-        const url = `http://localhost:9002/api/schedules/mentee/${event.scheduleId}`;
-        const res = await axios.delete(url);
+        const res = await axiosInstance.delete(`${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${event.scheduleId}`);
         if(res.status === 200){
           alert('취소가 완료되었습니다.');
         }
@@ -66,31 +62,43 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
   
   const handleJoinEvent = async () => {
     // 전체 방 리스트 조회
-    const sessionUrl = `http://localhost:8080/api/live-session/list`;
-    const lives = await axios.get(sessionUrl);
-    // 방 리스트의 데이터가 있다면 변환
-    const sessionRooms = JSON.parse(lives.data.data)
-    const sessionRoomsArray = Object.keys(sessionRooms);
+    const lives = await axiosInstance.get(`${process.env.REACT_APP_LIVE_URL}/api/live-session/list`,{
+      validateStatus: function (status) {
+        return status <= 500; // 상태 코드가 500 미만인 경우에만 해결
+      }
+    });
     // 방 리스트의 데이터가 있다면 무조건 조회
     if(window.confirm('멘토링 룸에 입장하시겠습니까?')){
-      const enterUrl = `http://localhost:8080/api/live-session/enter`
       if(lives.status === 400){
         // 방이 없는데 멘토면?
         if(isMentor){
             // 방 생성 로직
-          const enterRes = await axios.post(enterUrl, {
+          const enterRes = await axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/live-session/enter`, {
             roomName: event.title,
-            userName: memberName,
-            time:60
+            userName: event.owner,
+            userId:memberInfo.memberId,
+            time:60,
+            scheduleId:event.scheduleId
+          },
+          {
+            validateStatus: function (status) {
+              return status <= 500; // 상태 코드가 500 미만인 경우에만 해결
+            }
           }) //live-session에 등록
+          console.log(enterRes.data)
           if(enterRes.status===200){ //정상적으로 등록되었을 경우 url 반환
-            const enterUrl = "http://localhost:8080/api/dailyco"
-            const createRes = await axios.post(enterUrl,{
-              name:event.title.replace(/방제목 with 멘토/g, "roomtitle-with-mentor3"), 
+            const createRes = await axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/dailyco`,{
+              scheduleId:event.scheduleId,
+              userId:memberInfo.memberId,
               privacy:"public",
               properties:{
                 // nbf: Math.floor(new Date(event.startDate).getTime()/1000),
-                exp:Math.floor(new Date(event.endDate).getTime()/1000),
+                // exp:Math.floor(new Date(event.endDate).getTime()/1000),
+              }
+            },
+            {
+              validateStatus: function (status) {
+                return status <= 500; // 상태 코드가 500 미만인 경우에만 해결
               }
             })
             if(createRes.status === 200){ //url 반환되면 사용자 자동 연결
@@ -103,13 +111,13 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
           handleClose();
           }else{
             // 방이 없는데 멘토가 아니라면?
-              if(sessionRoomsArray.includes(event.title)){
-                alert("입장 성공하였습니다");
-                window.open(roomUrls[event.title], "_blank")
-                handleClose();
-              }
+              alert("멘토가 아직 방을 만들지 않았습니다!");
+              handleClose();
           }
       }else if(lives.status===200){
+        // 방 리스트의 데이터가 있다면 변환
+        const sessionRooms = JSON.parse(lives.data.data)
+        const sessionRoomsArray = Object.keys(sessionRooms);
         // 방이 있다면?
         if(sessionRoomsArray.includes(event.title)){
           window.open(roomUrls[event.title], "_blank")
@@ -117,7 +125,9 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
           handleClose();
         }
       }else{
-        const err = `${lives.status}:${lives.data}`
+        console.log(lives)
+        const err = `${lives.status}:${lives.data.msg}`
+        console.log(err)
       }
     }
   }

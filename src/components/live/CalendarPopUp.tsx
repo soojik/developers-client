@@ -9,17 +9,18 @@ import {
   DateNavigator
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { ViewState } from '@devexpress/dx-react-scheduler';
-import axios from 'axios';
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface CalendarPopupProps {
   events: any[];
   handleClose: () => void;
 }
 
-let memberId = 2;
-let memberName = "멘토2";
-
 const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) => {  
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+
   const [currentDate, setCurrentDate ] = useState(new Date()); // 시간 변수를 상태값으로 두어 변경 가능
   
   const currentDateChange = (newDate:Date) => {
@@ -28,13 +29,12 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
 
   const CustomAppointment = (props: any) => {
     const handleEventClick = () => {
-      if(props.data.mentorName === memberName){
+      if(props.data.mentorName === memberInfo.nickname){ // 직접 입력으로 추후 수정 필요
         alert("자신의 방에는 신청할 수 없습니다");
         handleClose();
       }else{
         if (window.confirm('해당 시간에 신청하시겠습니까?')) {
-          const url = `http://localhost:9002/api/register`
-          axios.post(url,{
+          axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/register`,{
             scheduleId:props.data.scheduleId,
             menteeId:memberId
           })

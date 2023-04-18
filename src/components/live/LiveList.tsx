@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
-
 import CreateRoomModal from './CreateRoomModal';
 import SearchBar from './SearchBar';
 import RoomList, { Room } from './RoomList';
 import React from 'react';
-import axios from 'axios';
 import {EventProp} from "../../pages/Mentoring"
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface LiveListProps {
     events: EventProp[];  // 내 기준으로 조회된 모든 스케쥴
 }
 
-const isMentor: boolean = true;
-
 const LiveList: React.FC<LiveListProps> = ({ events }) => {
+    const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
 
@@ -23,8 +24,8 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
     const fetchRooms = async (lastTime: Date | null) => {
         const lastDateTimeParam = lastTime ? `/next?lastDateTime=${lastTime}` : '';
-        const url = `http://localhost:9002/api/room${lastDateTimeParam}`;
-        const data = await axios.get(url);
+        const url = `${process.env.REACT_APP_LIVE_URL}/api/room${lastDateTimeParam}`;
+        const data = await axiosInstance.get(url);
         return data.data.data;
     };
 
@@ -74,8 +75,8 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
     const handleSearch = async (query: string) => {
         console.log(`Searching for "${query}"...`);
-        const url = `http://localhost:9002/api/room/${query}`;
-        const data = await axios.get(url);
+        const url = `${process.env.REACT_APP_LIVE_URL}/api/room/${query}`;
+        const data = await axiosInstance.get(url);
         setRoomList(data.data.data);
         setCurrentPage(1);
     };
@@ -86,7 +87,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
                 <SearchBar onSearch={handleSearch}></SearchBar>
             </div>
             <div className="h-32 flex items-center">
-                {isMentor && (
+                {memberInfo.mentor && (
                     <button
                         className="py-2 px-4 bg-transparent text-red-600 font-semibold border border-red-600 rounded hover:bg-red-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
                         onClick={handleOpenModal}>

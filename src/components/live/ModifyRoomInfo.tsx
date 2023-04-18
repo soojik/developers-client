@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ModifySchedule from './ModifySchedule';
+import { axiosInstance } from "apis/axiosConfig";
 
 export interface Room {
     mentoringRoomId: number,
@@ -22,8 +23,8 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({ room, onClose }) => {
 
     const handleNextClick = () => {
         if (room.title !== title || room.description !== description) {
-            axios({
-                url: `http://localhost:9002/api/room/update`,
+            axiosInstance({
+                url: `${process.env.REACT_APP_LIVE_URL}/api/room/update`,
                 method: 'post',
                 data: {
                     mentoringRoomId: room.mentoringRoomId,

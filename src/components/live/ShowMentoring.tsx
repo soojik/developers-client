@@ -4,7 +4,7 @@ import MentorProfile from 'components/live/MentorProfile';
 import CalendarPopUp from "components/live/CalendarPopUp";
 import { Room } from './RoomList';
 import { EventProp, ScheduleProps } from 'pages/Mentoring';
-import axios from 'axios';
+import { axiosInstance } from "apis/axiosConfig";
 
 interface ShowMentoringProps {
   mySchedule: EventProp[];
@@ -18,9 +18,8 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({mySchedule, room, handleCl
 
   let newSchedule: any[] = [];
   const handleShowSchedule = () => {
-    const url = `http://localhost:9002/api/schedules/${room.mentoringRoomId}`;
   // 방 아이디로 스케쥴 조회
-  axios.get(url)
+  axiosInstance.get(`${process.env.REACT_APP_LIVE_URL}/api/schedules/${room.mentoringRoomId}`)
   .then(res=>{
     setRoomSchedules(res.data.data)
   })

@@ -11,9 +11,10 @@ import {
     AppointmentTooltip,
     Resources
 } from "@devexpress/dx-react-scheduler-material-ui";
-
-import axios from "axios";
+import { axiosInstance } from "apis/axiosConfig";
 import { ViewState } from '@devexpress/dx-react-scheduler';
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface CalendarProps {
     onClose: () => void;
@@ -41,19 +42,16 @@ const resources = [{
     ],
 }];
 
-const baseURL = 'http://localhost:9002/api/schedules';
-const memberId = 1;
-
 const today: Date = new Date();
 const maxDate: Date = new Date(today.setDate(today.getDate() + 6) - (today.getTimezoneOffset() * 60000));
 
 const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentoringRoomId }) => {
+    const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+    
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     // 현재는 각각 events 라는 상수로 지정해서 사용
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
-
-    console.log(today);
 
     useEffect(() => {
         if (selectedDate) {
@@ -92,12 +90,13 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
                 const startAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
                 selectedDate.setHours(parseInt(timeSlot) + 1);
                 const endAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
-                axios({
-                    url: `${baseURL}`,
+                axiosInstance({
+                    url: `${process.env.REACT_APP_LIVE_URL}/api/schedules`,
                     method: 'post',
                     data: {
                         mentoringRoomId: mentoringRoomId,
                         mentorId: memberId,
+                        mentorName:memberInfo.nickname,
                         start: startAt,
                         end: endAt
                     }

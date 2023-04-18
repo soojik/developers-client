@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import CreateScheduleModal from './CreateScheduleModal';
-
-import axios from 'axios';
+import { axiosInstance } from "apis/axiosConfig";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 type CreateRoomModalProps = {
   onClose: () => void;
@@ -16,6 +17,8 @@ interface EventProp {
 };
 
 const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) => {
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [step, setStep] = useState(1);
@@ -27,15 +30,15 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
     }
     else {
       // axios로 방 데이터 추가
-      axios({
-        url: `http://localhost:9002/api/room`,
+      axiosInstance({
+        url: `${process.env.REACT_APP_LIVE_URL}/api/room`,
         method: 'post',
         data: {
           title: title,
           description: description,
-          // mentor Id 수정 필요
-          mentorId: 2
-        }
+          mentorId: memberId,
+          mentorName:memberInfo.nickname
+        },
       })
         .then((res) => {
           if (res.data['code'] == '200 OK') {

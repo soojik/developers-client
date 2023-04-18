@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ShowMentoring from './ShowMentoring';
 import { EventProp } from 'pages/Mentoring';
-// import ShowMentorOption from './ShowMentorOption';
 export interface Room {
     mentoringRoomId:Number,
     title:String,

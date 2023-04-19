@@ -54,7 +54,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [showCancelEventPopup, setShowCancelEventPopup] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
-    
+
     const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>(allTimeSlots);
 
     useEffect(() => {
@@ -109,13 +109,24 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
         };
 
         return (
-            <Popup>
-                <div className="cancelEventPopup">
-                    <h2>{event.title}</h2>
-                    <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleCancelEvent}>취소하기</button>
-                    <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
-                </div>
-            </Popup>
+            <div>
+                {event.mentoringRoomId === room.mentoringRoomId ? (
+                    <Popup>
+                        <div className="cancelEventPopup">
+                            <h2>{event.title}</h2>
+                            <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleCancelEvent}>취소하기</button>
+                            <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
+                        </div>
+                    </Popup>
+                ) : (
+                    <Popup>
+                        <div className="text-center">
+                            <h2>해당 일정은 '{event.title}' 일정관리 창에서 수정하실 수 있습니다.</h2>
+                            <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
+                        </div>
+                    </Popup>
+                )}
+            </div>
         );
     };
 
@@ -149,6 +160,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
                     method: 'post',
                     data: {
                         mentoringRoomId: room.mentoringRoomId,
+                        mentorName: room.mentorName,
                         mentorId: memberId,
                         start: startAt,
                         end: endAt

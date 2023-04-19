@@ -45,20 +45,8 @@ const onRequest = async (config: InternalAxiosRequestConfig) => {
   config.timeout = 15000;
 
   if (accessToken) {
-    /** 2. access 토큰 있으면 만료됐는지 체크 */
-    if (CheckJWTExp(accessToken, refreshToken) === ACCESS_EXP_MESSAGE) {
-      /** 3. access 만료되면 새로 발급받는 api 요청 */
-      const { data } = await axiosInstance.post(`/api/auth/refresh`, {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      });
-      removeLocalStorage("access_token");
-      setLocalStorage("access_token", `${data.accessToken}`);
-      config.headers!.Authorization = `Bearer ${data.accessToken}`;
-    } else {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-      return config;
-    }
+    config.headers.Authorization = `Bearer ${accessToken}`;
+    return config;
   }
   return config;
 };

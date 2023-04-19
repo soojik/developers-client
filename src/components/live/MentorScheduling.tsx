@@ -69,7 +69,7 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
             ))}
             {isModalOpen && (
                 <Popup>
-                    <ModifyRoomInfo room={selectedRoom} onClose={() => setIsModalOpen(false)} events={events}></ModifyRoomInfo>
+                    <ModifyRoomInfo room={selectedRoom} onClose={() => {setIsModalOpen(false);window.location.reload();}} events={events}></ModifyRoomInfo>
                 </Popup>
             )}
         </div>

@@ -1,102 +1,140 @@
+import { axiosInstance } from "apis/axiosConfig";
 import ConfirmBtn from "components/buttons/CofirmBtn";
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
 
 interface CareerProps {
+  id: number;
   careerStart: string;
   careerEnd: string;
   company: string;
 }
 
-const CareerInput = ({}: {}) => {
+const CareerInput = ({ careerList }: { careerList: {} }) => {
+  const { memberId } = useRecoilValue(memberInfoState);
+  const [inputId, setInputId] = useState(0);
   const [career, setCareer] = useState<CareerProps[]>([
-    {
-      careerStart: "2022-10-12",
-      careerEnd: "2023-10-12",
-      company: "(주)애플",
-    },
-    {
-      careerStart: "2021-5-12",
-      careerEnd: "2022-7-12",
-      company: "(주)카카오",
-    },
+    { id: inputId, careerStart: "", careerEnd: "", company: "" },
   ]);
-  const [newCareer, setNewCareer] = useState([{ ...career }]);
-  const [prevDate, setPrevDate] = useState("");
-  const [nextDate, setNextDate] = useState("");
-  const [company, setCompany] = useState("");
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    idx: number,
-    name: string
-  ) => {
-    const target = e.target as HTMLInputElement;
-    const keyname = name;
-    const obj = { [keyname]: target.value };
-    const newObj = (career[idx] = { ...career[idx], ...obj });
-    // const newDate = (career[idx][keyname] = target.value);
-    // setCareer([newDate]);
-    setCareer([{ ...career[idx], ...obj }]);
-    // console.log(" /// ", { ...career[idx], ...obj }); //매개변수 name이 아닌 객체의 키'name'으로 인식해서 안됨;;
-    // console.log(target.value, idx, career[idx]);
-
-    // setNewCareer([newCareer[idx]]);
+  const addInput = () => {
+    const input = {
+      id: inputId + 1,
+      careerStart: "",
+      careerEnd: "",
+      company: "",
+    };
+    setInputId(inputId + 1);
+    setCareer([...career, input]);
   };
-  const handleBtnClick = () => {
-    // console.log("저장 career : ", career);
+
+  const deleteInput = (id: number) => {
+    const filtered = career.filter((el) => el.id !== id);
+    setCareer([...filtered]);
+  };
+
+  const onInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    const data = {
+      [e.target.name]: e.target.value,
+    };
+    const newItem = career.map((el) =>
+      el.id === id ? { ...el, ...data } : el
+    );
+    setCareer([...newItem]);
+  };
+
+  const onSaveBtn = () => {
+    const deletedId = career.map((el) => {
+      const { id, ...rest } = el;
+      return { ...rest };
+    });
+
+    axiosInstance
+      .post(`/api/member/career`, { memberId, career: deletedId })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
-    // console.log("저장후", career);
-  }, [career]);
+    if (Array.isArray(careerList) && !careerList.length) {
+      return;
+    } else if (Array.isArray(careerList) && careerList.length) {
+      const prevItems = careerList.map((el, idx) => {
+        const prevItem = { ...el, id: idx };
+        setInputId(idx);
+        return prevItem;
+      });
+      setCareer(prevItems);
+    }
+  }, []);
 
   return (
-    <>
-      <button className="inline-block opacity-90 text-accent-300 font-bold py-1.5 rounded-md hover:opacity-100">
-        + 추가
-      </button>
+    <div>
       {career?.map((el, idx) => (
-        <div key={el.company}>
+        <div key={el.id} className="flex items-center text-slate-500">
           <input
             type="date"
             name="careerStart"
-            className="sign_input h-[30px] w-[120px] mr-1 font-light text-sm"
+            className="sign_input h-[30px] w-[123px] mr-1 font-light text-sm border-slate-200 "
             placeholder="YYYY-MM-DD"
-            max={``}
             min={``}
-            // required
+            max={`${el.careerEnd}`}
+            required
             defaultValue={el.careerStart}
-            onChange={(e) => handleInputChange(e, idx, "careerStart")}
+            onChange={(e) => onInputChange(e, el.id)}
           />
           -
           <input
             type="date"
             name="careerEnd"
-            className="sign_input h-[30px] w-[120px] mx-1 font-light text-sm"
+            className="sign_input h-[30px] w-[123px] mx-1 font-light text-sm border-slate-200"
             placeholder="YYYY-MM-DD"
+            min={`${el.careerStart}`}
             max={``}
-            min={``}
             // required
             defaultValue={el.careerEnd}
-            onChange={(e) => handleInputChange(e, idx, "careerEnd")}
+            onChange={(e) => onInputChange(e, el.id)}
           />
           <input
             type="text"
             name="company"
-            placeholder="근무처"
-            className="sign_input h-[30px] w-[140px]"
-            // required
+            placeholder="회사명"
+            className="sign_input h-[30px] min-w-[20px] max-w-[140px] border-slate-200"
+            required
             defaultValue={el.company}
-            onChange={(e) => handleInputChange(e, idx, "company")}
+            onChange={(e) => onInputChange(e, el.id)}
           />
+          {idx === 0 && career.length < 10 && (
+            <button
+              className="text-[28px] font-light ml-3 flex items-center justify-center text-slate-400 hover:text-accent-300  mb-[3px]"
+              onClick={() => addInput()}
+            >
+              +
+            </button>
+          )}
+          {idx > 0 && career[idx - 1] ? (
+            <button
+              className="text-[28px] font-light ml-3 flex items-center justify-center text-slate-400 hover:text-accent-300  mb-[3px]"
+              onClick={() => deleteInput(el.id)}
+            >
+              &minus;
+            </button>
+          ) : (
+            ""
+          )}
         </div>
       ))}
+
       <div className="flex justify-end mt-4">
-        <ConfirmBtn type="submit" onClick={handleBtnClick}>
+        <ConfirmBtn type="submit" onClick={onSaveBtn}>
           저장
         </ConfirmBtn>
       </div>
-    </>
+    </div>
   );
 };
 export default CareerInput;

@@ -1,51 +1,58 @@
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import MultiOptions from "components/MultiOptions";
 import TagInput from "components/TagInput";
 import { positionList } from "libs/options";
-import { useEffect, useState } from "react";
 import CareerInput from "./CareerInput";
 import ConfirmBtn from "components/buttons/CofirmBtn";
 
 const ResumeEdit = ({ active }: { active: any }) => {
-  const URL = process.env.REACT_APP_DEV_URL;
-  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
-
-  const careerInfo = [
-    {
-      intro: "나는 아무개입니다!",
-      skill: "React,Java,Python",
-      position: "프론트엔드,iOS",
-    },
-  ];
+  const { memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
   const [introduce, setIntroduce] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [position, setPosition] = useState<string[]>([]);
+  const [career, setCareer] = useState<string[]>([]);
   const newSkill = skills.join(",");
   const newPos = position.join(",");
 
   const reqBody = {
     memberId: Number(memberId),
     introduce,
-    position: newPos,
+    positions: newPos,
     skills: newSkill,
   };
 
   useEffect(() => {
-    const prevSkills = memberInfo.skills.split(",");
-    const prevPos = memberInfo.position.split(",");
-    setSkills(prevSkills);
-    setPosition(prevPos);
+    const getResume = async () => {
+      const { data } = await axiosInstance.get(
+        `/api/member/career/${memberId}`
+      );
+
+      if (data?.data?.introduce?.length > 0) {
+        setIntroduce(data.data.introduce);
+      }
+      if (data?.data?.skills?.length > 0) {
+        const prevSkills = data.data.skills.split(",");
+        setSkills(prevSkills);
+      }
+      if (data?.data?.positions?.length > 0) {
+        const prevPos = data.data?.positions.split(",");
+        setPosition(prevPos);
+      }
+
+      setCareer(data.data.careerList);
+    };
+    getResume();
   }, []);
 
   const handleBtnClick = () => {
-    // console.log(reqBody);
-    axios
+    axiosInstance
       .patch(
-        `${URL}/api/resume`,
-        { reqBody },
+        `/api/member/resume`,
+        { ...reqBody },
         {
           headers: {
             "Content-Type": "application/json",
@@ -53,13 +60,13 @@ const ResumeEdit = ({ active }: { active: any }) => {
         }
       )
       .then((res) => {
-        // console.log("전체저장 응답", res);
+        console.log("전체저장 응답", res);
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <div className={`mb-20 px-6 ${active || "hidden"}`}>
+    <div className={`mb-20 sm:px-6 ${active || "hidden"}`}>
       <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
         소개
       </div>
@@ -72,12 +79,12 @@ const ResumeEdit = ({ active }: { active: any }) => {
         maxLength={1000}
         wrap="hard"
         required
-        defaultValue={memberInfo.introduce!}
+        defaultValue={introduce}
       />
       <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
         경력
       </div>
-      <CareerInput />
+      <CareerInput careerList={career} />
       <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
         기술
       </div>
@@ -91,7 +98,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
         직무
       </div>
       <MultiOptions
-        label={memberInfo.position}
+        label={"직무"}
         lists={positionList}
         state={position}
         setState={setPosition}

@@ -15,3 +15,8 @@ export const API = {
     return axiosInstance({ method: "GET", url: `/api/member/${memberId}` });
   },
 };
+export const ROOMAPI = {
+  getRoomTop: () => {
+    return axiosInstance({ method: "GET", url: `/api/room/top` });
+  },
+};

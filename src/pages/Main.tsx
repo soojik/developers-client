@@ -1,31 +1,88 @@
+import { ROOMAPI } from "apis/apis";
 import Carousel from "components/Carousel";
 import MainList from "components/MainList";
+import { useEffect, useState } from "react";
 
 const Main = () => {
-  const section = [
-    { nickname: "유저1", type: "객관식", views: 0, title: "제목입니다" },
-    { nickname: "유저2", type: "객관식", views: 0, title: "제목입니다2" },
-    { nickname: "유저3", type: "객관식", views: 0, title: "제목입니다3" },
-    { nickname: "유저4", type: "객관식", views: 0, title: "제목입니다4" },
-    { nickname: "유저5", type: "객관식", views: 0, title: "제목입니다5" },
+  const [roomTop, setRoomTop] = useState([]);
+  useEffect(() => {
+    const getRoom = async () => {
+      const {
+        data: { data },
+      } = await ROOMAPI.getRoomTop();
+      setRoomTop(data);
+    };
+    getRoom();
+  }, []);
+
+  // 문제 더미데이터
+  const problems = [
+    {
+      problemId: 1,
+      writer: "유저1",
+      type: "answer",
+      views: 0,
+      likes: 0,
+      title: "제목입니다",
+    },
+    {
+      problemId: 2,
+      writer: "유저2",
+      type: "choice",
+      views: 0,
+      likes: 0,
+      title: "제목입니다2",
+    },
+    {
+      problemId: 3,
+      writer: "유저3",
+      type: "answer",
+      views: 0,
+      likes: 0,
+      title: "제목입니다3",
+    },
+    {
+      problemId: 4,
+      writer: "유저4",
+      type: "answer",
+      views: 0,
+      likes: 0,
+      title: "제목입니다4",
+    },
+    {
+      problemId: 5,
+      writer: "유저5",
+      type: "choice",
+      views: 0,
+      likes: 0,
+      title: "제목입니다5",
+    },
   ];
 
   return (
     <div className="md:w-[90%] md:m-auto">
       <Carousel />
-      {/* 모바일 */}
-      <div className="flex flex-col md:hidden">
-        <MainList section={section} sectionHeader={"최근 등록된 문제"} />
-        <MainList section={section} sectionHeader={"최근 개설된 채팅방"} />
-        <MainList section={section} sectionHeader={"WEEKLY SOLVED BEST"} />
-        <MainList section={section} sectionHeader={"WEEKLY ROOM BEST"} />
-      </div>
-      {/* 데스크탑 */}
-      <div className="hidden w-full grid-cols-2 gap-5 md:grid">
-        <MainList section={section} sectionHeader={"최근 등록된 문제"} />
-        <MainList section={section} sectionHeader={"최근 개설된 채팅방"} />
-        <MainList section={section} sectionHeader={"WEEKLY SOLVED BEST"} />
-        <MainList section={section} sectionHeader={"WEEKLY ROOM BEST"} />
+      <div className="flex flex-col w-full md:grid md:grid-cols-2 md:gap-10 ">
+        <MainList
+          problems={problems}
+          option="problem"
+          sectionHeader={"최근 등록된 문제"}
+        />
+        <MainList
+          rooms={roomTop}
+          option="room"
+          sectionHeader={"최근 개설된 채팅방"}
+        />
+        <MainList
+          problems={problems}
+          option="problem"
+          sectionHeader={"WEEKLY SOLVED BEST"}
+        />
+        <MainList
+          rooms={roomTop}
+          option="room"
+          sectionHeader={"WEEKLY ROOM BEST"}
+        />
       </div>
     </div>
   );

@@ -5,9 +5,7 @@ type LayoutProps = {
 const MainListTitle = ({ children }: LayoutProps) => {
   return (
     <>
-      <div className="text-center bg-slate-300 text-xl font-bold p-3 rounded-md ">
-        {children}
-      </div>
+      <div className="text-center text-xl font-bold">{children}</div>
     </>
   );
 };

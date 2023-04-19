@@ -32,7 +32,7 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
             method: 'get'
         }).then((res) => {
             setRoomList(res.data['data']);
-        })
+        }).catch(err=>console.log(err))
     }, [])
 
     const handleClickRoom = (room: Room) => {

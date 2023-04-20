@@ -43,7 +43,9 @@ const MultiOptions = ({
           className="flex items-center justify-between w-full sign_input"
           onClick={handleOptionClick}
         >
-          <span className="leading-4 line_wrap">{labelName.join(",")}</span>
+          <span className="leading-4 line_wrap">
+            {label.length > 0 ? labelName.join(",") : state.join(",")}
+          </span>
           <DownArrowIcon stroke="black" />
         </button>
         {isClicked && (

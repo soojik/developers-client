@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  tools {
+    nodejs 'my_node'
+  }
   environment {
     gitName = 'lango'
     gitEmail = 'xmun777@naver.com'

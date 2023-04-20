@@ -57,7 +57,7 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): 
   useEffect(() => {
     const eventSources: EventSource[] = [];
 
-    if(!eventSources.length){
+    if(!subscriptions.length){
       subscriptions.forEach((subscription: { mentorName: any; }) => {
         const es = new EventSource(`${process.env.REACT_APP_NOTIFY_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`);
         es.addEventListener('push', (e) => {

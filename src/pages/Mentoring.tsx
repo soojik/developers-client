@@ -129,6 +129,11 @@ const Mentoring = () => {
   }, [subscriptions, memberInfo.nickname, email]);
 
   useEffect(() => {
+    if (!memberInfo.mentor) {
+      setMySchedulesAsMentor([]);
+      setMySchedulesAsMentee([]);
+      return;
+    }
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     axiosInstance({
       url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,

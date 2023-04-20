@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { axiosInstance } from "apis/axiosConfig";
-import { API } from "apis/apis";
+import { MEMBER_API } from "apis/apis";
 import NaverOauthBtn from "components/buttons/NaverOauthBtn";
 import GoogleOauthBtn from "components/buttons/GoogleOauthBtn";
 import { setLocalStorage } from "libs/localStorage";
@@ -27,7 +27,7 @@ const Login = () => {
   } = useForm<LoginProps>({ mode: "onChange" });
 
   const handleLoginSubmit: SubmitHandler<LoginProps> = async (formData) => {
-    const { data } = await API.login(formData);
+    const { data } = await MEMBER_API.login(formData);
     let accessToken = data.accessToken;
     let refreshToken = data.refreshToken;
     setLocalStorage("access_token", accessToken); // 임시
@@ -48,7 +48,7 @@ const Login = () => {
     });
 
     /* 유저정보 조회 */
-    const userData = await API.getUser(data.memberId);
+    const userData = await MEMBER_API.getUser(data.memberId);
     setMember({
       ...member,
       isLoggedIn: true,

@@ -91,7 +91,7 @@ const Nav = () => {
                   }`}
                   onClick={handleOpenMenuBar}
                 >
-                  <MenuCloseIcon fill="white" />
+                  <MenuCloseIcon fill="white" width={33} height={33} />
                 </button>
 
                 {sideBarMenu?.map((menu) => (

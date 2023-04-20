@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
-import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import { MEMBER_API } from "apis/apis";
 import MultiOptions from "components/MultiOptions";
 import TagInput from "components/TagInput";
 import { positionList } from "libs/options";
 import CareerInput from "./CareerInput";
 import ConfirmBtn from "components/buttons/CofirmBtn";
+
+export interface CareerProps {
+  careerId: number;
+  careerStart: string;
+  careerEnd: string;
+  company: string;
+}
 
 const ResumeEdit = ({ active }: { active: any }) => {
   const { memberId, isLoggedIn } = useRecoilValue(memberInfoState);
@@ -14,7 +21,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
   const [introduce, setIntroduce] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [position, setPosition] = useState<string[]>([]);
-  const [career, setCareer] = useState<string[]>([]);
+  const [prevCareer, setPrevCareer] = useState<CareerProps[]>([]);
   const newSkill = skills.join(",");
   const newPos = position.join(",");
 
@@ -26,10 +33,8 @@ const ResumeEdit = ({ active }: { active: any }) => {
   };
 
   useEffect(() => {
-    const getResume = async () => {
-      const { data } = await axiosInstance.get(
-        `/api/member/career/${memberId}`
-      );
+    const loadResume = async () => {
+      const { data } = await MEMBER_API.getResume(Number(memberId));
 
       if (data?.data?.introduce?.length > 0) {
         setIntroduce(data.data.introduce);
@@ -42,27 +47,16 @@ const ResumeEdit = ({ active }: { active: any }) => {
         const prevPos = data.data?.positions.split(",");
         setPosition(prevPos);
       }
-
-      setCareer(data.data.careerList);
+      if (data?.data?.careerList?.length > 0) {
+        setPrevCareer(data.data.careerList);
+      }
     };
-    getResume();
+    loadResume();
   }, []);
 
-  const handleBtnClick = () => {
-    axiosInstance
-      .patch(
-        `/api/member/resume`,
-        { ...reqBody },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        console.log("전체저장 응답", res);
-      })
-      .catch((err) => console.log(err));
+  const handleBtnClick = async () => {
+    const { data } = await MEMBER_API.patchRsm({ ...reqBody });
+    // console.log("전체저장 응답", data);
   };
 
   return (
@@ -81,10 +75,6 @@ const ResumeEdit = ({ active }: { active: any }) => {
         required
         defaultValue={introduce}
       />
-      <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
-        경력
-      </div>
-      <CareerInput careerList={career} />
       <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
         기술
       </div>
@@ -108,6 +98,10 @@ const ResumeEdit = ({ active }: { active: any }) => {
           전체 저장
         </ConfirmBtn>
       </div>
+      <div className="text-sm font-bold mt-5 border-b py-1 mb-2 text-slate-500">
+        경력
+      </div>
+      <CareerInput prevCareer={prevCareer} setPrevCareer={setPrevCareer} />
     </div>
   );
 };

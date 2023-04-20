@@ -15,7 +15,7 @@ const Main = () => {
     getRoom();
   }, []);
 
-  // 문제 더미데이터
+  // 최근 등록된 문제 더미데이터
   const problems = [
     {
       problemId: 1,

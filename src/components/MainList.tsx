@@ -43,6 +43,11 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
         </div>
         {option === "problem" && (
           <>
+            {problems?.length === 0 && (
+              <div className="font-thin pt-10 flex justify-center">
+                최근 등록된 문제가 없습니다.
+              </div>
+            )}
             {problems!.map((el, idx) => (
               <Link
                 to={`/problem/${el.problemId}`}
@@ -78,6 +83,11 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
         )}
         {option === "room" && (
           <>
+            {rooms?.length === 0 && (
+              <div className="font-thin pt-10 flex justify-center">
+                최근 개설된 채팅방이 없습니다.
+              </div>
+            )}
             {rooms!.slice(5, rooms!.length).map((el, idx) => (
               <Link
                 to={`/mentoring/${el.mentoringRoomId}`} // 멘토링 방 url이 없음

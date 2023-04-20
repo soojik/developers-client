@@ -2,9 +2,10 @@ import { SVGProps } from "react";
 const MenuCloseIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={36}
-    height={36}
+    width="current"
+    height="current"
     fill="none"
+    viewBox="0 0 36 36"
     {...props}
   >
     <g clipPath="url(#a)">

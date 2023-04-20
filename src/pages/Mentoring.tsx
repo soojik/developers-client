@@ -103,7 +103,7 @@ const Mentoring = () => {
 
     if(!subscriptions.length){
       subscriptions.forEach((subscription: { mentorName: any; }) => {
-        const es = new EventSource(`${process.env.REACT_APP_NOTIFY_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`);
+        const es = new EventSource(`${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`);
         es.addEventListener('push', (e) => {
           new Notification(e.data);
           console.log(e.data);
@@ -123,17 +123,19 @@ const Mentoring = () => {
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     axiosInstance({
-      url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentor/${memberId}`,
+      url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,
       method: 'get',
     }).then((res) => {
       setMySchedulesAsMentor(res.data['data']);
+      console.log(res.data['data'])
     })
-    axios({
-      url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${memberId}`,
+    axiosInstance({
+      url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${memberId}`,
       method: 'get',
     }).then((res) => {
       // 멘티 일정 처리
       setMySchedulesAsMentee(res.data['data']);
+      console.log(res.data['data'])
     })
   }, [])
 

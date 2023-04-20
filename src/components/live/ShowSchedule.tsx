@@ -51,7 +51,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
   useEffect(() => {
     const fetchRoomUrls = async () => {
       try {
-        const res = await axiosInstance.get(`${process.env.REACT_APP_LIVE_URL}/api/live-session/list`);
+        const res = await axiosInstance.get(`${process.env.REACT_APP_DEV_URL}/api/live-session/list`);
         const sessionData = res.data;
         const parsedData: {[key:string]:string}= Object.entries(sessionData).reduce((acc, [roomName, url]) => {
           acc[roomName] = url as string;
@@ -70,7 +70,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
   const handleCancelEvent = async () => {
     if(!isMentor){
       if (window.confirm('해당 시간을 취소하시겠습니까?')) {
-        const res = await axiosInstance.delete(`${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${event.scheduleId}`);
+        const res = await axiosInstance.delete(`${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${event.scheduleId}`);
         if(res.status === 200){
           alert('취소가 완료되었습니다.');
           handleClose();
@@ -89,7 +89,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
     const endDate = new Date(event.endDate);
 
     try {
-      const enterRes = await axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/live-session/enter`, {
+      const enterRes = await axiosInstance.post(`${process.env.REACT_APP_DEV_URL}/api/live-session/enter`, {
         roomName: event.title,
         userName: event.owner,
         userId: memberId,
@@ -123,7 +123,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
   const handleRemoveEvent = async () => {
     try {
       const removeUrl = Object.keys(roomUrls).filter(el=>el===event.title);
-      axiosInstance.delete(`${process.env.REACT_APP_LIVE_URL}/api/live-session/exit`, {
+      axiosInstance.delete(`${process.env.REACT_APP_DEV_URL}/api/live-session/exit`, {
         data:{
           roomName: event.title,
           roomUUID:roomUrls[removeUrl[0]].split("daily.co/")[1],

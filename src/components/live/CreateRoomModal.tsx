@@ -31,7 +31,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
     else {
       // axios로 방 데이터 추가
       axiosInstance({
-        url: `${process.env.REACT_APP_LIVE_URL}/api/room`,
+        url: `${process.env.REACT_APP_DEV_URL}/api/room`,
         method: 'post',
         data: {
           title: title,

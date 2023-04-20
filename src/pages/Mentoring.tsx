@@ -7,8 +7,6 @@ import { subscriptionState } from '../recoil/subscriptionState';
 import { memberInfoState } from "recoil/userState";
 import { axiosInstance } from "apis/axiosConfig";
 
-import axios from 'axios';
-
 export interface ScheduleProps {
   scheduleId: number;
   mentoringRoomTitle: string;
@@ -121,6 +119,11 @@ const Mentoring = () => {
   }, [subscriptions, memberInfo.nickname, email]);
 
   useEffect(() => {
+    if (!memberInfo.mentor) {
+      setMySchedulesAsMentor([]);
+      setMySchedulesAsMentee([]);
+      return;
+    }
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     axiosInstance({
       url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,

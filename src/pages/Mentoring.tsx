@@ -35,8 +35,48 @@ export interface EventProp {
 const email ="" //테스트 이메일 계정
 
 const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): EventProp[] => {
-  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
   const events: EventProp[] = [];
+
+  if (isMentor) {
+    schedules.forEach((schedule) => {
+      const event: EventProp = {
+        title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
+        startDate: new Date(schedule.startDate),
+        endDate: new Date(schedule.endDate),
+        type: 'mentor',
+        mentoringRoomId:schedule.mentoringRoomId,
+        scheduleId: schedule.scheduleId,
+        owner: schedule.mentorName
+      };
+      events.push(event);
+      console.log(event);
+    });
+  }
+  else {
+    schedules.forEach((schedule) => {
+      const event: EventProp = {
+        title: `${schedule.mentoringRoomTitle} with ${schedule.menteeName}`,
+        startDate: new Date(schedule.startDate),
+        endDate: new Date(schedule.endDate),
+        type: 'mentee',
+        mentoringRoomId:schedule.mentoringRoomId,
+        scheduleId: schedule.scheduleId,
+        owner: schedule.mentorName
+      };
+      events.push(event);
+    });
+  }
+
+  return events;
+}
+
+const Mentoring = () => {
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+
+  const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
+  const [mySchedulesAsMentee, setMySchedulesAsMentee] = useState<ScheduleProps[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
   const [sse, setSse] = useState<EventSource[] | null>(null); //sse 상태 추적
  
@@ -77,46 +117,6 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): 
       };
     }
   }, [subscriptions, memberInfo.nickname, email]);
-
-  if (memberInfo.mentor) {
-    schedules.forEach((schedule) => {
-      const event: EventProp = {
-        title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
-        startDate: new Date(schedule.startDate),
-        endDate: new Date(schedule.endDate),
-        type: 'mentor',
-        mentoringRoomId:schedule.mentoringRoomId,
-        scheduleId: schedule.scheduleId,
-        owner: schedule.mentorName
-      };
-      events.push(event);
-      console.log(event);
-    });
-  }
-  else {
-    schedules.forEach((schedule) => {
-      const event: EventProp = {
-        title: `${schedule.mentoringRoomTitle} with ${schedule.menteeName}`,
-        startDate: new Date(schedule.startDate),
-        endDate: new Date(schedule.endDate),
-        type: 'mentee',
-        mentoringRoomId:schedule.mentoringRoomId,
-        scheduleId: schedule.scheduleId,
-        owner: schedule.mentorName
-      };
-      events.push(event);
-    });
-  }
-
-  return events;
-}
-
-const Mentoring = () => {
-  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
-
-  const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
-  const [mySchedulesAsMentee, setMySchedulesAsMentee] = useState<ScheduleProps[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,

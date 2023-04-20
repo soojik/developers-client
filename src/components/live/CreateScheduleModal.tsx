@@ -91,7 +91,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
                 selectedDate.setHours(parseInt(timeSlot) + 1);
                 const endAt: Date = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
                 axiosInstance({
-                    url: `${process.env.REACT_APP_LIVE_URL}/api/schedules`,
+                    url: `${process.env.REACT_APP_DEV_URL}/api/schedules`,
                     method: 'post',
                     data: {
                         mentoringRoomId: mentoringRoomId,

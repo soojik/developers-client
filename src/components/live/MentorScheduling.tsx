@@ -28,7 +28,7 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
 
     useEffect(() => {
         axiosInstance({
-            url: `${process.env.REACT_APP_LIVE_URL}/api/room/mentor/${memberId}`,
+            url: `${process.env.REACT_APP_DEV_URL}/api/room/mentor/${memberId}`,
             method: 'get'
         }).then((res) => {
             setRoomList(res.data['data']);
@@ -44,7 +44,7 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
         if (window.confirm('멘토링 방을 삭제하시겠습니까?')) {
             console.log("room", room);
             axiosInstance({
-                url: `${process.env.REACT_APP_LIVE_URL}/api/room/${room.mentoringRoomId}`,
+                url: `${process.env.REACT_APP_DEV_URL}/api/room/${room.mentoringRoomId}`,
                 method: 'delete'
             }).then((res) => {
                 window.alert(res.data['msg']);

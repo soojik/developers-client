@@ -34,7 +34,7 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
         handleClose();
       }else{
         if (window.confirm('해당 시간에 신청하시겠습니까?')) {
-          axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/register`,{
+          axiosInstance.post(`${process.env.REACT_APP_DEV_URL}/api/register`,{
             scheduleId:props.data.scheduleId,
             menteeId:memberId,
             menteeName: memberInfo.nickname

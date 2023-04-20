@@ -12,7 +12,7 @@ pipeline {
     applicationGitAddress = 'https://github.com/kcs-developers/developers-client.git'
     k8sGitHttpAddress = 'https://github.com/start-dream-team/manifest.git'
     k8sGitSshAddress = 'git@github.com:start-dream-team/manifest.git'
-    REACT_APP_DEV_URL = "http://diveloper.site"
+    REACT_APP_DEV_URL = "https://diveloper.site"
   }
   stages {
     stage('Checkout Github') {

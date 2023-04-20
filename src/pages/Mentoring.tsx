@@ -37,34 +37,36 @@ const email ="" //테스트 이메일 계정
 const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): EventProp[] => {
   const events: EventProp[] = [];
 
-  if (isMentor) {
-    schedules.forEach((schedule) => {
-      const event: EventProp = {
-        title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
-        startDate: new Date(schedule.startDate),
-        endDate: new Date(schedule.endDate),
-        type: 'mentor',
-        mentoringRoomId:schedule.mentoringRoomId,
-        scheduleId: schedule.scheduleId,
-        owner: schedule.mentorName
-      };
-      events.push(event);
-      console.log(event);
-    });
-  }
-  else {
-    schedules.forEach((schedule) => {
-      const event: EventProp = {
-        title: `${schedule.mentoringRoomTitle} with ${schedule.menteeName}`,
-        startDate: new Date(schedule.startDate),
-        endDate: new Date(schedule.endDate),
-        type: 'mentee',
-        mentoringRoomId:schedule.mentoringRoomId,
-        scheduleId: schedule.scheduleId,
-        owner: schedule.mentorName
-      };
-      events.push(event);
-    });
+  if (schedules.length) {
+    if (isMentor) {
+      schedules.forEach((schedule) => {
+        const event: EventProp = {
+          title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
+          startDate: new Date(schedule.startDate),
+          endDate: new Date(schedule.endDate),
+          type: 'mentor',
+          mentoringRoomId:schedule.mentoringRoomId,
+          scheduleId: schedule.scheduleId,
+          owner: schedule.mentorName
+        };
+        events.push(event);
+        console.log(event);
+      });
+    }
+    else {
+      schedules.forEach((schedule) => {
+        const event: EventProp = {
+          title: `${schedule.mentoringRoomTitle} with ${schedule.menteeName}`,
+          startDate: new Date(schedule.startDate),
+          endDate: new Date(schedule.endDate),
+          type: 'mentee',
+          mentoringRoomId:schedule.mentoringRoomId,
+          scheduleId: schedule.scheduleId,
+          owner: schedule.mentorName
+        };
+        events.push(event);
+      });
+    }
   }
 
   return events;

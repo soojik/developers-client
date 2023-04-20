@@ -45,7 +45,7 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({mySchedule, room, handleCl
               <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 rounded" onClick={() => {setShowCalendarPopup(!showCalendarPopup); handleShowSchedule()}}>Next</button>
             </div>
           ) : (
-            <CalendarPopUp events={newSchedule} handleClose={ handleClose } />
+            <CalendarPopUp events={newSchedule} handleClose={ ()=>{handleClose;window.location.reload();} } />
           )}
         </Popup>
     </div>

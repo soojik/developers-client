@@ -38,6 +38,7 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): 
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
   const events: EventProp[] = [];
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
+  const [sse, setSse] = useState<EventSource[] | null>(null); //sse 상태 추적
  
   // 구독 정보 가져오는 함수
   useEffect(() => {
@@ -56,19 +57,23 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): 
   useEffect(() => {
     const eventSources: EventSource[] = [];
 
-    subscriptions.forEach((subscription: { mentorName: any; }) => {
-      const es = new EventSource(`${process.env.REACT_APP_NOTIFY_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`);
-      es.addEventListener('push', (e) => {
-        new Notification(e.data);
-        console.log(e.data);
+    if(!eventSources.length){
+      subscriptions.forEach((subscription: { mentorName: any; }) => {
+        const es = new EventSource(`${process.env.REACT_APP_NOTIFY_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`);
+        es.addEventListener('push', (e) => {
+          new Notification(e.data);
+          console.log(e.data);
+        });
+  
+        eventSources.push(es);
       });
-
-      eventSources.push(es);
-    });
-
-    return () => {
-      eventSources.forEach((es) => es.close());
-    };
+  
+      setSse(eventSources);
+  
+      return () => {
+        eventSources.forEach((es) => es.close());
+      };
+    }
   }, [subscriptions, memberInfo.nickname, email]);
 
   if (memberInfo.mentor) {
@@ -110,7 +115,6 @@ const Mentoring = () => {
   const [mySchedulesAsMentor, setMySchedulesAsMentor] = useState<ScheduleProps[]>([]);
   const [mySchedulesAsMentee, setMySchedulesAsMentee] = useState<ScheduleProps[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [sse, setSse] = useState<EventSource | null>(null);
 
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,

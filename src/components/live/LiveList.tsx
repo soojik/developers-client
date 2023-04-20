@@ -99,7 +99,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
             <div>
                 <RoomList events={events} rooms={displayedRooms}></RoomList>
             </div>
-            {isModalOpen && <CreateRoomModal onClose={() => {setIsModalOpen(false);  window.location.reload();}} events={events} />}
+            {isModalOpen && <CreateRoomModal onClose={() => {setIsModalOpen(false); window.location.reload();}} events={events} />}
         </div>
     );
 };

@@ -87,14 +87,13 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
     //시간 차 구하기
     const startDate = new Date(event.startDate);
     const endDate = new Date(event.endDate);
-    const timeDifference = Math.round((endDate.getTime() - startDate.getTime()) / 60000); // 1분 = 60,000ms
 
     try {
       const enterRes = await axiosInstance.post(`${process.env.REACT_APP_LIVE_URL}/api/live-session/enter`, {
         roomName: event.title,
         userName: event.owner,
         userId: memberId,
-        time: timeDifference,
+        time: 60,
         scheduleId: event.scheduleId,
       });
 

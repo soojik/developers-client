@@ -13,7 +13,7 @@ import DownArrowIcon from "components/icons/DownArrowIcon";
 import ConfirmBtn from "components/buttons/CofirmBtn";
 import { removeLocalStorage } from "libs/localStorage";
 import { axiosInstance } from "apis/axiosConfig";
-import { API } from "apis/apis";
+import { MEMBER_API } from "apis/apis";
 
 const MyPage = () => {
   const { memberId } = useParams();
@@ -38,7 +38,7 @@ const MyPage = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const userData = await API.getUser(memberInfo.memberId!);
+      const userData = await MEMBER_API.getUser(memberInfo.memberId!);
       setMemberInfo({
         ...memberInfo,
         memberInfo: userData.data?.data,
@@ -76,7 +76,7 @@ const MyPage = () => {
       })
       .catch((err) => {
         alert("저장에 실패했습니다");
-        console.log(err);
+        // console.log(err);
       });
   };
 
@@ -123,11 +123,11 @@ const MyPage = () => {
       )
       .then((res) => {
         alert("멘토로 등록됐습니다");
-        console.log(res.data);
+        // console.log(res.data);
       })
       .catch((err) => {
         alert("멘토 등록에 실패했습니다");
-        console.log(err);
+        // console.log(err);
       });
   };
 
@@ -225,12 +225,14 @@ const MyPage = () => {
 
       {modalOpened ? (
         <Popup>
-          <div className="w-[400px] h-fit relative">
+          <div className="sm:w-[400px] min-w-[250px] h-fit relative">
             <div className="flex justify-end items-end">
               <div />
               <MenuCloseIcon
                 className="cursor-pointer absolute top-0"
                 fill="black"
+                width={36}
+                height={36}
                 onClick={() => {
                   setModalOpened(false);
                   setNicknameEditOpend(false);

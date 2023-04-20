@@ -44,8 +44,10 @@ const convertScheduleToEvents = (schedules: ScheduleProps[], isMentor:Boolean): 
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_NOTIFY_URL}/subscriptions?userName=${memberInfo.nickname}`);
-        setSubscriptions(response.data);
+        if(!subscriptions.length){
+          const response = await axiosInstance.get(`${process.env.REACT_APP_NOTIFY_URL}/subscriptions?userName=${memberInfo.nickname}`);
+          setSubscriptions(response.data);
+        }
       } catch (error) {
         console.error('구독 정보를 가져오는데 실패했습니다:', error);
       }

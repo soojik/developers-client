@@ -31,6 +31,7 @@ pipeline {
     stage('Npm Build') {
       steps {
           sh 'npm install --force'
+          sh 'npm run build'
           }
       post {
         failure {

@@ -18,8 +18,8 @@ const MentorProfile: React.FC<MentorProfileProps> = ({  bio, name}) => {
 
   const handleSubscription = async () => {
     const endpoint = subscribed 
-    ?`${process.env.REACT_APP_NOTIFY_URL}/api/unsubscribe?mentorName=${name}&userName=${memberInfo.nickname}` 
-    : `${process.env.REACT_APP_NOTIFY_URL}/api/subscribe?mentorName=${name}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
+    ?`${process.env.REACT_APP_DEV_URL}/api/unsubscribe?mentorName=${name}&userName=${memberInfo.nickname}` 
+    : `${process.env.REACT_APP_DEV_URL}/api/subscribe?mentorName=${name}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
 
     axiosInstance({
       url:`${endpoint}`,

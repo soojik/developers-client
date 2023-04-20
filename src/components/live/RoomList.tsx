@@ -35,7 +35,7 @@ const RoomList: React.FC<RoomListProps> = ({ events, rooms }) => {
                 </div>
             ))}
             {showRoomInfo && selectedRoom && (
-                <ShowMentoring handleClose={() => {setShowRoomInfo(false);   window.location.reload();}} room={selectedRoom} mySchedule={events} />
+                <ShowMentoring handleClose={() => setShowRoomInfo(false)} room={selectedRoom} mySchedule={events} />
             ) 
             }
         </div>

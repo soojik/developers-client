@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ShowMentoring from './ShowMentoring';
 import { EventProp } from 'pages/Mentoring';
-import { useRecoilState, useRecoilValue} from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { memberInfoState } from "recoil/userState";
 export interface Room {
     mentoringRoomId: Number,
@@ -22,27 +22,37 @@ const RoomList: React.FC<RoomListProps> = ({ events, rooms }) => {
     const [showRoomInfo, setShowRoomInfo] = useState(false);
 
     const handleShowRoomInfo = (room: Room) => {
-        if (memberId) {
+        // if (memberId) {
             setSelectedRoom(room);
             setShowRoomInfo(!showRoomInfo);
-        }
+        // }
     };
 
-    let num = 1; // 출력 갯수 확인 변수
-
     return (
-        <div className="flex flex-wrap justify-center" >
+        <div className="flex flex-wrap">
             {rooms.map((room) => (
-                <div key={room.mentoringRoomId.toString()} className="w-1/3 p-4 flex flex-col justify-center items-center">
-                    <h2 className="text-lg font-semibold mt-2" onClick={() => handleShowRoomInfo(room)}>{num++}{room.title}</h2>
-                    <h3 className=''>{room.description}</h3>
-                    <h3 className=''>{room.mentorName}</h3>
+                <div
+                    className="w-1/3 p-4 flex flex-col justify-center items-center"
+                >
+                    <div
+                        className="text-md font-semibold"
+                        onClick={() => handleShowRoomInfo(room)}
+                    >{room.title}</div>
+                    <div className="flex justify-center items-center mt-2">
+                        <div className="flex items-center text-sm text-slate-600">
+                            {room.description}
+                        </div>
+                    </div>
+                    <div className="flex justify-center items-center mt-2">
+                        <div className="flex items-center text-sm text-slate-600">
+                            {room.mentorName}
+                        </div>
+                    </div>
                 </div>
             ))}
             {showRoomInfo && selectedRoom && (
                 <ShowMentoring handleClose={() => setShowRoomInfo(false)} room={selectedRoom} mySchedule={events} />
-            )
-            }
+            )}
         </div>
     );
 }

@@ -79,7 +79,7 @@ const Mentoring = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
-  const [sse, setSse] = useState<EventSource[] | null>(null); //sse 상태 추적
+  const [sse, setSse] = useState<EventSource[]>([]); //sse 상태 추적
 
   // 구독 정보 가져오는 함수
   useEffect(() => {
@@ -87,7 +87,7 @@ const Mentoring = () => {
       try {
         if (!subscriptions.length) {
           const response = await axiosInstance.get(
-            `${process.env.REACT_APP_NOTIFY_URL}/subscriptions?userName=${memberInfo.nickname}`
+            `${process.env.REACT_APP_DEV_URL}/subscriptions?userName=${memberInfo.nickname}`
           );
           setSubscriptions(response.data);
         }
@@ -102,25 +102,23 @@ const Mentoring = () => {
   useEffect(() => {
     const eventSources: EventSource[] = [];
 
-    if (!subscriptions.length) {
-      subscriptions.forEach((subscription: { mentorName: any }) => {
-        const es = new EventSource(
-          `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
-        );
-        es.addEventListener("push", (e) => {
-          new Notification(e.data);
-          console.log(e.data);
-        });
-
-        eventSources.push(es);
+    subscriptions.forEach((subscription: { mentorName: any }) => {
+      const es = new EventSource(
+        `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
+      );
+      es.addEventListener("push", (e) => {
+        new Notification(e.data);
+        console.log(e.data);
       });
 
-      setSse(eventSources);
+      eventSources.push(es);
+    });
 
-      return () => {
-        eventSources.forEach((es) => es.close());
-      };
-    }
+    setSse(eventSources);
+
+    return () => {
+      eventSources.forEach((es) => es.close());
+    };
   }, [subscriptions, memberInfo.nickname, memberInfo.email]);
 
   useEffect(() => {

@@ -15,6 +15,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
   const { memberInfo, memberId } = useRecoilValue(memberInfoState);
   const [subscribed, setSubscribed] = useState(false);
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
+  const [sse, setSse] = useState<EventSource[]>([]); //sse 상태 추적
 
   const handleSubscription = async () => {
     const endpoint = subscribed
@@ -43,14 +44,31 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
       .then(() => {
         setSubscribed(!subscribed);
         setSubscriptions((prevSubscriptions: any[]) => {
+          let updatedSubscriptions;
+
           if (subscribed) {
-            return prevSubscriptions.filter((sub) => sub.mentorName !== name);
+            updatedSubscriptions = prevSubscriptions.filter(
+              (sub) => sub.mentorName !== name
+            );
           } else {
-            return [
+            updatedSubscriptions = [
               ...prevSubscriptions,
               { mentorName: name, userName: memberInfo?.nickname },
             ];
           }
+          // SSE 설정 로직 추가
+          const es = new EventSource(
+            `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${name}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
+          );
+          es.addEventListener("push", (e) => {
+            new Notification(e.data);
+            console.log(e.data);
+          });
+
+          const eventSources = [...sse, es];
+          setSse(eventSources);
+
+          return updatedSubscriptions;
         });
       })
       .catch((err) => console.log(err.data));

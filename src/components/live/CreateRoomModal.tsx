@@ -59,9 +59,9 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
   };
 
   return (
-    <div>
+    <Popup>
       {step === 1 && (
-        <Popup>
+        <div>
           <h2 className="text-lg font-bold mb-4">방 생성</h2>
           <form>
             <div className="mb-4">
@@ -89,18 +89,18 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
               />
             </div>
             <div className="flex justify-end">
-              <button type='button' className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={handleNextClick}>
-                스케쥴 추가
+              <button type='button' className="bg-accent-400 text-white px-3 py-2 rounded-md" onClick={handleNextClick}>
+                일정 추가
               </button>
-              <button type="button" className="mr-4" onClick={onClose}>
+              <button type="button" className="ml-4 mr-4" onClick={onClose}>
                 취소
               </button>
             </div>
           </form>
-        </Popup>
+        </div>
       )}
       {step === 2 && <CreateScheduleModal onClose={onClose} events={events} mentoringRoomId={mentoringRoomId} />}
-    </div>
+    </Popup>
   );
 };
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { TextField, Button, Grid } from "@mui/material";
+import { TextField, Grid } from "@mui/material";
 import {
     Scheduler,
     WeekView,
@@ -9,7 +9,8 @@ import {
     Toolbar,
     TodayButton,
     AppointmentTooltip,
-    Resources
+    Resources,
+    DateNavigator
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { axiosInstance } from "apis/axiosConfig";
 import { ViewState } from '@devexpress/dx-react-scheduler';
@@ -75,9 +76,9 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
 
         return availableTimeSlots.map((timeSlot, index) => (
             <Grid item key={index}>
-                <Button variant="contained" onClick={() => handleSelectTimeSlot(timeSlot)}>
+                <button type='button' className="bg-slate-300 border border-accent-500 text-accent-500 px-3 py-2 rounded-md" onClick={() => handleSelectTimeSlot(timeSlot)}>
                     {timeSlot}:00
-                </Button>
+                </button>
             </Grid>
         ));
     };
@@ -118,11 +119,12 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({ onClose, events, mentorin
                 <h2 className="text-lg font-bold mb-4">방 생성</h2>
                 <h3 className="italic mb-4">생성하신 멘토링을 진행하실 시각을 선택해주세요! (한시간 단위)</h3>
                 <div>
-                    <Scheduler data={events} height={300}>
+                    <Scheduler data={events} height={400}>
                         <ViewState defaultCurrentDate={new Date()} />
                         <WeekView startDayHour={7} endDayHour={23} />
                         <Toolbar />
                         <TodayButton />
+                        <DateNavigator />
                         <Appointments />
                         <AppointmentTooltip />
                         <Resources

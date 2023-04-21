@@ -42,46 +42,48 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({ room, onClose, events }
 
     return (
         <div>
-            <form>
-                <div className="mb-4">
-                    <label htmlFor="title" className="block mb-2 font-bold">
-                        방 제목
-                    </label>
-                    <input
-                        id="title"
-                        value={title}
-                        type="text"
-                        className="w-full border-gray-300 rounded-md px-4 py-2"
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="description" className="block mb-2 font-bold">
-                        방 소개글
-                    </label>
-                    <input
-                        id="description"
-                        value={description}
-                        type="text"
-                        className="w-full border-gray-300 rounded-md px-4 py-2"
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="flex justify-end">
-                    <button type='button' className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={handleNextClick}>
-                        다음
-                    </button>
-                    <button type="button" className="mr-4" onClick={() => onClose()}>
-                        취소
-                    </button>
-                </div>
-            </form>
-            {step === 2 && (
+            {step === 2 ? (
                 <ModifySchedule onClose={onClose} room={room} events={events}></ModifySchedule>
+            ) : (
+                <form>
+                    <div className="mb-4">
+                        <label htmlFor="title" className="block mb-2 font-bold">
+                            방 제목
+                        </label>
+                        <input
+                            id="title"
+                            value={title}
+                            type="text"
+                            className="w-full border-gray-300 rounded-md px-4 py-2"
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="description" className="block mb-2 font-bold">
+                            방 소개글
+                        </label>
+                        <input
+                            id="description"
+                            value={description}
+                            type="text"
+                            className="w-full border-gray-300 rounded-md px-4 py-2"
+                            onChange={(e) => setDescription(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="flex justify-end">
+                        <button type='button' className="bg-accent-400 text-slate-200 px-3 py-2 mr-2 rounded" onClick={handleNextClick}>
+                            다음
+                        </button>
+                        <button type="button" className="mr-4" onClick={() => onClose()}>
+                            취소
+                        </button>
+                    </div>
+                </form>
             )}
         </div>
+
     );
 }
 

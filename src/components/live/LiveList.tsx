@@ -3,7 +3,7 @@ import CreateRoomModal from './CreateRoomModal';
 import SearchBar from './SearchBar';
 import RoomList, { Room } from './RoomList';
 import React from 'react';
-import {EventProp} from "../../pages/Mentoring"
+import { EventProp } from "../../pages/Mentoring"
 import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
@@ -13,8 +13,8 @@ interface LiveListProps {
 }
 
 const LiveList: React.FC<LiveListProps> = ({ events }) => {
-    const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
-    
+    const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [roomList, setRoomList] = useState<Room[]>([]);
 
@@ -87,19 +87,19 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
             <div className="w-1/2">
                 <SearchBar onSearch={handleSearch}></SearchBar>
             </div>
-            <div className="h-32 flex items-center">
-                {memberInfo.mentor && (
+            {memberInfo.mentor && (
+                <div className="h-16 flex items-center">
                     <button
-                        className="py-2 px-4 bg-transparent text-accent-300 font-semibold border border-accent-300 rounded hover:bg-accent-500 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                        className="py-2 px-4 w-fit rounded-md text-slate-50 bg-accent-400 hover:bg-accent-500"
                         onClick={handleOpenModal}>
                         방 생성
                     </button>
-                )}
-            </div>
+                </div>
+            )}
             <div className='w-full'>
                 <RoomList events={events} rooms={displayedRooms}></RoomList>
             </div>
-            {isModalOpen && <CreateRoomModal onClose={() => {setIsModalOpen(false); window.location.reload();}} events={events} />}
+            {isModalOpen && <CreateRoomModal onClose={() => { setIsModalOpen(false); window.location.reload(); }} events={events} />}
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { TextField, Button, Grid } from "@mui/material";
+import { TextField, Grid } from "@mui/material";
 import {
     Scheduler,
     WeekView,
@@ -139,9 +139,9 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
 
         return availableTimeSlots.map((timeSlot, index) => (
             <Grid item key={index}>
-                <Button variant="contained" onClick={() => handleSelectTimeSlot(timeSlot)}>
+                <button type="button" className="bg-slate-300 border border-accent-500 text-accent-500 px-3 py-2 rounded-md" onClick={() => handleSelectTimeSlot(timeSlot)}>
                     {timeSlot}:00
-                </Button>
+                </button>
             </Grid>
         ));
     };
@@ -177,54 +177,50 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
     };
 
     return (
-        <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-10">
-            <div className="bg-white p-5 rounded-lg max-w-4xl h-500 overflow-y-auto flex flex-col justify-between">
+        <div>
+            <div>
+                <h2 className="text-lg font-bold mb-4">방 수정</h2>
+                <h3 className="italic mb-4">멘토링 일정을 추가해주세요 (한시간 단위)</h3>
                 <div>
-                    <h2 className="text-lg font-bold mb-4">방 수정</h2>
-                    <h3 className="italic mb-4">멘토링 일정을 추가해주세요 (한시간 단위)</h3>
-                    <div>
-                        <Scheduler data={events} height={400}>
-                            <ViewState defaultCurrentDate={new Date()} />
-                            <WeekView startDayHour={7} endDayHour={23} />
-                            <Toolbar />
-                            <DateNavigator />
-                            <TodayButton />
-                            <Appointments appointmentComponent={(props) => <CustomAppointment {...props} onClick={handleEventClick} />} />
-                            <AppointmentTooltip />
-                            <Resources
-                                data={resources}
-                            />
-                        </Scheduler>
-                    </div>
-                    <div className="flex flex-wrap justify-between">
-                        <div className="w-full md:w-1/3 px-4 mt-4">
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DatePicker
-                                    label="Controlled picker"
-                                    value={selectedDate}
-                                    onChange={(newValue: any) => setSelectedDate(newValue)}
-                                    renderInput={(params: any) => <TextField {...params} />}
-                                    minDate={new Date()}
-                                    maxDate={maxDate}
-                                />
-                            </LocalizationProvider>
-                        </div>
-                        <div className="w-full md:w-2/3 px-4 mt-4">
-                            <Grid container spacing={2}>
-                                {renderTimeSlotButtons()}
-                            </Grid>
-                        </div>
-                    </div>
+                    <Scheduler data={events} height={400}>
+                        <ViewState defaultCurrentDate={new Date()} />
+                        <WeekView startDayHour={7} endDayHour={23} />
+                        <Toolbar />
+                        <DateNavigator />
+                        <TodayButton />
+                        <Appointments appointmentComponent={(props) => <CustomAppointment {...props} onClick={handleEventClick} />} />
+                        <AppointmentTooltip />
+                        <Resources
+                            data={resources} />
+                    </Scheduler>
                 </div>
-                <div className="text-right">
-                    <button type="button" className="mt-4 ml-auto" onClick={onClose}>
-                        완료
-                    </button>
+                <div className="flex flex-wrap justify-between">
+                    <div className="w-full md:w-1/3 px-4 mt-4">
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                label="Controlled picker"
+                                value={selectedDate}
+                                onChange={(newValue: any) => setSelectedDate(newValue)}
+                                renderInput={(params: any) => <TextField {...params} />}
+                                minDate={new Date()}
+                                maxDate={maxDate} />
+                        </LocalizationProvider>
+                    </div>
+                    <div className="w-full md:w-2/3 px-4 mt-4">
+                        <Grid container spacing={2}>
+                            {renderTimeSlotButtons()}
+                        </Grid>
+                    </div>
                 </div>
             </div>
-            {showCancelEventPopup && (
-                <CancelEventPopup event={selectedEvent} handleClose={handleClosePopup} />
-            )}
+            <div className="text-right">
+                <button type="button" className="bg-accent-400 text-slate-200 px-3 py-2 mr-2 rounded" onClick={onClose}>
+                    완료
+                </button>
+                {showCancelEventPopup && (
+                    <CancelEventPopup event={selectedEvent} handleClose={handleClosePopup} />
+                )}
+            </div>
         </div>
     );
 }

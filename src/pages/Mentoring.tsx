@@ -125,6 +125,12 @@ const Mentoring = () => {
 
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
+    // 비회원의 일정 요청 방지
+    if (!isLoggedIn) {
+      setMySchedulesAsMentor([]);
+      setMySchedulesAsMentee([]);
+      return;
+    }
     axiosInstance({
       url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,
       method: "get",
@@ -156,64 +162,67 @@ const Mentoring = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="flex mt-5 mb-3 justify-center">
-        <button
-          className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
-            currentPage == 1
-              ? "bg-accent-300 text-white border-accent-300"
-              : "border-accent-300 text-accent-300"
-          }`}
-          onClick={handleClickScheduler}
-        >
-          일정 관리
-        </button>
-        <button
-          className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
-            currentPage == 2
-              ? "bg-accent-300 text-white border-accent-300"
-              : "border-accent-300 text-accent-300"
-          }`}
-          onClick={handleClickRoomList}
-        >
-          전체 방 목록
-        </button>
-        {memberInfo.mentor && (
+      <div className="flex mt-5 mb-3 justify-center border-b border-gray-200 dark:border-gray-700">
+        <nav className="flex w-full space-x-2" aria-label="Tabs" role="tablist">
           <button
-            className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
-              currentPage == 3
-                ? "bg-accent-300 text-white border-accent-300"
-                : "border-accent-300 text-accent-300"
-            }`}
-            onClick={handleClickMentorSetting}
-          >
-            멘토 관리
+            type="button"
+            className={`hs-tab-active:font-semibold hs-tab-active:border-blue-900 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${currentPage === 1 ? 'text-blue-900 border-blue-900' : 'border-transparent'}`}
+            id="tabs-with-underline-item-1"
+            data-hs-tab="#tabs-with-underline-1"
+            aria-controls="tabs-with-underline-1"
+            role="tab"
+            onClick={() => handleClickScheduler()}>
+            일정 관리
           </button>
+          <button
+            type="button"
+            className={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${currentPage === 2 ? 'text-blue-900 border-blue-900' : 'border-transparent'}`}
+            id="tabs-with-underline-item-2"
+            data-hs-tab="#tabs-with-underline-2"
+            aria-controls="tabs-with-underline-2"
+            role="tab"
+            onClick={() => handleClickRoomList()}>
+            전체 목록
+          </button>
+          {memberInfo.mentor &&
+            <button
+              type="button"
+              className={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${currentPage === 3 ? 'text-blue-900 border-blue-900' : 'border-transparent'}`}
+              id="tabs-with-underline-item-3"
+              data-hs-tab="#tabs-with-underline-3"
+              aria-controls="tabs-with-underline-3"
+              role="tab"
+              onClick={() => handleClickMentorSetting()}>
+              멘토 관리
+            </button>
+          }
+        </nav>
+      </div>
+      <div>
+        {currentPage == 1 && (
+          <ShowSchedule
+            events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(
+              convertScheduleToEvents(mySchedulesAsMentee, false)
+            )}
+            isMentor={memberInfo.mentor}
+          />
+        )}
+
+        {currentPage == 2 && (
+          <LiveList
+            events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(
+              convertScheduleToEvents(mySchedulesAsMentee, false)
+            )}
+          ></LiveList>
+        )}
+        {currentPage == 3 && (
+          <MentorScheduling
+            events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(
+              convertScheduleToEvents(mySchedulesAsMentee, false)
+            )}
+          ></MentorScheduling>
         )}
       </div>
-      {currentPage == 1 && (
-        <ShowSchedule
-          events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(
-            convertScheduleToEvents(mySchedulesAsMentee, false)
-          )}
-          isMentor={memberInfo.mentor}
-        />
-      )}
-
-      {currentPage == 2 && (
-        <LiveList
-          events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(
-            convertScheduleToEvents(mySchedulesAsMentee, false)
-          )}
-        ></LiveList>
-      )}
-
-      {currentPage == 3 && (
-        <MentorScheduling
-          events={convertScheduleToEvents(mySchedulesAsMentor, true).concat(
-            convertScheduleToEvents(mySchedulesAsMentee, false)
-          )}
-        ></MentorScheduling>
-      )}
     </div>
   );
 };

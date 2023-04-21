@@ -182,7 +182,7 @@ const Mentoring = () => {
         >
           전체 방 목록
         </button>
-        {/* {memberInfo.mentor && ( */}
+        {memberInfo.mentor && (
           <button
             className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
               currentPage == 3
@@ -193,7 +193,7 @@ const Mentoring = () => {
           >
             멘토 관리
           </button>
-        {/* )} */}
+        )}
       </div>
       {currentPage == 1 && (
         <ShowSchedule

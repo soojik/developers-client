@@ -24,10 +24,10 @@ const RoomList: React.FC<RoomListProps> = ({ events, rooms }) => {
     const [showRoomInfo, setShowRoomInfo] = useState(false);
 
     const handleShowRoomInfo = (room: Room) => {
-        // if (memberId) {
-        setSelectedRoom(room);
-        setShowRoomInfo(!showRoomInfo);
-        // }
+        if (memberId) {
+            setSelectedRoom(room);
+            setShowRoomInfo(!showRoomInfo);
+        }
     };
 
     return (

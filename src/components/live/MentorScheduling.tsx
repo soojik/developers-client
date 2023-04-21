@@ -29,7 +29,7 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
 
     useEffect(() => {
         axiosInstance({
-            url: `${process.env.REACT_APP_DEV_URL}/api/room/mentor/${67}`,
+            url: `${process.env.REACT_APP_DEV_URL}/api/room/mentor/${memberId}`,
             method: 'get'
         }).then((res) => {
             setRoomList(res.data['data']);
@@ -55,8 +55,6 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
             })
         }
     }
-
-    let num = 1;
 
     return (
 

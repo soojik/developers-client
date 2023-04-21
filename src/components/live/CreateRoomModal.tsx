@@ -37,8 +37,8 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
         data: {
           title: title,
           description: description,
-          mentorId: 1,
-          mentorName: "김멘토"
+          mentorId: memberId,
+          mentorName: memberInfo.nickname
         },
       })
         .then((res) => {

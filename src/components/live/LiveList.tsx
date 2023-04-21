@@ -88,13 +88,13 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
                 <SearchBar onSearch={handleSearch}></SearchBar>
             </div>
             <div className="h-32 flex items-center">
-                {/* {memberInfo.mentor && ( */}
+                {memberInfo.mentor && (
                     <button
                         className="py-2 px-4 bg-transparent text-accent-300 font-semibold border border-accent-300 rounded hover:bg-accent-500 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
                         onClick={handleOpenModal}>
                         방 생성
                     </button>
-                {/* )} */}
+                )}
             </div>
             <div className='w-full'>
                 <RoomList events={events} rooms={displayedRooms}></RoomList>

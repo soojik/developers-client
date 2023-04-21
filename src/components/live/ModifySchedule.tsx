@@ -183,7 +183,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
                     <h2 className="text-lg font-bold mb-4">방 수정</h2>
                     <h3 className="italic mb-4">멘토링 일정을 추가해주세요 (한시간 단위)</h3>
                     <div>
-                        <Scheduler data={events} height={500}>
+                        <Scheduler data={events} height={400}>
                             <ViewState defaultCurrentDate={new Date()} />
                             <WeekView startDayHour={7} endDayHour={23} />
                             <Toolbar />

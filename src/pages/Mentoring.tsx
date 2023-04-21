@@ -129,11 +129,6 @@ const Mentoring = () => {
   }, [subscriptions, memberInfo.nickname, email]);
 
   useEffect(() => {
-    if (!memberInfo.mentor) {
-      setMySchedulesAsMentor([]);
-      setMySchedulesAsMentee([]);
-      return;
-    }
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     axiosInstance({
       url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,
@@ -170,8 +165,8 @@ const Mentoring = () => {
         <button
           className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
             currentPage == 1
-              ? "bg-blue-300 text-white border-blue-300"
-              : "border-blue-300 text-blue-300"
+              ? "bg-accent-300 text-white border-accent-300"
+              : "border-accent-300 text-accent-300"
           }`}
           onClick={handleClickScheduler}
         >
@@ -180,25 +175,25 @@ const Mentoring = () => {
         <button
           className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
             currentPage == 2
-              ? "bg-blue-300 text-white border-blue-300"
-              : "border-blue-300 text-blue-300"
+              ? "bg-accent-300 text-white border-accent-300"
+              : "border-accent-300 text-accent-300"
           }`}
           onClick={handleClickRoomList}
         >
           전체 방 목록
         </button>
-        {memberInfo.mentor && (
+        {/* {memberInfo.mentor && ( */}
           <button
             className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
               currentPage == 3
-                ? "bg-blue-300 text-white border-blue-300"
-                : "border-blue-300 text-blue-300"
+                ? "bg-accent-300 text-white border-accent-300"
+                : "border-accent-300 text-accent-300"
             }`}
             onClick={handleClickMentorSetting}
           >
             멘토 관리
           </button>
-        )}
+        {/* )} */}
       </div>
       {currentPage == 1 && (
         <ShowSchedule

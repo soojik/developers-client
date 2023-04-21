@@ -6,6 +6,7 @@ import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { EventProp } from 'pages/Mentoring';
+import { thumbnails } from './RoomList';
 
 export interface Room {
     mentoringRoomId: number,
@@ -28,7 +29,7 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
 
     useEffect(() => {
         axiosInstance({
-            url: `${process.env.REACT_APP_DEV_URL}/api/room/mentor/${memberId}`,
+            url: `${process.env.REACT_APP_DEV_URL}/api/room/mentor/${67}`,
             method: 'get'
         }).then((res) => {
             setRoomList(res.data['data']);
@@ -58,13 +59,23 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
     let num = 1;
 
     return (
-        <div className="flex flex-wrap justify-center" >
-            {roomList.map((room, idx) => (
-                <div key={num++} className="w-1/3 p-4 flex flex-col justify-center items-center">
-                    <h2 className="text-lg font-semibold mt-2" onClick={() => handleClickRoom(room)}>{idx + 1}{room.title}</h2>
-                    <h3 className=''>{room.description}</h3>
-                    <h3 className=''>{room.mentorName}</h3>
-                    <button className='bg-blue-500 text-white px-4 py-2 rounded-md' onClick={() => handleRemoveSchedule(room)}>삭제</button>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {roomList.map((room) => (
+                <div
+                    className="flex flex-col items-center bg-gray-100 p-4 m-4 rounded-lg"
+                    onClick={() => handleClickRoom(room)}
+                >
+                    <div>
+                        <img src={thumbnails[room.mentoringRoomId % 6]} alt="Thumbnail" />
+                    </div>
+                    <div className="text-lg font-semibold mt-2">
+                        {room.title}
+                    </div>
+                    <div className="flex justify-center items-center mt-2">
+                        <div className="flex items-center text-md text-slate-600">{room.mentorName}</div>
+                    </div>
+                    <button className='bg-accent-500 text-white px-4 my-2 rounded-md' onClick={() => handleRemoveSchedule(room)}>삭제</button>
                 </div>
             ))}
             {isModalOpen && (

@@ -24,7 +24,6 @@ const ResumeEdit = ({ active }: { active: any }) => {
   const [prevCareer, setPrevCareer] = useState<CareerProps[]>([]);
   const newSkill = skills.join(",");
   const newPos = position.join(",");
-
   const reqBody = {
     memberId: Number(memberId),
     introduce,
@@ -55,8 +54,12 @@ const ResumeEdit = ({ active }: { active: any }) => {
   }, []);
 
   const handleBtnClick = async () => {
-    const { data } = await MEMBER_API.patchRsm({ ...reqBody });
-    // console.log("전체저장 응답", data);
+    await MEMBER_API.patchRsm({ ...reqBody })
+      .then(({ data }) => {
+        // console.log("전체저장 응답", data);
+        alert("저장됐습니다.");
+      })
+      .catch((err) => alert("저장에 실패했습니다"));
   };
 
   return (
@@ -88,7 +91,7 @@ const ResumeEdit = ({ active }: { active: any }) => {
         직무
       </div>
       <MultiOptions
-        label={"직무"}
+        label={""}
         lists={positionList}
         state={position}
         setState={setPosition}

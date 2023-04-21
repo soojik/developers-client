@@ -73,7 +73,7 @@ const Carousel = () => {
         {/* Slider Btn */}
         <button
           type="button"
-          className="absolute flex items-center justify-center w-3 p-3 px-4 transition ease-in-out rounded-lg cursor-pointer delay-50 left-3 top-8 h-4/5 group-focus:outline-none bg-white/50 hover:bg-white/30"
+          className="absolute flex items-center justify-center w-10 sm:w-3 p-3 px-4 transition ease-in-out delay-50 rounded-3xl sm:rounded-lg left-3 sm:top-9 sm:h-4/5 top-[150px] bg-white/50 hover:bg-white/30"
           onClick={() => onSlide(-1)}
           data-carousel-prev
         >
@@ -82,7 +82,7 @@ const Carousel = () => {
 
         <button
           type="button"
-          className="absolute flex items-center justify-center w-3 p-3 px-4 transition ease-in-out rounded-lg cursor-pointer top-8 h-4/5 right-3 group-focus:outline-none bg-white/50 hover:bg-white/30 delay-50"
+          className="absolute flex items-center justify-center w-10 sm:w-3 p-3 px-4 transition ease-in-out delay-50 rounded-3xl sm:rounded-lg sm:top-9 sm:h-4/5 right-3 top-[150px] bg-white/50 hover:bg-white/30"
           onClick={() => onSlide(1)}
           data-carousel-next
         >

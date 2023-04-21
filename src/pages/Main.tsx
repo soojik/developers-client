@@ -1,70 +1,50 @@
-import { ROOMAPI } from "apis/apis";
+import { PROBLEM_API, ROOM_API } from "apis/apis";
 import Carousel from "components/Carousel";
 import MainList from "components/MainList";
 import { useEffect, useState } from "react";
 
 const Main = () => {
   const [roomTop, setRoomTop] = useState([]);
+  const [roomLikes, setRoomLikes] = useState([]);
+  const [problemNew, setProblemNew] = useState([]);
+  const [problemLikes, setProblemLikes] = useState([]);
   useEffect(() => {
-    const getRoom = async () => {
+    const getRoomNewest = async () => {
       const {
         data: { data },
-      } = await ROOMAPI.getRoomTop();
+      } = await ROOM_API.getRoomNew();
       setRoomTop(data);
     };
-    getRoom();
+    const getRoomLike = async () => {
+      /*  const {
+        data: { data },
+      } = await ROOM_API.getRoomLikes();
+      setRoomLikes(data); */
+    };
+    const getProblemNewest = async () => {
+      const {
+        data: { data },
+      } = await PROBLEM_API.getProblemNew();
+      setProblemNew(data.slice(0, 5));
+    };
+    const getProblemLike = async () => {
+      const {
+        data: { data },
+      } = await PROBLEM_API.getProblemLikes();
+      setProblemLikes(data.slice(0, 5));
+    };
+    getRoomNewest();
+    // getRoomLike();
+    getProblemNewest();
+    getProblemLike();
   }, []);
-
-  // 최근 등록된 문제 더미데이터
-  const problems = [
-    {
-      problemId: 1,
-      writer: "유저1",
-      type: "answer",
-      views: 0,
-      likes: 0,
-      title: "제목입니다",
-    },
-    {
-      problemId: 2,
-      writer: "유저2",
-      type: "choice",
-      views: 0,
-      likes: 0,
-      title: "제목입니다2",
-    },
-    {
-      problemId: 3,
-      writer: "유저3",
-      type: "answer",
-      views: 0,
-      likes: 0,
-      title: "제목입니다3",
-    },
-    {
-      problemId: 4,
-      writer: "유저4",
-      type: "answer",
-      views: 0,
-      likes: 0,
-      title: "제목입니다4",
-    },
-    {
-      problemId: 5,
-      writer: "유저5",
-      type: "choice",
-      views: 0,
-      likes: 0,
-      title: "제목입니다5",
-    },
-  ];
 
   return (
     <div className="md:w-[90%] md:m-auto">
       <Carousel />
       <div className="flex flex-col w-full md:grid md:grid-cols-2 md:gap-10 ">
         <MainList
-          problems={problems}
+          problems={problemNew}
           option="problem"
           sectionHeader={"최근 등록된 문제"}
         />
@@ -74,9 +54,9 @@ const Main = () => {
           sectionHeader={"최근 개설된 채팅방"}
         />
         <MainList
-          problems={problems}
+          problems={problemLikes}
           option="problem"
-          sectionHeader={"WEEKLY SOLVED BEST"}
+          sectionHeader={"이번 주 추천 문제"}
         />
         <MainList
           rooms={roomTop}

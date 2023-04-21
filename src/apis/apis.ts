@@ -31,8 +31,22 @@ export const MEMBER_API = {
     });
   },
 };
-export const ROOMAPI = {
-  getRoomTop: () => {
+export const ROOM_API = {
+  getRoomNew: () => {
     return axiosInstance({ method: "GET", url: `/api/room/top` });
+  },
+};
+export const PROBLEM_API = {
+  getProblemNew: () => {
+    return axiosInstance({
+      method: "GET",
+      url: `api/problem/list?order=createdTime`,
+    });
+  },
+  getProblemLikes: () => {
+    return axiosInstance({
+      method: "GET",
+      url: `api/problem/list?order=likes`,
+    });
   },
 };

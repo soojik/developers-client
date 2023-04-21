@@ -3,15 +3,22 @@ import { Link } from "react-router-dom";
 import ViewIcon from "./icons/ViewIcon";
 import LikesIcon from "./icons/LikesIcon";
 import RightArrowIcon from "./icons/RightArrowIcon";
+import Tags from "./Tags";
 
 interface MainListProps {
-  problemId: number;
-  writer: string;
-  type: string;
-  views: number;
+  answer: string;
+  answerCandidate: string[];
+  content: string;
+  createdTime: string;
+  hashTag: string[];
+  level: string;
   likes: number;
+  views: number;
+  problemId: number;
+  pathname?: string | null;
   title: string;
-  hashTag?: string;
+  type: string;
+  writer: string;
 }
 interface RoomsProps {
   createdAt: string;
@@ -54,8 +61,9 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
                 key={idx}
                 className="h-[100px] hover:bg-slate-100 hover:bg-opacity-60 p-3 border-b last:border-b-0 flex justify-between"
               >
-                <div className="flex flex-col justify-between">
+                <div className="flex flex-col w-[90%] justify-around">
                   <div className="text-md font-semibold">{el.title}</div>
+                  <Tags tagList={el.hashTag} />
                   <div className="flex justify-between">
                     <div className="flex items-center justify-between">
                       <div className="flex">
@@ -74,7 +82,7 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-center items-center text-sm">
+                <div className="flex justify-center items-center text-sm min-w-[40px]">
                   {el.type === "answer" ? "주관식" : "객관식"}
                 </div>
               </Link>

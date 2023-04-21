@@ -102,23 +102,25 @@ const Mentoring = () => {
   useEffect(() => {
     const eventSources: EventSource[] = [];
 
-    subscriptions.forEach((subscription: { mentorName: any }) => {
-      const es = new EventSource(
-        `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
-      );
-      es.addEventListener("push", (e) => {
-        new Notification(e.data);
-        console.log(e.data);
+    if (!subscriptions.length) {
+      subscriptions.forEach((subscription: { mentorName: any }) => {
+        const es = new EventSource(
+          `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
+        );
+        es.addEventListener("push", (e) => {
+          new Notification(e.data);
+          console.log(e.data);
+        });
+
+        eventSources.push(es);
       });
 
-      eventSources.push(es);
-    });
+      setSse(eventSources);
 
-    setSse(eventSources);
-
-    return () => {
-      eventSources.forEach((es) => es.close());
-    };
+      return () => {
+        eventSources.forEach((es) => es.close());
+      };
+    }
   }, [subscriptions, memberInfo.nickname, memberInfo.email]);
 
   useEffect(() => {

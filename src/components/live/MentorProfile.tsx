@@ -34,8 +34,11 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
 
     axiosInstance({
       url: `${endpoint}`,
-      data: `${notifybody}`,
+      data: notifybody,
       method: subscribed ? "DELETE" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then(() => {
         setSubscribed(!subscribed);

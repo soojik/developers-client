@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
@@ -14,6 +14,7 @@ import ConfirmBtn from "components/buttons/CofirmBtn";
 import { removeLocalStorage } from "libs/localStorage";
 import { axiosInstance } from "apis/axiosConfig";
 import { MEMBER_API } from "apis/apis";
+import PencilIcon from "components/icons/PencilIcon";
 
 const MyPage = () => {
   const { memberId } = useParams();
@@ -29,12 +30,21 @@ const MyPage = () => {
 
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
+  const [imgFile, setImgFile] = useState<File>();
+  const [avatar, setAvatar] = useState(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+  );
+  const [imgPreview, setImgPreview] = useState(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [modalOpened, setModalOpened] = useState(false);
   const [pwdEditOpend, setPwdEditOpend] = useState(false);
   const [nicknameEditOpend, setNicknameEditOpend] = useState(false);
   const [adressEditOpend, setAdressEditOpend] = useState(false);
   const [mentorEditOpend, setMentorEditOpend] = useState(false);
+  const [avatarEditOpend, setAvatarEditOpend] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -43,6 +53,11 @@ const MyPage = () => {
         ...memberInfo,
         memberInfo: userData.data?.data,
       });
+      // console.log("유저조회", userData.data?.data);
+      if (userData.data?.data?.profileImageUrl) {
+        setAvatar(userData.data?.data?.profileImageUrl);
+        setImgPreview(userData.data?.data?.profileImageUrl);
+      }
     };
     getUser();
   }, [nickname, address]);
@@ -50,6 +65,52 @@ const MyPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const onMenuClick = (idx: number): any => {
     setActiveIndex(idx);
+  };
+
+  const handelImgChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.files![0] !== undefined) {
+      const uploadFiles = e.target.files![0];
+      /* 모달 이미지 미리보기 */
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.readyState === 2 && typeof reader.result === "string")
+          setImgPreview(reader.result);
+      };
+      reader.readAsDataURL(uploadFiles);
+
+      /* 이미지 state 저장 */
+      const formData = new FormData();
+      if (uploadFiles) formData.append("file", uploadFiles);
+      setImgFile(uploadFiles);
+    }
+  };
+
+  const handleImgSave = async () => {
+    if (imgFile !== undefined) {
+      const formData = new FormData();
+      formData.append("file", imgFile);
+
+      /* 이미지 전송 */
+      try {
+        await axiosInstance.post(`/api/attach/profile`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          params: { memberId },
+        });
+        /* 프로필 이미지 미리보기 */
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (reader.readyState === 2 && typeof reader.result === "string")
+            setAvatar(reader.result);
+        };
+        reader.readAsDataURL(imgFile);
+        alert("이미지가 등록됐습니다");
+        setAvatarEditOpend(false);
+        setModalOpened(false);
+      } catch (err) {
+        alert(err || "이미지 등록에 실패했습니다");
+      }
+    }
   };
 
   const editUserInfo = async (path: string, data: string) => {
@@ -85,6 +146,7 @@ const MyPage = () => {
     else if (path === "address") setAdressEditOpend(true);
     else if (path === "password") setPwdEditOpend(true);
     else if (path === "mentor") setMentorEditOpend(true);
+    else if (path === "avatar") setAvatarEditOpend(true);
     setModalOpened(true);
   };
 
@@ -126,8 +188,7 @@ const MyPage = () => {
         // console.log(res.data);
       })
       .catch((err) => {
-        alert("멘토 등록에 실패했습니다");
-        // console.log(err);
+        alert(err || "멘토 등록에 실패했습니다");
       });
   };
 
@@ -136,8 +197,28 @@ const MyPage = () => {
       {/* 왼쪽 - 내정보 관리 */}
       <div className=" sm:bg-zinc-50 sm:rounded-3xl sm:mr-4 sm:shadow-lg md:sticky sm:top-20 sm:h-fit sm:p-4 border-b-2 mb-20 pb-14">
         <div className="flex pb-4 mb-4 border-b ">
-          <div className="w-[150px] h-[100px] rounded-3xl bg-slate-200"></div>
-          <div className="flex flex-col justify-between px-3 text-sm w-full">
+          <div className="relative w-[35%] h-[100px]">
+            <img
+              className="rounded-3xl bg-slate-200 h-[100px] w-full object-cover"
+              src={avatar}
+              alt="profile image"
+            />
+            <button
+              className="absolute bottom-0 right-[-8px] p-2 rounded-full bg-blue-500 hover:bg-blue-600"
+              onClick={() => handleUserInfoModal("avatar")}
+            >
+              <PencilIcon fill="white" width={18} height={18} />
+            </button>
+            <input
+              className="hidden bg-cover"
+              type="file"
+              name="profile_img"
+              accept="image/jpg,impge/png,image/jpeg"
+              ref={fileInputRef}
+              onChange={handelImgChange}
+            />
+          </div>
+          <div className="flex flex-col w-[65%] justify-between px-3 text-sm">
             <div>
               <span className="text-accent-200 font-bold">{`<칭호/>`}</span>
               <span> {`${memberInfo.memberInfo.nickname}`}</span>
@@ -239,9 +320,36 @@ const MyPage = () => {
                   setAdressEditOpend(false);
                   setPwdEditOpend(false);
                   setMentorEditOpend(false);
+                  setAvatarEditOpend(false);
                 }}
               />
             </div>
+            {avatarEditOpend && (
+              <div className="h-[350px]">
+                <div className="flex font-bold text-xl justify-center mt-2 mb-8">
+                  프로필 사진 변경
+                </div>
+                <img
+                  className="rounded-3xl bg-slate-200 h-[200px] w-full bg-cover cursor-pointer flex justify-center items-center text-slate-400 hover:bg-slate-300"
+                  src={imgPreview}
+                  alt="profile image"
+                  onClick={() => fileInputRef.current!.click()}
+                />
+                <input
+                  className="hidden bg-cover"
+                  type="file"
+                  name="profile_img"
+                  accept="image/jpg,impge/png,image/jpeg"
+                  ref={fileInputRef}
+                  onChange={handelImgChange}
+                />
+                <div className="flex justify-end mt-6">
+                  <ConfirmBtn type="submit" onClick={handleImgSave}>
+                    저장
+                  </ConfirmBtn>
+                </div>
+              </div>
+            )}
             {mentorEditOpend && (
               <div className="h-[200px]">
                 <div className="flex font-bold text-xl justify-center mt-2 mb-8">

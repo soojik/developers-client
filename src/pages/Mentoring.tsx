@@ -27,11 +27,6 @@ export interface EventProp {
   owner: String; // 방 주인 확인
 }
 
-/**
- * 테스트를 위한 상태값
- */
-const email = ""; //테스트 이메일 계정
-
 const convertScheduleToEvents = (
   schedules: ScheduleProps[],
   isMentor: Boolean
@@ -110,7 +105,7 @@ const Mentoring = () => {
     if (!subscriptions.length) {
       subscriptions.forEach((subscription: { mentorName: any }) => {
         const es = new EventSource(
-          `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${email}`
+          `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
         );
         es.addEventListener("push", (e) => {
           new Notification(e.data);
@@ -126,7 +121,7 @@ const Mentoring = () => {
         eventSources.forEach((es) => es.close());
       };
     }
-  }, [subscriptions, memberInfo.nickname, email]);
+  }, [subscriptions, memberInfo.nickname, memberInfo.email]);
 
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,

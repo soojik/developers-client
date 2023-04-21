@@ -13,6 +13,8 @@ pipeline {
     k8sGitHttpAddress = 'https://github.com/start-dream-team/manifest.git'
     k8sGitSshAddress = 'git@github.com:start-dream-team/manifest.git'
     REACT_APP_DEV_URL = "https://diveloper.site"
+    REACT_APP_AWS_ACCESS_KEY_ID = ${env.REACT_APP_AWS_ACCESS_KEY_ID}
+    REACT_APP_AWS_ACCESS_SECRET_KEY = ${env.REACT_APP_AWS_ACCESS_SECRET_KEY}
   }
   stages {
     stage('Checkout Github') {

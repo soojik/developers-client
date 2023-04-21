@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import TitleBox from "./TitleBox";
 import ContentBox from "./ContentBox";
 import LevelDropdown from "./LevelDropdown";
@@ -9,40 +9,51 @@ import ProblemRegister from "pages/ProblemRegister";
 import Submit from "./SubmitButton";
 import SubmitButton from "./SubmitButton";
 import PointBox from "./PointBox";
-import FileUpload from "./FileUpload";
 import HashTagBox from "./HashTagBox";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { axiosInstance } from "apis/axiosConfig";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { LocalActivity } from "@mui/icons-material";
 import { ca } from "date-fns/locale";
+import { sub } from "date-fns";
+import { json } from "stream/consumers";
+import { error } from "console";
+import S3Box from "components/S3Box";
+import { useRecoilValue } from "recoil";
+import { memberInfoState } from "recoil/userState";
+
 
 const ProblemRegisterBox = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [inputTitle, setInputTitle] = useState(location?.state ? location?.state?.title :"");
-  const [inputContent, setContent] = useState("");
+  const [inputContent, setContent] = useState(location?.state ? location?.state?.content :"");
   const [isObjective, setIsObjective] = useState(false);
   const [isSubjective, setIsSubjective] = useState(false);
-  const [point, setInputPoint] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
-  const [selectedValue, setSelectedValue] = useState("");
-  const [hashTag, setHashTag] = useState<string[]>([]);
+  const [point, setInputPoint] = useState("10 Point");
+  const [files, setFiles] = useState<File[]>(location?.state ? location?.state?.pathname : []);
+  const [selectedValue, setSelectedValue] = useState(location?.state ? location?.state?.level :"bronze");
+  const [hashTag, setHashTag] = useState<string[]>(location?.state ? location?.state?.hashTag :[]);
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
-
+  const [isValue,setIsValue]= useState(false);
+  const [s3File , setS3File] = useState('');
+  
   const [isHashTag, setIsHashTag] = useState(false);
-  const [subjectiveValue, SetSubjectiveValue] = useState("");
-  const [answers, setAnswers] = useState<string[]>(Array(4).fill(""));
+  const [subjectiveValue, SetSubjectiveValue] = useState(location?.state ? location?.state?.answer : "");
+  const [answers, setAnswers] = useState<string[]>(location?.state ? location?.state?.answerCandidate :Array(4).fill(""));
+
+  const [realAnswer, setRealAnswer] = useState<string>(location?.state ? location?.state?.answer : "");
   const [selectedDropDownValue, setSelectedDropDownValue] = useState("");
+  const [s3Upload, setS3Upload] = useState(false);
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
 
-
-  console.log("location",location);
 
   const handleHashTagClick = (index: Number, item: string) => {
     if (hashTag.includes(item)) {
       return alert("이미 해쉬태그가 등록이되어있습니다.");
     } else {
-      setHashTag([...hashTag, item]);
+      setHashTag([...hashTag, item]); 
       setIsHashTag(true);
     }
   };
@@ -53,9 +64,7 @@ const ProblemRegisterBox = () => {
     console.log(hashTag);
   };
 
-  const handleFileChange = (newFiles: File[]) => {
-    setFiles(newFiles);
-  };
+  
   const handlePointChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputPoint(event.target.value);
   };
@@ -70,6 +79,12 @@ const ProblemRegisterBox = () => {
     setContent(event.target.value);
   };
 
+  const handleRealAnswerChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRealAnswer(event.target.value);
+  };
+
   const handleDropDownChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -79,62 +94,120 @@ const ProblemRegisterBox = () => {
   const handleCheckboxChange = (value: boolean) => {
     setIsObjective(!value);
   };
+ 
 
   const handleSubmit = async () => {
-    let subjectiveData = {
-      "type": "choice",
-      "writer": "Taeho",
-      "title": "ㅂㅈㄷㄱ",
-      "content": "Spring Boot의 장/단점 중 잘못된 것은 무엇인지 4가지 중에 골라주세요.",
-      "answer": "1",
-      "level": "bronze",
-      "tag": null,
-      "views": 259,
-      "likes": 63,
-      "answerCandidate" :["1"],
-      "hashTag": "CS,FrontEnd,BackEnd,Cloud"
+    if (s3Upload) {
+      window.alert("파일 업로드를 먼저 눌러주세요");
+      return;
+    }
 
+    const answerArray = ["1","2","3","4"];
+    if(!isSubjective){
+    if(!answerArray.includes(realAnswer)){
+      window.alert("정답 형식을 맞춰주세요.(1,2,3,4) 중 하나만 선택하세요.")
+      return
+    }}
+    let subjectiveData = {
+      type : isSubjective ? "answer" : "choice",
+      writer: memberInfo.nickname,
+      title: inputTitle,
+      content: inputContent,
+      answer: !isSubjective ? realAnswer : subjectiveValue,
+      views:0,
+      likes:0,
+      level: selectedValue,
+      answerCandidate: !isSubjective ? answers:[],
+      hashTag : hashTag.join(','),
+      pathname: s3File
       // subjectiveAnswer: subjectiveValue,
       // objectiveAnswer: answers
       // objectiveAnswer: isObjective ? ObjectiveAnswer : []/
     };
+
     try {
-      const response = await axios.post('http://localhost:9001/api/problem',subjectiveData)
-    console.log(response); 
-
+      const response = await axiosInstance.post(`/api/problem`,subjectiveData,{headers: {"Content-Type" : "application/json"}}).then()
+      window.alert("문제 등록이 완료되었습니다.");
+      navigate(`/problem`)
+    console.log(`response`, response); 
     }
-    catch(error){
-      // if (axios.isAxiosError(error)) {  
-      //   console.error("Axios error:", error.message, "Code:", error.code);
-      // } else {
-      //   console.error("Unknown error:", error);
-      // }
-      console.log(error);
+    catch(error: any){
+        console.log(typeof error, error.response.data.detail)
+        window.alert(error.response.data.detail)
+        
     };
-
+ 
     console.log(subjectiveData);
   };
+  
   const updateSubmit = async() => {
+    if (s3Upload) {
+      window.alert("파일 업로드를 먼저 눌러주세요");
+      return;
+    }
+
+    const answerArray = ["1","2","3","4"];
+    if(!isSubjective){
+    if(!answerArray.includes(realAnswer)){
+      window.alert("정답 형식을 맞춰주세요.(1,2,3,4) 중 하나만 선택하세요.")
+      return
+    }}
+    
     let updatedata = {
-      problemId : location.state.problemId,
-      writer : location.state.writer,
+      problemId: location.state.problemId,
+      type : isSubjective ? "answer" : "choice",
+      writer: memberInfo.nickname ,
       title: inputTitle,
       content: inputContent,
-      answerCandidate: !isSubjective ? answers : [],
-      level : selectedValue,
-      tag : hashTag
+      answer: !isSubjective ? realAnswer : subjectiveValue,
+      level: selectedValue,
+      answerCandidate: !isSubjective ? answers:[],
+      hashTag : hashTag.join(","),
+      pathname: s3File
+
     }
-    console.log(updatedata)
-    try{const update = await axios.patch("http://localhost:9001/api/problem",updatedata)
-    window.alert("수정이 완료되었습니다.")
-    console.log("수정")}
-    catch(error){
-      window.alert("수정 권한이 없습니다. 로그인을 다시 시도해주세요")
+    
+    try{
+      const update = await axiosInstance.patch("/api/problem",updatedata)
+      if(update.status===200){
+        window.alert("수정이 완료되었습니다.")
+        navigate(`/problem`)
+      }else{
+        window.alert("수정 실패");
+        navigate(`/problem`)
+      }
+    console.log(update);
+  }
+    catch(error : any){
+      window.alert(error.response.data.detail)
     }
   }
-  const deleteSubmit = () => {
+  const deleteSubmit = async() => {
+    try{const deleted = await axiosInstance.delete(`/api/problem/${location.state.problemId}`)
+    window.alert("삭제가 완료되었습니다.")
+    navigate(`/problem`)
     console.log("삭제")
+  }catch(error){
+    window.alert("삭제 권한이 없습니다. 로그인을 다시 시도해주세요.")
   }
+  }
+  useEffect(() => {
+    if (location?.state?.type === "answer") {
+      setIsSubjective(true);
+    } else {
+      setIsSubjective(false);
+    }
+  }, [location]);
+
+  const s3upload = (s3select: string) => {
+    setS3File(s3select);
+    
+};
+  const fileSelect = (uploadCheck: boolean) =>{
+    setS3Upload(uploadCheck);
+  }
+
+  
 
   return (
     <>
@@ -152,10 +225,9 @@ const ProblemRegisterBox = () => {
         </div>
         <PointBox point={point} handlePointChange={handlePointChange} />
       </div>
-
       <div className=" bg-gray-200 px-20 py-10 rounded">    
       <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
-      {isHashTag && (
+      {/* {isHashTag && ( */}
         <div className="flex ">
           {hashTag.map((item, index) => (
             <div>
@@ -173,7 +245,7 @@ const ProblemRegisterBox = () => {
             </div>
           ))}
         </div>
-      )}
+      {/* )} */}
       
 
       <div></div>
@@ -182,24 +254,38 @@ const ProblemRegisterBox = () => {
         handleContentChange={handleContentChange}
       />
   </div>
-      {console.log(isSubjective)}
       {isSubjective ? (
         <SubjectiveAnswer
           children={subjectiveValue}
           onChange={(e) => {
+            
             SetSubjectiveValue(e.target.value);
+          
           }}
         />
       ) : (
-        <ObjectiveAnswer
-          answers={answers}
-          setAnswers={setAnswers}
-          Count={4}
-          onChange={() => {}}
-        />
+        <div>
+          <ObjectiveAnswer
+            answers={answers}
+            setAnswers={setAnswers}
+            Count={4}
+            onChange={() => {}}
+          />
+          정답 : 
+          <input
+            placeholder="번호를 입력하세요.(1,2,3,4)"
+            type="text"
+            className="border border-gray-300 px-2 py-1"
+            value={realAnswer}
+            onChange={(e) => handleRealAnswerChange(e)}
+          />
+        </div>
       )}
       <div>
-        <FileUpload files={files} onFileChange={handleFileChange} />
+      <S3Box 
+          s3select={s3upload}
+          uploadCheck = {fileSelect}
+                  />
       </div>
       {
  

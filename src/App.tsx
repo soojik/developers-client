@@ -11,11 +11,10 @@ import MyPage from "pages/MyPage";
 import ProblemRegister from "pages/ProblemRegister";
 import ProblemSolved from "pages/ProblemSolved";
 
-import ProblemDetail from "pages/ProblemDetail";
-import ProblemDetailClientob from "components/problem/ClientDetailob";
-import ProblemDetailClientsb from "components/problem/ClientDetailsb";
-import ProblemDetailObjective from "components/problem/ProblemDetailObjective";
-import ProblemDetailSubjective from "components/problem/ProblemDetailSubjective";
+
+
+
+
 
 const App: React.FC = () => {
   return (
@@ -31,12 +30,6 @@ const App: React.FC = () => {
             <Route path="/problem" element={<Problem />} />
             <Route path="/mentoring" element={<Mentoring />} />
             <Route path="/problem/register" element={<ProblemRegister />} />
-
-
-            {/* <Route
-              path="/problem/:problemId/:nickname"
-              element={<ProblemDetail />}
-            /> */}
              <Route
             path="/problem/detail" element={<ProblemSolved />} />
             

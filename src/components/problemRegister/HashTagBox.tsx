@@ -31,5 +31,5 @@ export default HashTagBox;
 
 let hashTagBox=[
 
-    'cs','backend','frontend','cloudschool'
+    'React','CSS','Vue.js','JavaScript','TypeScript','Node.js','HTML','Angular','BackEnd','Java','Cloud'
 ]

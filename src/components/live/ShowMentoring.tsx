@@ -9,45 +9,51 @@ import { axiosInstance } from "apis/axiosConfig";
 interface ShowMentoringProps {
   mySchedule: EventProp[];
   room: Room;
-  handleClose : () => void,
+  handleClose: () => void,
 }
 
-const ShowMentoring: React.FC<ShowMentoringProps> = ({mySchedule, room, handleClose}) => {
+const ShowMentoring: React.FC<ShowMentoringProps> = ({ mySchedule, room, handleClose }) => {
   const [showCalendarPopup, setShowCalendarPopup] = useState(false); // 다음 버튼을 누를 때
   const [roomSchedules, setRoomSchedules] = useState<ScheduleProps[]>([]);
 
   let newSchedule: any[] = [];
   const handleShowSchedule = () => {
-  // 방 아이디로 스케쥴 조회
-  axiosInstance.get(`${process.env.REACT_APP_DEV_URL}/api/schedules/${room.mentoringRoomId}`)
-  .then(res=>{
-    setRoomSchedules(res.data.data)
-  })
-  .catch(err=>console.log(err));
+    // 방 아이디로 스케쥴 조회
+    axiosInstance.get(`${process.env.REACT_APP_DEV_URL}/api/schedules/${room.mentoringRoomId}`)
+      .then(res => {
+        setRoomSchedules(res.data.data)
+      })
+      .catch(err => console.log(err));
   }
 
-  if(roomSchedules.length !== 0){
-    newSchedule = roomSchedules.filter(roomSchedule => 
+  if (roomSchedules.length !== 0) {
+    newSchedule = roomSchedules.filter(roomSchedule =>
       !mySchedule.some(my => my.startDate.toString() === roomSchedule.startDate)
-    );  
+    );
   }
 
   return (
     <div>
-        <Popup>
-          {!showCalendarPopup ? (
-            <div className="roomDescription">
-                <h2 className="text-2xl pb-1 border-b border-gray-300"> {room.title}</h2>
-              <p className='py-3'>{room.description}</p>
-              <MentorProfile  name={room.mentorName} bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!" />
-              {/* imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" */}
-              <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
-              <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 rounded" onClick={() => {setShowCalendarPopup(!showCalendarPopup); handleShowSchedule()}}>Next</button>
+      <Popup>
+        {!showCalendarPopup ? (
+          <div className="roomDescription">
+            <div className="flex text-sm items-center text-gray-400">
+              제목
             </div>
-          ) : (
-            <CalendarPopUp events={newSchedule} handleClose={ ()=>{handleClose;window.location.reload();} } />
-          )}
-        </Popup>
+            <h2 className="text-2xl pb-1 border-b border-gray-300"> {room.title}</h2>
+            <div className="flex text-sm items-center text-gray-400 mt-3">
+              소개글
+            </div>
+            <p className='py-2 border-b border-gray-300 mb-3'>{room.description}</p>
+            <MentorProfile name={room.mentorName} bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!" />
+            {/* imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" */}
+            <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
+            <button className="bg-blue-200 hover:bg-blue-300 px-3 py-2 rounded" onClick={() => { setShowCalendarPopup(!showCalendarPopup); handleShowSchedule() }}>Next</button>
+          </div>
+        ) : (
+          <CalendarPopUp events={newSchedule} handleClose={() => { handleClose; window.location.reload(); }} />
+        )}
+      </Popup>
     </div>
   );
 }

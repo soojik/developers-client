@@ -50,8 +50,8 @@ const MentorProfile: React.FC<MentorProfileProps> = ({  bio, name}) => {
         className="ml-2 bg-blue-200 hover:bg-blue-300 px-1 py-2 mr-3 rounded"
         onClick={handleSubscription} >{subscribed ? '구독취소' : '구독'}</button>
       </div>
-      <h2>멘토 연혁</h2>
-      <p>{bio}</p>
+      {/* <h2>멘토 연혁</h2>
+      <p>{bio}</p> */}
     </div>
   );
 };

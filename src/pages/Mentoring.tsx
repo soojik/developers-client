@@ -165,8 +165,8 @@ const Mentoring = () => {
         <button
           className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
             currentPage == 1
-              ? "bg-blue-300 text-white border-blue-300"
-              : "border-blue-300 text-blue-300"
+              ? "bg-accent-300 text-white border-accent-300"
+              : "border-accent-300 text-accent-300"
           }`}
           onClick={handleClickScheduler}
         >
@@ -175,8 +175,8 @@ const Mentoring = () => {
         <button
           className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
             currentPage == 2
-              ? "bg-blue-300 text-white border-blue-300"
-              : "border-blue-300 text-blue-300"
+              ? "bg-accent-300 text-white border-accent-300"
+              : "border-accent-300 text-accent-300"
           }`}
           onClick={handleClickRoomList}
         >
@@ -186,8 +186,8 @@ const Mentoring = () => {
           <button
             className={`flex-1 py-2 px-4 border text-center w-32 md:w-40 lg:w-32 rounded ${
               currentPage == 3
-                ? "bg-blue-300 text-white border-blue-300"
-                : "border-blue-300 text-blue-300"
+                ? "bg-accent-300 text-white border-accent-300"
+                : "border-accent-300 text-accent-300"
             }`}
             onClick={handleClickMentorSetting}
           >

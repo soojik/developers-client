@@ -18,7 +18,7 @@ const SearchBar: React.FC<Props> = ({ onSearch }) => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit} className="w-full flex">
+    <form onSubmit={handleFormSubmit} className="w-full flex justify-center">
       <input
         type="text"
         placeholder="검색어를 입력해주세요."
@@ -28,7 +28,7 @@ const SearchBar: React.FC<Props> = ({ onSearch }) => {
       />
       <button
         type="submit"
-        className="bg-blue-600 text-white py-2 px-4 rounded-lg ml-2"
+        className="text-white py-2 px-4 ml-2 rounded-md text-slate-50 bg-accent-400 hover:bg-accent-500"
       >
         Search
       </button>

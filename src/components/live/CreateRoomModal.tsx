@@ -3,6 +3,7 @@ import CreateScheduleModal from './CreateScheduleModal';
 import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import Popup from './PopUp';
 
 type CreateRoomModalProps = {
   onClose: () => void;
@@ -17,7 +18,7 @@ interface EventProp {
 };
 
 const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) => {
-  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -37,7 +38,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
           title: title,
           description: description,
           mentorId: memberId,
-          mentorName:memberInfo.nickname
+          mentorName: memberInfo.nickname
         },
       })
         .then((res) => {
@@ -60,45 +61,43 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, events }) =>
   return (
     <div>
       {step === 1 && (
-        <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-10">
-          <div className="bg-white p-5 rounded-lg max-w-4xl h-500 overflow-y-auto">
-            <h2 className="text-lg font-bold mb-4">방 생성</h2>
-            <form>
-              <div className="mb-4">
-                <label htmlFor="title" className="block mb-2 font-bold">
-                  방 제목
-                </label>
-                <input
-                  id="title"
-                  type="text"
-                  className="w-full border-gray-300 rounded-md px-4 py-2"
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="description" className="block mb-2 font-bold">
-                  방 소개글
-                </label>
-                <input
-                  id="description"
-                  type="text"
-                  className="w-full border-gray-300 rounded-md px-4 py-2"
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex justify-end">
-                <button type='button' className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={handleNextClick}>
-                  스케쥴 추가
-                </button>
-                <button type="button" className="mr-4" onClick={onClose}>
-                  취소
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <Popup>
+          <h2 className="text-lg font-bold mb-4">방 생성</h2>
+          <form>
+            <div className="mb-4">
+              <label htmlFor="title" className="block mb-2 font-bold">
+                방 제목
+              </label>
+              <input
+                id="title"
+                type="text"
+                className="w-full border-gray-300 rounded-md px-4 py-2"
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="description" className="block mb-2 font-bold">
+                방 소개글
+              </label>
+              <input
+                id="description"
+                type="text"
+                className="w-full border-gray-300 rounded-md px-4 py-2"
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex justify-end">
+              <button type='button' className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={handleNextClick}>
+                스케쥴 추가
+              </button>
+              <button type="button" className="mr-4" onClick={onClose}>
+                취소
+              </button>
+            </div>
+          </form>
+        </Popup>
       )}
       {step === 2 && <CreateScheduleModal onClose={onClose} events={events} mentoringRoomId={mentoringRoomId} />}
     </div>

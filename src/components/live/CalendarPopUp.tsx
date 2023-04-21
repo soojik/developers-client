@@ -58,7 +58,10 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({ events, handleClose }) =>
   return (
     <Popup>
       <div className="calendarPopup">
-        <Scheduler data={events} height={700}>
+        <div className='italic mb-4'>
+          해당 멘토링이 신청 가능한 시간대 목록입니다.
+        </div>
+        <Scheduler data={events} height={500}>
           <ViewState currentDate={currentDate} onCurrentDateChange={currentDateChange} />
           <WeekView startDayHour={7} endDayHour={23} cellDuration={60} /> {/* 한 시간 간격으로 변경 */}
           <Toolbar />

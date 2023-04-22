@@ -1,16 +1,22 @@
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { subscriptionState } from "../../recoil/subscriptionState";
 import { axiosInstance } from "apis/axiosConfig";
 import { memberInfoState } from "recoil/userState";
 
 interface MentorProfileProps {
-  // imgUrl: string;
   bio: string;
   name: string;
   roomName: string;
   startTime: string;
+}
+
+export interface Subscription {
+  mentorName: string;
+  userName: string;
+  email: string;
+  roomName: string;
+  startTime?: string;
 }
 
 const MentorProfile: React.FC<MentorProfileProps> = ({
@@ -20,47 +26,36 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
   startTime,
 }) => {
   const { memberInfo, memberId } = useRecoilValue(memberInfoState);
-  const [mentors, setMentors] = useState<string[]>([]);
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
   const isSelf = memberInfo.nickname === name; // 본인 구독 불가
 
-  const subscribed = mentors.includes(name); // 멘토 여부 판별
-
-  // 중복 여부 판별
-  const isMentorExists = (mentorName: string) => {
-    if (Array.isArray(mentors)) {
-      return mentors.some((name) => name === mentorName);
-    }
-    return false;
-  };
-
-  // 서버에서 구독 목록을 가져와 사용자가 이미 구독한 멘토인지 확인하고 구독 상태를 설정
   useEffect(() => {
-    const getSub = async () => {
-      await axiosInstance
-        .get(
-          `${process.env.REACT_APP_DEV_URL}/api/subscriptions?userName=${memberInfo.nickname}`
-        )
-        .then((res) => {
-          for (let subscribe of subscriptions) {
-            setMentors(subscribe.mentorName);
-          }
-        })
-        .catch((err) => console.log(err.data));
-    };
+    setSubscribed(
+      subscriptions.some(
+        (subscription: Subscription) => subscription.mentorName === name
+      )
+    );
+  }, [subscriptions]);
 
-    getSub();
+  // 구독 여부를 확인하는 변수를 생성하고 recoil에서 구독 목록(subscriptions)에 따라 값을 설정
+  const [subscribed, setSubscribed] = useState(() => {
+    return subscriptions.some(
+      (subscription: Subscription) => subscription.mentorName === name
+    );
   });
 
+  // 이벤트 처리 함수를 수정하여 구독 및 구독 취소 시 엔드포인트가 정확하게 변경되도록 함
   const handleSubscription = async () => {
     if (isSelf) {
       return;
     }
 
+    // 일반 푸시 엔드포인트
     const endpoint = subscribed
       ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe`
       : `${process.env.REACT_APP_DEV_URL}/api/subscribe`;
 
+    // schedule 엔드포인트 선택
     const scheduleEndopint = subscribed
       ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe/schedule`
       : `${process.env.REACT_APP_DEV_URL}/api/subscribe/schedule`;
@@ -69,11 +64,14 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
       ? {
           mentorName: name,
           userName: memberInfo.nickname,
+          roomName: roomName,
         }
       : {
           mentorName: name,
           userName: memberInfo.nickname,
           email: memberInfo.email,
+          roomName: roomName,
+          startTime: startTime,
         };
 
     const scheduleNotifyBody = subscribed
@@ -90,12 +88,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
           startTime: startTime,
         };
 
-    if (isMentorExists(name) && subscribed) {
-      alert("이미 구독한 멘토입니다.");
-      return;
-    }
-
-    // 일반 푸시
+    // 일반 푸시 알림 요청
     axiosInstance({
       url: `${endpoint}`,
       data: notifybody,
@@ -106,17 +99,33 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
     })
       .then((res) => {
         if (subscribed) {
-          setMentors(mentors.filter((el) => el !== name));
+          // 구독 취소
+          setSubscriptions((prev: any[]) =>
+            prev.filter(
+              (subscription: { mentorName: string; userName: string }) =>
+                !(
+                  subscription.mentorName === name &&
+                  subscription.userName === memberInfo.nickname
+                )
+            )
+          );
         } else {
-          if (!isMentorExists(name)) {
-            setMentors([...mentors, name]);
-          }
+          // 구독
+          setSubscriptions((prev: any) => [
+            ...prev,
+            {
+              mentorName: name,
+              userName: memberInfo.nickname,
+              roomName: roomName,
+              startTime: startTime,
+            },
+          ]);
         }
-        setSubscriptions(res.data);
+        setSubscribed(!subscribed);
       })
       .catch((err) => console.log(err));
 
-    //스케쥴 푸시
+    // 스케쥴 푸시 알림 요청
     axiosInstance({
       url: `${scheduleEndopint}`,
       data: scheduleNotifyBody,
@@ -127,13 +136,29 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
     })
       .then((res) => {
         if (subscribed) {
-          setMentors(mentors.filter((el) => el !== name));
+          // 구독 취소
+          setSubscriptions((prev: any[]) =>
+            prev.filter(
+              (subscription: { mentorName: string; userName: string }) =>
+                !(
+                  subscription.mentorName === name &&
+                  subscription.userName === memberInfo.nickname
+                )
+            )
+          );
         } else {
-          if (!isMentorExists(name)) {
-            setMentors([...mentors, name]);
-          }
+          // 구독
+          setSubscriptions((prev: any) => [
+            ...prev,
+            {
+              mentorName: name,
+              userName: memberInfo.nickname,
+              roomName: roomName,
+              startTime: startTime,
+            },
+          ]);
         }
-        setSubscriptions(res.data);
+        setSubscribed(!subscribed);
       })
       .catch((err) => console.log(err));
   };

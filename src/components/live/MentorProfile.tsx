@@ -36,19 +36,21 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
 
   // 서버에서 구독 목록을 가져와 사용자가 이미 구독한 멘토인지 확인하고 구독 상태를 설정
   useEffect(() => {
-    setSubscriptions([]);
-    setMentors([]);
-    axiosInstance
-      .get(
-        `${process.env.REACT_APP_NOTIFY_URL}/api/subscriptions?userName=${memberInfo.nickname}`
-      )
-      .then((res) => {
-        for (let subscribe of subscriptions) {
-          setMentors(subscribe.mentorName);
-        }
-      })
-      .catch((err) => console.log(err.data));
-  }, []);
+    const getSub = async () => {
+      await axiosInstance
+        .get(
+          `${process.env.REACT_APP_DEV_URL}/api/subscriptions?userName=${memberInfo.nickname}`
+        )
+        .then((res) => {
+          for (let subscribe of subscriptions) {
+            setMentors(subscribe.mentorName);
+          }
+        })
+        .catch((err) => console.log(err.data));
+    };
+
+    getSub();
+  });
 
   const handleSubscription = async () => {
     if (isSelf) {
@@ -56,12 +58,12 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
     }
 
     const endpoint = subscribed
-      ? `${process.env.REACT_APP_NOTIFY_URL}/api/unsubscribe`
-      : `${process.env.REACT_APP_NOTIFY_URL}/api/subscribe`;
+      ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe`
+      : `${process.env.REACT_APP_DEV_URL}/api/subscribe`;
 
     const scheduleEndopint = subscribed
-      ? `${process.env.REACT_APP_NOTIFY_URL}/api/unsubscribe/schedule`
-      : `${process.env.REACT_APP_NOTIFY_URL}/api/subscribe/schedule`;
+      ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe/schedule`
+      : `${process.env.REACT_APP_DEV_URL}/api/subscribe/schedule`;
 
     const notifybody = subscribed
       ? {
@@ -141,9 +143,12 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
       <div className="flex items-center mb-2">
         {/* <img className="border border-black rounded" src={imgUrl} alt="Mentor" width={70} height={70}/> */}
         <h3 className="text-xl pb-1">{name}</h3>
-        <button 
-        className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
-        onClick={handleSubscription} >{subscribed ? '구독취소' : '구독'}</button>
+        <button
+          className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
+          onClick={handleSubscription}
+        >
+          {subscribed ? "구독취소" : "구독"}
+        </button>
       </div>
       {/* <h2>멘토 연혁</h2>
       <p>{bio}</p> */}

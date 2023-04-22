@@ -50,7 +50,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             setStep(2);
             // 방 생성 이후에 알림
             await axiosInstance
-              .post(`${process.env.REACT_APP_NOTIFY_URL}/api/publish`, {
+              .post(`${process.env.REACT_APP_DEV_URL}/api/publish`, {
                 mentorName: memberInfo.nickname,
                 message: `push::구독한 ${memberInfo.nickname} 멘토가 멘토링 룸을 개설하였습니다!`,
               })

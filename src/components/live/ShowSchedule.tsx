@@ -56,7 +56,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
     const fetchRoomUrls = async () => {
       try {
         const res = await axiosInstance.get(
-          `${process.env.REACT_APP_LIVE_URL}/api/live-session/list`
+          `${process.env.REACT_APP_DEV_URL}/api/live-session/list`
         );
         const sessionData = res.data;
         const parsedData: { [key: string]: string } = Object.entries(
@@ -79,7 +79,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
     if (!isMentor) {
       if (window.confirm("해당 시간을 취소하시겠습니까?")) {
         const res = await axiosInstance.delete(
-          `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${event.scheduleId}`
+          `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${event.scheduleId}`
         );
         if (res.status === 200) {
           alert("취소가 완료되었습니다.");
@@ -94,7 +94,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
   const handleJoinEvent = async () => {
     try {
       const res = await axiosInstance.post(
-        `${process.env.REACT_APP_LIVE_URL}/api/live-session/enter`,
+        `${process.env.REACT_APP_DEV_URL}/api/live-session/enter`,
         {
           roomName: event.title,
           userName: event.owner,
@@ -103,7 +103,6 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
           scheduleId: event.scheduleId,
         }
       );
-
       if (res.status === 200) {
         if (!Object.keys(roomUrls).includes(event.title)) {
           setRoomUrls((prevRoomUrls) => ({
@@ -114,7 +113,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
 
         try {
           await axiosInstance.post(
-            `${process.env.REACT_APP_NOTIFY_URL}/api/publish/schedule`,
+            `${process.env.REACT_APP_DEV_URL}/api/publish/schedule`,
             {
               mentorName: memberInfo.nickname,
               roomUrl: res.data.url,
@@ -131,9 +130,9 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
         handleClose();
       }
     } catch (err) {
-      console.log(err);
       alert("멘토가 아직 방을 만들지 않았습니다!");
       handleClose();
+      console.log(err);
     }
   };
 
@@ -143,7 +142,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
         (el) => el === event.title
       );
       axiosInstance
-        .delete(`${process.env.REACT_APP_LIVE_URL}/api/live-session/exit`, {
+        .delete(`${process.env.REACT_APP_DEV_URL}/api/live-session/exit`, {
           data: {
             roomName: event.title,
             roomUUID: roomUrls[removeUrl[0]].split("daily.co/")[1],

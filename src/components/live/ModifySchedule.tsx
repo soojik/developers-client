@@ -118,7 +118,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
       if (window.confirm("해당 시간을 취소하시겠습니까?")) {
         console.log("event", event);
         axiosInstance({
-          url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentor/${event.scheduleId}`,
+          url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${event.scheduleId}`,
           method: "delete",
         })
           .then((res) => {
@@ -207,7 +207,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
           selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
         );
         axiosInstance({
-          url: `${process.env.REACT_APP_LIVE_URL}/api/schedules`,
+          url: `${process.env.REACT_APP_DEV_URL}/api/schedules`,
           method: "post",
           data: {
             mentoringRoomId: room.mentoringRoomId,

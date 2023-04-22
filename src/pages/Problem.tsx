@@ -19,6 +19,7 @@ import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { useAsync } from "react-use";
 import ScrollButton from "components/ScrollButton";
+const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
 interface ProblemProps {
   problemId: number;
@@ -192,7 +193,7 @@ const Problem = () => {
     <>
       <div className="md:m-auto w-full md:w-4/5">
         <div className="flex justify-end mt-5 mb-10">
-          {memberInfo.isLoggedIn === false ? (
+          {isLoggedIn === false ? (
             <div></div>
           ) : (
             <div className="flex">

@@ -141,8 +141,6 @@ const ProblemDetail = () => {
     }
   };
 
-
-
   return (
 
     <>
@@ -174,13 +172,14 @@ const ProblemDetail = () => {
         </div>
 
 
-        <div>
+        <div>        {memberInfo.isLoggedIn === false ? <div></div> :
+
           <p style={{ fontSize: '1.2rem', marginBottom: '10px' }}>
             문제 해결 여부:{' '}
             <span className={detail.solved ? 'solved' : 'unsolved'} style={{ fontWeight: 'bold' }}>
               {detail.solved ? '해결' : '미해결'}
             </span>
-          </p>
+          </p>}
         </div>
 
       </div>
@@ -199,11 +198,11 @@ const ProblemDetail = () => {
       </div>
       <div>
         {!detail.pathname ? <div></div> :
-        <button
-          className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
-          onClick={() => {
-            setIsImageOpen(!isimageOpen)
-          }}>이미지 미리보기</button>}
+          <button
+            className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
+            onClick={() => {
+              setIsImageOpen(!isimageOpen)
+            }}>이미지 미리보기</button>}
       </div>
       {isimageOpen &&
         <p className="flex"><img src={detail.pathname} alt="이미지를 불러오지 못했습니다." /></p>
@@ -239,53 +238,56 @@ const ProblemDetail = () => {
       <div className="flex">
         <p className="text-bold text-blue-500"> 해시태그:&nbsp;</p> <Tags tagList={detail.hashTag ? detail.hashTag.split(",") : []} />
       </div>
-      {problemSolved === true ? <div></div> : 
 
-      <div>
-        <>
-          <div className="flex flex-col justify-center items-end">
-            {isEditing ? (
-              <div className="h-32 flex items-center">
-                <button
-                  className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                  onClick={handleSave}
-                >
-                  저장
-                </button>
+      {memberInfo.isLoggedIn === false ? <div></div> :
+        <div>
+          {problemSolved === true ? <div></div> :
 
-              </div>
-            ) : (
-              <div className="flex flex-col justify-center items-end">
-                <div className="h-32 flex items-center">
-                  {/* <div>입력한 값과 일치여부: {checkAnswer() ? '일치' : '불일치'}</div> */}
-                  <button
-                    className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                    onClick={handleEditing}
-                  >
-                    수정
-                  </button>
-                  <button
-                    className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
-                    onClick={openModal}
-                  >
-                    문제 제출
-                  </button>
+            <div>
+              <>
+                <div className="flex flex-col justify-center items-end">
+                  {isEditing ? (
+                    <div className="h-32 flex items-center">
+                      <button
+                        className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                        onClick={handleSave}
+                      >
+                        저장
+                      </button>
+
+                    </div>
+                  ) : (
+                    <div className="flex flex-col justify-center items-end">
+                      <div className="h-32 flex items-center">
+                        {/* <div>입력한 값과 일치여부: {checkAnswer() ? '일치' : '불일치'}</div> */}
+                        <button
+                          className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                          onClick={handleEditing}
+                        >
+                          수정
+                        </button>
+                        <button
+                          className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0"
+                          onClick={openModal}
+                        >
+                          문제 제출
+                        </button>
+                      </div>
+                      {modalOpen && (
+                        <ProblemPointModal
+                          title={modalTitle}
+                          point={pointAdd}
+                          isOpen={modalOpen}
+                          onClose={() => setModalOpen(false)}
+                        />
+                      )}
+                    </div>
+                  )
+                  }
                 </div>
-                {modalOpen && (
-                  <ProblemPointModal
-                    title={modalTitle}
-                    point={pointAdd}
-                    isOpen={modalOpen}
-                    onClose={() => setModalOpen(false)}
-                  />
-                )}
-              </div>
-            )
-            }
-          </div>
-        </>
+              </>
 
-      </div>}
+            </div>}</div>}
     </>
   )
 

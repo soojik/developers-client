@@ -5,8 +5,8 @@ const S3_BUCKET = "developers-attach-test";
 const REGION = "ap-northeast-2";
 
 AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.REACT_APP_AWS_ACCESS_SECRET_KEY,
+    accessKeyId: "AKIA3LOAVHJ6JM4T5PHS",
+    secretAccessKey: "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",
 });
 
 const myBucket = new AWS.S3({

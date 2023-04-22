@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosInstance } from "apis/axiosConfig";
+import axios from "components/axiosInstance";
 import useIntersect from "hooks/useIntersect";
 import SearchBox from "components/SearchBox";
 import DropBoxCondition from "components/dropbox/DropBoxCondition";
@@ -50,7 +51,7 @@ const Problem = () => {
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [selectTemp, setSelectTemp] = useState<string[]>([]);
-  const [searchTemp, setSearchTerm] = useState<string[]>([]);
+  const [searchTemp, setSearchTemp] = useState<string>("");
   const [filteredProblemList, setFilteredProblemList] = useState<ProblemProps[]>([]);
   const [isLastPage, setIsLastPage] = useState(false);
 
@@ -154,31 +155,25 @@ const Problem = () => {
     window.location.reload(); // 페이지 새로고침
   };
 
-  const searchList = useAsync(async () => {
-    const params = searchTemp;
-    const url = `api/problem?search=${params}`;
-    // const url = `${URL}/api/problem?search=${params}`;
-    console.log(url); // axios 요청 전에 url 값을 출력
-  
-    const response = await axiosInstance.get(url); // url 변수를 바로 사용
-    return response;
 
-  }, [searchTemp]);
-  
-
-
-  const searchSubmit = async (value: string) => {
-    setSearchTerm([value]); // 검색어 상태 업데이트
-  };
-
-
-  useEffect(() => {
-    if (searchList.value) {
+  const searchList = async(searchTemp:string) =>{
+    try{
+      const url = `api/problem?search=${searchTemp}`;
+      // const url = `${URL}/api/problem?search=${params}`;
+      console.log(`요청시작전`,url); // axios 요청 전에 url 값을 출력
+    
+      const response = await axiosInstance.get(url); // url 변수를 바로 사용
       setPage(0); // 페이지 번호를 0으로 설정
-      setProblemList(searchList.value.data); // 문제 목록을 searchList.value.data로 설정
+      setProblemList(response.data)
+    }catch(error){
+      console.log("데이터를 찾아오지 못했습니다.")
     }
-  }, [searchList.value]);
-
+  }
+  
+  const searchSubmit = (value: string) => {
+    setSearchTemp(value); // 검색어 상태 업데이트
+    searchList(value); 
+  };
 
   useEffect(() => {
     const hashTags = selectTemp
@@ -200,121 +195,123 @@ const Problem = () => {
       setFilteredProblemList(problemList);
     }
   }, [selectTemp, problemList]);
-
   
+
   return (
-    <div className="md:m-auto w-full md:w-4/5">
-      <div className="flex justify-end mt-5 mb-10">
-        <ConfirmBtn type="submit" onClick={() => navigate("/problem/register")}>
-          문제 등록
-        </ConfirmBtn>
+    <>
+      <div className="md:m-auto w-full md:w-4/5">
+        <div className="flex justify-end mt-5 mb-10">
+          {memberInfo.isLoggedIn === false ? <div></div> :
+            <div className="flex">
+              <ConfirmBtn type="submit" onClick={() => navigate("/problem/register")}>
+                문제 등록
+              </ConfirmBtn>
+            </div>}
+          <ConfirmBtn onClick={resetListData}>데이터 초기화</ConfirmBtn> {/* 버튼 수정 */}
+        </div>
+        <div className="flex justify-center mb-10">
+          <div className="flex flex-col w-full">
+            <SearchBox
+              onSearch={searchSubmit}
 
-        <ConfirmBtn onClick={resetListData}>데이터 초기화</ConfirmBtn> {/* 버튼 수정 */}
-
-
-      </div>
-      <div className="flex justify-center mb-10">
-        <div className="flex flex-col w-full">
-          <SearchBox
-            onSearch={searchSubmit}
-      
-          />
-          <div className="flex w-full justify-between">
-            <DropBoxLevel
-              selectFn={handleChangeTemp}
-              handleResetTemp={handleResetTemp}
             />
-            <DropBoxSolved
-              selectFn={handleChangeTemp}
-              handleResetTemp={handleResetTemp}
-            />
-            <DropBoxType
+            <div className="flex w-full justify-between">
+              <DropBoxLevel
+                selectFn={handleChangeTemp}
+                handleResetTemp={handleResetTemp}
+              />
+              <DropBoxSolved
+                selectFn={handleChangeTemp}
+                handleResetTemp={handleResetTemp}
+              />
+              <DropBoxType
+                selectFn={handleChangeTemp}
+                handleResetTemp={handleResetTemp}
+              />
+            </div>
+            <HashTagComponent
               selectFn={handleChangeTemp}
               handleResetTemp={handleResetTemp}
             />
           </div>
-          <HashTagComponent
+        </div>
+        <div className="flex justify-between items-center my-4">
+          <h2 className="text-accent-500 font-bold text-xl">
+            {/* 총 {filteredProblemList.length} 문제 */}
+          </h2>
+          <DropBoxCondition
             selectFn={handleChangeTemp}
             handleResetTemp={handleResetTemp}
           />
-        </div>
-      </div>
-      <div className="flex justify-between items-center my-4">
-        <h2 className="text-accent-500 font-bold text-xl">
-          {/* 총 {filteredProblemList.length} 문제 */}
-        </h2>
-        <DropBoxCondition
-          selectFn={handleChangeTemp}
-          handleResetTemp={handleResetTemp}
-        />
 
-        {/* <div className="w-[90px]">
+          {/* <div className="w-[90px]">
           <Options label="조건" lists={conditionList} setState={setCondition} />
         </div> */}
-      </div>
-      <div className="grid grid-cols-10 text-slate-400 font-bold text-sm border-b pb-3 my-2">
-        {/* <div className="flex justify-center">상태</div> */}
-        <div className="flex justify-center">문제번호</div>
-        <div className="col-span-7 flex justify-center">제목</div>
-        <div className="flex justify-center">난이도</div>
-        <div className="flex justify-center">문제 유형</div>
-      </div>
+        </div>
+        <div className="grid grid-cols-10 text-slate-400 font-bold text-sm border-b pb-3 my-2">
+          {/* <div className="flex justify-center">상태</div> */}
+          <div className="flex justify-center">문제번호</div>
+          <div className="col-span-7 flex justify-center">제목</div>
+          <div className="flex justify-center">난이도</div>
+          <div className="flex justify-center">문제 유형</div>
+        </div>
 
-      {filteredProblemList.length === 0 && (selectTemp.length > 0 || searchTemp.length > 0) ? (
-        <div className="text-center mt-5">검색 결과가 없습니다.</div>
-        ) : <div className="problemListContainer" style={{ height: '500px', overflowY: 'auto' }}> 
-        {(filteredProblemList?.map((el, idx) => (
-          // <Link to={`/problem/${el.problemId}/${nickname}`} key={idx}>
-        <div onClick={() => {
-          // navigate(el.writer!== "Taeho"? "/problem/detail":"/problem/register",{state:el});
-          navigate(el.writer !== memberInfo.nickname ? "/problem/detail" : "/problem/register", { state: el });
+        {filteredProblemList.length === 0 && (selectTemp.length > 0 || searchTemp.length > 0) ? (
+          <div className="text-center mt-5">검색 결과가 없습니다.</div>
+        ) : <div className="problemListContainer" style={{ height: '500px', overflowY: 'auto' }}>
+          {(filteredProblemList?.map((el, idx) => (
+            // <Link to={`/problem/${el.problemId}/${nickname}`} key={idx}>
+            <div onClick={() => {
+              // navigate(el.writer!== "Taeho"? "/problem/detail":"/problem/register",{state:el});
+              navigate(el.writer !== memberInfo.nickname ? "/problem/detail" : "/problem/register", { state: el });
 
-        }} className="grid grid-cols-10 bg-gray-100 rounded-lg py-2.5 mb-2 shadow">
-          <div className="flex justify-center items-center">
-            {/* {el.answer.length >= 1 ? (
+            }} className="grid grid-cols-10 bg-gray-100 rounded-lg py-2.5 mb-2 shadow">
+              <div className="flex justify-center items-center">
+                {/* {el.answer.length >= 1 ? (
               <CheckIcon fill="blue" width={25} height={25} />
             ) : null} */}
-            {el.problemId}
-          </div>
-          <div className="col-span-7 text-xl ">
-            <h1 className="font-semibold">{el.title}</h1>
+                {el.problemId}
+              </div>
+              <div className="col-span-7 text-xl ">
+                <h1 className="font-semibold">{el.title}</h1>
 
-            <div className="flex items-center justify-between">
-              <div className="flex">
-                <div className="flex text-sm text-slate-600">{el.writer} &nbsp;</div>
-                <div className="flex text-sm mr-4 items-center text-gray-400">
-                  <ViewIcon fill="lightGray" width={18} height={18} />
-                  &nbsp;{el.views}
-                </div>
-                <div className="flex text-sm mr-4 items-center text-gray-400">
-                  <LikesIcon fill="lightGray" width={14} height={14} />
-                  &nbsp;{el.likes}
+                <div className="flex items-center justify-between">
+                  <div className="flex">
+                    <div className="flex text-sm text-slate-600">{el.writer} &nbsp;</div>
+                    <div className="flex text-sm mr-4 items-center text-gray-400">
+                      <ViewIcon fill="lightGray" width={18} height={18} />
+                      &nbsp;{el.views}
+                    </div>
+                    <div className="flex text-sm mr-4 items-center text-gray-400">
+                      <LikesIcon fill="lightGray" width={14} height={14} />
+                      &nbsp;{el.likes}
+                    </div>
+                  </div>
+                  <Tags tagList={el?.hashTag} />
                 </div>
               </div>
-              <Tags tagList={el?.hashTag} />
+              <div className="flex justify-center items-center">
+                {el.level === "gold" ? (
+                  <LevelIcon fill="#D9B600" width={22} height={22} />
+                ) : el.level === "silver" ? (
+                  <LevelIcon fill="gray" width={22} height={22} />
+                ) : (
+                  <LevelIcon fill="#AD5600" width={22} height={22} />
+                )}
+              </div>
+              <div className="flex justify-center items-center text-sm">
+                {el.type === "answer" ? "주관식" : "객관식"}
+              </div>
             </div>
-          </div>
-          <div className="flex justify-center items-center">
-            {el.level === "gold" ? (
-              <LevelIcon fill="#D9B600" width={22} height={22} />
-            ) : el.level === "silver" ? (
-              <LevelIcon fill="gray" width={22} height={22} />
-            ) : (
-              <LevelIcon fill="#AD5600" width={22} height={22} />
-            )}
-          </div>
-          <div className="flex justify-center items-center text-sm">
-            {el.type === "answer" ? "주관식" : "객관식"}
-          </div>
+          )))}
         </div>
-      )))}
+        }
+        <div ref={target}>{isLoading && <div>Loading...</div>}</div>
+        <ScrollButton />
       </div>
-      }
-      <div ref={target}>{isLoading && <div>Loading...</div>}</div>
-      <ScrollButton />
-    </div>
+    </>
   );
 };
 
-export default Problem; 
+export default Problem;
 

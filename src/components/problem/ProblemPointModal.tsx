@@ -36,13 +36,18 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
         solver: memberInfo.nickname, // 실제 푼 사람의 사용자 이름으로 변경하세요. -> 나중에 사용자 값을 받아야함
       };
       const response = await axiosInstance.post(`/api/solution`, request);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-      const updatePoint = {
+  const updatePoint = async () => {
+    try {
+      const point = {
         memberId: memberId,
       };
-
       await axiosInstance
-        .patch(`/api/member/point/increase`, updatePoint)
+        .patch(`/api/member/point/increase`, point)
         .then((res) => {
           console.log(res);
         })
@@ -57,6 +62,7 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
   const handleClose = () => {
     if (title === "정답입니다!") {
       saveSolution();
+      updatePoint();
     }
     setVisible(false);
     onClose();

@@ -37,7 +37,7 @@ const convertScheduleToEvents = (
     if (isMentor) {
       schedules.forEach((schedule) => {
         const event: EventProp = {
-          title: `${schedule.mentoringRoomTitle} with ${schedule.mentorName}`,
+          title: `${schedule.mentoringRoomTitle}`,
           startDate: new Date(schedule.startDate),
           endDate: new Date(schedule.endDate),
           type: "mentor",
@@ -51,7 +51,7 @@ const convertScheduleToEvents = (
     } else {
       schedules.forEach((schedule) => {
         const event: EventProp = {
-          title: `${schedule.mentoringRoomTitle} with ${schedule.menteeName}`,
+          title: `${schedule.mentoringRoomTitle}`,
           startDate: new Date(schedule.startDate),
           endDate: new Date(schedule.endDate),
           type: "mentee",

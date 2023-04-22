@@ -89,32 +89,31 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({ handleClose, event,
     const endDate = new Date(event.endDate);
 
     try {
-      const enterRes = await axiosInstance.post(`${process.env.REACT_APP_DEV_URL}/api/live-session/enter`, {
+      await axiosInstance.post(`${process.env.REACT_APP_DEV_URL}/api/live-session/enter`, {
         roomName: event.title,
         userName: event.owner,
         userId: memberId,
         time: 60,
         scheduleId: event.scheduleId,
-      });
-
-      // console.log(enterRes);
-      const status = enterRes.status;
-      if (status === 200) {
-        if(!Object.keys(roomUrls).includes(event.title)){
-          setRoomUrls(prevRoomUrls => ({
-            ...prevRoomUrls,
-            [event.title]: enterRes.data.url,
-          }));
+      })
+      .then(res=>{
+        if (res.status === 200) {
+          if(!Object.keys(roomUrls).includes(event.title)){
+            setRoomUrls(prevRoomUrls => ({
+              ...prevRoomUrls,
+              [event.title]: res.data.url,
+            }));
+          }
+          window.open(res.data.url, "_blank");
+          alert("방에 입장하셨습니다");
+          handleClose();
+        } else if (res.status <= 500) {
+          alert("멘토가 아직 방을 만들지 않았습니다!");
+          handleClose();
+        } else {
+          alert("오류가 발생했습니다. 다시 시도해주세요.");
         }
-        window.open(enterRes.data.url, "_blank");
-        alert("방에 입장하셨습니다");
-        handleClose();
-      } else if (status <= 500) {
-        alert("멘토가 아직 방을 만들지 않았습니다!");
-        handleClose();
-      } else {
-        alert("오류가 발생했습니다. 다시 시도해주세요.");
-      }
+      })
     } catch (err) {
       console.log(err);
     }

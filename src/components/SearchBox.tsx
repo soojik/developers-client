@@ -13,9 +13,11 @@ const SearchBox: React.FC<Props> = ({ onSearch }) => {
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log(`Submit`,query);
     e.preventDefault();
     onSearch(query);
   };
+  console.log(query);
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full flex">

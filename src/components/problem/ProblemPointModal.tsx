@@ -24,20 +24,6 @@ const Modal: React.FC<ModalProps> = ({ title,point, isOpen, onClose }) => { //St
   const content = 100;
   const [totalPoint, setTotalPoint] = useState(content + point); // 합산된 점수 값 저장
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
-
-
-  // const bronze = {
-  //   key: 'bronze',
-  //   point: 6
-  // }
-  // const silver = {
-  //   key: 'silver',
-  //   point: 7 
-  // }
-  // const gold = {
-  //   key: 'gold',
-  //   point: 8
-  // }
   
   const[pointAdd, setPointAdd] = useState(0);
 
@@ -55,6 +41,13 @@ const Modal: React.FC<ModalProps> = ({ title,point, isOpen, onClose }) => { //St
         solver: memberInfo.nickname // 실제 푼 사람의 사용자 이름으로 변경하세요. -> 나중에 사용자 값을 받아야함
       };
       const response = await axiosInstance.post(`/api/solution`, request);
+
+      const point = {
+        memberId: memberInfo.memberId
+      }
+     await axiosInstance.patch(`/api/member/point/increase`,point)
+     
+
       console.log(response.data);
     } catch (error) {
       console.error("Error:", error);
@@ -64,11 +57,10 @@ const Modal: React.FC<ModalProps> = ({ title,point, isOpen, onClose }) => { //St
   const handleClose = () => {
     if (title === "정답입니다!") {
       saveSolution();
-      setTotalPoint((prevPoint) => prevPoint + pointAdd); // 정답인 경우 추가 점수를 더해서 저장
     }
     setVisible(false);
     onClose();
-  
+    window.location.reload(); // 페이지 새로고침  
   };
 
 

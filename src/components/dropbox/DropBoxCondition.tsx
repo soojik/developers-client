@@ -41,35 +41,6 @@ const SelectDropdown = ({
       selectFn(value);
     }
   };
-
-  // const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
-  //   const value = e.currentTarget.getAttribute("data-value");
-  
-  //   // Clear the existing filters
-  //   handleResetTemp("likes");
-  //   handleResetTemp("views");
-  //   handleResetTemp("order");
-  
-  //   if (value === "likes=likes") {
-  //     setSelectDropValue("추천순");
-  //   } else if (value === "views=views") {
-  //     setSelectDropValue("조회순");
-  //   } else if (value === "order=order") {
-  //     setSelectDropValue("최신순");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (selectDropValue === "추천순") {
-  //     selectFn("likes=likes");
-  //   } else if (selectDropValue === "조회순") {
-  //     selectFn("views=views");
-  //   } else if (selectDropValue === "최신순") {
-  //     selectFn("order=order");
-  //   }
-  // }, [selectDropValue]);
-  
-  
   
 
   const handleClear = () => {

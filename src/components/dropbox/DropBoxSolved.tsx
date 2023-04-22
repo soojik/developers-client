@@ -52,16 +52,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     if (value === null) {
       return;
     }
-    // if(value === "solved="){
-    //   setSelectDropValue("안 푼문제");
-    //   selectFn(value);
-    //   menuSelect(value);
-    // }else{
-    //   setSelectDropValue("푼 문제");
-    //   selectFn(value);
-    //   menuSelect(value);
-    // }
-
+    
     if (value === "solved=") {
       setSelectDropValue("안 푼문제");
       selectFn(value);

@@ -41,25 +41,6 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
       navigate(`?${searchParams.toString()}`);
     }
   };
-  // const fetchProblems = async (language: string) => {
-  //   // 2. fetchProblems 함수를 생성합니다.
-  //   try {
-  //     const response = await axios.get("http://localhost/problem/list", {
-  //       params: {
-  //         level: language,
-  //         //   writer: "your-writer-name", // 필요한 경우 실제 작성자 값으로 변경하세요.
-  //       },
-  //     });
-
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.error("Axios error:", error.message, "Code:", error.code);
-  //     } else {
-  //       console.error("Unknown error:", error);
-  //     }
-  //   }
-  // };
 
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const value = e.currentTarget.getAttribute("data-value");

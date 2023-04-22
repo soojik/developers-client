@@ -70,8 +70,14 @@ const SignUp = () => {
       )
       .then((res) => {
         console.log("회원가입 응답", res.data);
-        alert("회원가입 되었습니다!");
-        navigate("/login");
+        if (res.data.msg === "이미 가입된 이메일입니다.") {
+          alert("이미 사용중인 이메일 입니다.");
+        } else if (res.data.msg === "이미 사용중인 닉네임입니다.") {
+          alert("이미 사용중인 닉네임 입니다.");
+        } else {
+          alert("회원가입 되었습니다!");
+          navigate("/login");
+        }
       })
       .catch((err) => console.log(err));
   };

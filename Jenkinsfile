@@ -19,7 +19,7 @@ pipeline {
   stages {
     stage('Checkout Github') {
       steps {
-          echo ${REACT_APP_AWS_ACCESS_KEY_ID}
+          sh 'echo $REACT_APP_AWS_ACCESS_KEY_ID'
           checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: githubCredential, url: applicationGitAddress ]]])
       }
       post {

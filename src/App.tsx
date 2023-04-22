@@ -11,12 +11,6 @@ import MyPage from "pages/MyPage";
 import ProblemRegister from "pages/ProblemRegister";
 import ProblemSolved from "pages/ProblemSolved";
 
-import ProblemDetail from "pages/ProblemDetail";
-import ProblemDetailClientob from "components/problem/ClientDetailob";
-import ProblemDetailClientsb from "components/problem/ClientDetailsb";
-import ProblemDetailObjective from "components/problem/ProblemDetailObjective";
-import ProblemDetailSubjective from "components/problem/ProblemDetailSubjective";
-
 import { useRecoilValue, useRecoilState } from "recoil";
 import { subscriptionState } from "./recoil/subscriptionState";
 import { memberInfoState } from "recoil/userState";

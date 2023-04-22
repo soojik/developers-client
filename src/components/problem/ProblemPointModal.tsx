@@ -15,7 +15,6 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
-  //String뺐음
   const location = useLocation();
   const [visible, setVisible] = useState(isOpen);
   const navigate = useNavigate();

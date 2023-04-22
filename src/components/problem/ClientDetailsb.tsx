@@ -166,7 +166,6 @@ const ProblemDetail = () => {
             <LevelIcon fill="#AD5600" width={30} height={30} />
           )}
         </div>
-        <p>point : 10</p>
       </div>
       <div className="flex justify-between items-center mb-3">
         <div className="flex justify-center items-center text-m text-bold">

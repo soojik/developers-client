@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShowSchedule from "../components/live/ShowSchedule";
 import LiveList from "../components/live/LiveList";
 import MentorScheduling from "../components/live/MentorScheduling";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { subscriptionState } from "../recoil/subscriptionState";
 import { memberInfoState } from "recoil/userState";
 import { axiosInstance } from "apis/axiosConfig";
@@ -46,7 +46,6 @@ const convertScheduleToEvents = (
           owner: schedule.mentorName,
         };
         events.push(event);
-        console.log(event);
       });
     } else {
       schedules.forEach((schedule) => {
@@ -78,51 +77,6 @@ const Mentoring = () => {
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
-  const [sse, setSse] = useState<EventSource[]>([]); //sse 상태 추적
-
-  // 구독 정보 가져오는 함수
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        if (!subscriptions.length) {
-          const response = await axiosInstance.get(
-            `${process.env.REACT_APP_DEV_URL}/subscriptions?userName=${memberInfo.nickname}`
-          );
-          setSubscriptions(response.data);
-        }
-      } catch (error) {
-        console.error("구독 정보를 가져오는데 실패했습니다:", error);
-      }
-    };
-    fetchSubscriptions();
-  }, [memberInfo.nickname, setSubscriptions]);
-
-  // 푸시 알림 받는 로직
-  useEffect(() => {
-    const eventSources: EventSource[] = [];
-
-    if (!subscriptions.length) {
-      subscriptions.forEach((subscription: { mentorName: any }) => {
-        const es = new EventSource(
-          `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
-        );
-        es.addEventListener("push", (e) => {
-          new Notification(e.data);
-          console.log(e.data);
-        });
-
-        eventSources.push(es);
-      });
-
-      setSse(eventSources);
-
-      return () => {
-        eventSources.forEach((es) => es.close());
-      };
-    }
-  }, [subscriptions, memberInfo.nickname, memberInfo.email]);
-
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     // 비회원의 일정 요청 방지
@@ -136,7 +90,6 @@ const Mentoring = () => {
       method: "get",
     }).then((res) => {
       setMySchedulesAsMentor(res.data["data"]);
-      console.log(res.data["data"]);
     });
     axiosInstance({
       url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${memberId}`,
@@ -144,7 +97,6 @@ const Mentoring = () => {
     }).then((res) => {
       // 멘티 일정 처리
       setMySchedulesAsMentee(res.data["data"]);
-      console.log(res.data["data"]);
     });
   }, []);
 
@@ -166,36 +118,51 @@ const Mentoring = () => {
         <nav className="flex w-full space-x-2" aria-label="Tabs" role="tablist">
           <button
             type="button"
-            className={`hs-tab-active:font-semibold hs-tab-active:border-blue-900 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${currentPage === 1 ? 'text-blue-900 border-blue-900' : 'border-transparent'}`}
+            className={`hs-tab-active:font-semibold hs-tab-active:border-blue-900 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${
+              currentPage === 1
+                ? "text-blue-900 border-blue-900"
+                : "border-transparent"
+            }`}
             id="tabs-with-underline-item-1"
             data-hs-tab="#tabs-with-underline-1"
             aria-controls="tabs-with-underline-1"
             role="tab"
-            onClick={() => handleClickScheduler()}>
+            onClick={() => handleClickScheduler()}
+          >
             일정 관리
           </button>
           <button
             type="button"
-            className={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${currentPage === 2 ? 'text-blue-900 border-blue-900' : 'border-transparent'}`}
+            className={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${
+              currentPage === 2
+                ? "text-blue-900 border-blue-900"
+                : "border-transparent"
+            }`}
             id="tabs-with-underline-item-2"
             data-hs-tab="#tabs-with-underline-2"
             aria-controls="tabs-with-underline-2"
             role="tab"
-            onClick={() => handleClickRoomList()}>
+            onClick={() => handleClickRoomList()}
+          >
             전체 목록
           </button>
-          {memberInfo.mentor &&
+          {memberInfo.mentor && (
             <button
               type="button"
-              className={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${currentPage === 3 ? 'text-blue-900 border-blue-900' : 'border-transparent'}`}
+              className={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] text-md whitespace-nowrap text-gray-500 hover:text-blue-900 flex-1 justify-center ${
+                currentPage === 3
+                  ? "text-blue-900 border-blue-900"
+                  : "border-transparent"
+              }`}
               id="tabs-with-underline-item-3"
               data-hs-tab="#tabs-with-underline-3"
               aria-controls="tabs-with-underline-3"
               role="tab"
-              onClick={() => handleClickMentorSetting()}>
+              onClick={() => handleClickMentorSetting()}
+            >
               멘토 관리
             </button>
-          }
+          )}
         </nav>
       </div>
       <div>

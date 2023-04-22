@@ -11,7 +11,6 @@ import SubmitButton from "./SubmitButton";
 import PointBox from "./PointBox";
 import HashTagBox from "./HashTagBox";
 // import axios, { AxiosError } from "axios";
-import axios from "components/axiosInstance";
 import { axiosInstance } from "apis/axiosConfig";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { LocalActivity } from "@mui/icons-material";
@@ -127,7 +126,7 @@ const ProblemRegisterBox = () => {
     };
 
     try {
-      const response = await axios.post(`/api/problem`,subjectiveData,{headers: {"Content-Type" : "application/json"}}).then()
+      const response = await axiosInstance.post(`/api/problem`,subjectiveData,{headers: {"Content-Type" : "application/json"}}).then()
       window.alert("문제 등록이 완료되었습니다.");
       navigate(`/problem`)
     console.log(`response`, response); 
@@ -169,7 +168,7 @@ const ProblemRegisterBox = () => {
     }
     
     try{
-      const update = await axios.patch("/api/problem",updatedata)
+      const update = await axiosInstance.patch("/api/problem",updatedata)
       if(update.status===200){
         window.alert("수정이 완료되었습니다.")
         navigate(`/problem`)
@@ -184,7 +183,7 @@ const ProblemRegisterBox = () => {
     }
   }
   const deleteSubmit = async() => {
-    try{const deleted = await axios.delete(`/api/problem/${location.state.problemId}`)
+    try{const deleted = await axiosInstance.delete(`/api/problem/${location.state.problemId}`)
     window.alert("삭제가 완료되었습니다.")
     navigate(`/problem`)
     console.log("삭제")

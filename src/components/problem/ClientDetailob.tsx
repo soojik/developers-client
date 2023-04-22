@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import ProblemPointModal from "components/problem/ProblemPointModal";
-
 import LevelIcon from "components/icons/LevelIcon";
 import ViewIcon from "components/icons/ViewIcon";
 import LikesIcon from "components/icons/LikesIcon";
@@ -11,9 +10,6 @@ import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import ProblemSolved from "pages/ProblemSolved";
 import { axiosInstance } from "apis/axiosConfig";
-
-
-
 interface ProblemBoxProps {
   problemId: number;
   nickname: string;
@@ -26,50 +22,45 @@ interface ProblemBoxProps {
   content: string;
   hashTag: string;
   answer: string;
-  answerCandidate: string[]; // answerCandidate 추가  
+  answerCandidate: string[]; // answerCandidate 추가
   solved: boolean;
   pathname: string;
-
 }
-
 const ProblemDetail = () => {
   const [isimageOpen, setIsImageOpen] = useState(false);
   const location = useLocation();
   const { problemId, member } = useParams();
   const [detail, setDetail] = useState<ProblemBoxProps>();
   const [modalOpen, setModalOpen] = useState(false); //모달 오픈
-  const [answer, setAnswer] = useState(''); //정답 저장 
+  const [answer, setAnswer] = useState(""); //정답 저장
   const [answerCandidate, setAnswerCandidate] = useState<string[]>([]); //문제 답안 목록 저장
-  const [modalTitle, setModalTitle] = useState(''); //모달 타이틀 전송
+  const [modalTitle, setModalTitle] = useState(""); //모달 타이틀 전송
   const [pointAdd, setPointAdd] = useState(0); // 포인트 -> 연산값이 실제로 연산된 후 보내져야한다.
   const [isEditing, setIsEditing] = useState(true); // 수정 모드인지 여부를 true로 변경
   const [radioDisabled, setRadioDisabled] = useState(false);
   const [originalAnswer, setOriginalAnswer] = useState(""); // 수정 모드 진입 시 기존 답변 저장
   const [problemSolved, setProblemSolved] = useState(false); // 문제 풀이 유무 DB저장을 위해서 만듦
   const [btnVisible, setBtnVisible] = useState(false); //문제 작성자는 문제 풀수없도록 하기 위한 속성===
-  const [answerWriter, setAnswerWriter] = useState(''); //문제 작성자를 받아오기 위한값===
+  const [answerWriter, setAnswerWriter] = useState(""); //문제 작성자를 받아오기 위한값===
   const [likes, setLikes] = useState(detail?.likes || 0);
   const [isLiked, setIsLiked] = useState(false);
-  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState); 
-  console.log(memberInfo.nickname)
-
-
-  const sessionAnswer = sessionStorage.getItem('answer') || ''; // 값 null처리
-
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+  console.log(memberInfo.nickname);
+  const sessionAnswer = sessionStorage.getItem("answer") || ""; // 값 null처리
   const openModal = () => {
     if (window.confirm("답안을 제출 하시겠습니까?")) {
       setModalOpen(true);
     }
   };
-
   const checkAnswer = () => {
     return answer === sessionAnswer; //session answer이랑 값 비교
-  }
-
+  };
   useEffect(() => {
     const fetchProblemDetail = async () => {
       try {
-        const response = await axiosInstance.get(`/api/problem/${location.state.problemId}/${memberInfo.nickname}`)
+        const response = await axiosInstance.get(
+          `/api/problem/${location.state.problemId}/${memberInfo.nickname}`
+        );
         // console.log(response);
         const answerCandidateString = response.data.data.answerCandidate;
         setLikes(response.data?.data?.likes);
@@ -79,7 +70,6 @@ const ProblemDetail = () => {
         setAnswerCandidate(answerCandidateArray);
         setDetail(response.data.data);
         setAnswerWriter(response.data.data.writer);
-
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error("Axios error:", error.message, "Code:", error.code);
@@ -90,32 +80,26 @@ const ProblemDetail = () => {
     };
     fetchProblemDetail();
   }, [problemId, member]);
-
-
   if (!detail) {
     return <div>Loading...</div>;
   }
-
   const handleRadioClick = (selectedNumber: number) => {
     console.log("Selected radio button:", selectedNumber);
     console.log("Correct answer:", detail.answer);
     // 여기에서 번호를 전송하거나 다른 작업을 수행할 수 있습니다.
     // 정답을 비교 후 모달 창으로 연산 포인트를 보낸다.
     const answerNumber = selectedNumber.toString(); // 문자열을 숫자로 변환
-
     if (answerNumber === detail.answer) {
       console.log("정답처리"); // 추후 삭제 예정
       console.log(detail.answer);
-      setModalTitle("정답입니다!")
+      setModalTitle("정답입니다!");
       setPointAdd(10);
-
     } else {
-      console.log("오답처리")
-      setModalTitle("오답입니다")
+      console.log("오답처리");
+      setModalTitle("오답입니다");
       setPointAdd(0);
     }
   };
-
   const handleEditing = () => {
     if (window.confirm("수정 하시겠습니까?")) {
       setIsEditing(true);
@@ -124,15 +108,15 @@ const ProblemDetail = () => {
       // setInputAnswer(detail.answer);
     }
   };
-
   const handleSave = () => {
     setIsEditing(false);
     setRadioDisabled(true);
   };
-
   const handleLikeButtonClick = async () => {
     try {
-      const response = await axiosInstance.post(`/api/problem/${location.state.problemId}`);
+      const response = await axiosInstance.post(
+        `/api/problem/${location.state.problemId}`
+      );
       setLikes(response.data?.data?.likes);
       setIsLiked(true);
       setLikes(likes + 1);
@@ -147,8 +131,17 @@ const ProblemDetail = () => {
   return (
     <>
       <div>
-        <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>
-          문제 번호: <span style={{ color: '#007bff', fontSize: '1.5rem' }}>{detail.problemId}</span>
+        <p
+          style={{
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+            marginBottom: "10px",
+          }}
+        >
+          문제 번호:{" "}
+          <span style={{ color: "#007BFF", fontSize: "1.5rem" }}>
+            {detail.problemId}
+          </span>
         </p>
       </div>
       <div className="flex justify-between items-center mb-3 ">
@@ -163,8 +156,6 @@ const ProblemDetail = () => {
         </div>
         <p>point : 10</p>
       </div>
-
-
       <div className="flex justify-between items-center mb-3">
         <div className="flex justify-center items-center text-m text-bold">
           {detail.type === "answer" ? "주관식" : "객관식"}
@@ -173,42 +164,59 @@ const ProblemDetail = () => {
             &nbsp;{detail.views}
           </div>
         </div>
-        {memberInfo.isLoggedIn === false ? <div></div> :
-          <p style={{ fontSize: '1.2rem', marginBottom: '10px' }}>
-            문제 해결 여부:{' '}
-            <span className={detail.solved ? 'solved' : 'unsolved'} style={{ fontWeight: 'bold' }}>
-              {detail.solved ? '해결' : '미해결'}
+        {isLoggedIn === false ? (
+          <div></div>
+        ) : (
+          <p style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
+            문제 해결 여부:{" "}
+            <span
+              className={detail.solved ? "solved" : "unsolved"}
+              style={{ fontWeight: "bold" }}
+            >
+              {detail.solved ? "해결" : "미해결"}
             </span>
-          </p>}
-
+          </p>
+        )}
       </div>
-
       <div className=" bg-gray-200 px-20 py-10 rounded">
         <div className="mt-4">
           <div className="flex-container">
-            <h2 className="text-lg font-medium leading-6 text-gray-900 bg-white rounded">제목: {detail.title}</h2>
+            <h2 className="text-lg font-medium leading-6 text-gray-900 bg-white rounded">
+              제목: {detail.title}
+            </h2>
           </div>
           <p className="bg-white rounded mt-4 ">작성자: {detail.writer}</p>
           <div className="mt-4">
-            <p className="text-sm text-gray-500 bg-white rounded py-9">{detail.content}</p>
+            <p className="text-sm text-gray-500 bg-white rounded py-9">
+              {detail.content}
+            </p>
           </div>
         </div>
       </div>
       <div>
-        {!detail.pathname ? <div></div> :
+        {!detail.pathname ? (
+          <div></div>
+        ) : (
           <button
             className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
             onClick={() => {
-              setIsImageOpen(!isimageOpen)
-            }}>이미지 미리보기</button>}
+              setIsImageOpen(!isimageOpen);
+            }}
+          >
+            이미지 미리보기
+          </button>
+        )}
       </div>
-      {isimageOpen &&
-
-        <p className="flex"><img src={detail.pathname} alt="이미지를 불러오지 못했습니다." /></p>
-      }
-
+      {isimageOpen && (
+        <p className="flex">
+          <img src={detail.pathname} alt="이미지를 불러오지 못했습니다." />
+        </p>
+      )}
       <div className="mt-4">
-        <label htmlFor="answer" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="answer"
+          className="block text-sm font-medium text-gray-700"
+        >
           보기
         </label>
         <div className="flex flex-col items-start space-y-2">
@@ -229,10 +237,7 @@ const ProblemDetail = () => {
             </div>
           ))}
         </div>
-
-
       </div>
-
       {detail && (
         <button
           className=" flex py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-2"
@@ -244,12 +249,16 @@ const ProblemDetail = () => {
         </button>
       )}
       <div className="flex">
-        <p className="text-bold text-blue-500"> 해시태그:&nbsp;</p> <Tags tagList={detail.hashTag ? detail.hashTag.split(",") : []} />
+        <p className="text-bold text-blue-500"> 해시태그:&nbsp;</p>{" "}
+        <Tags tagList={detail.hashTag ? detail.hashTag.split(",") : []} />
       </div>
-      {memberInfo.isLoggedIn === false ? <div></div> :
-
+      {memberInfo.isLoggedIn === false ? (
+        <div></div>
+      ) : (
         <div>
-          {problemSolved === true ? <div></div> :
+          {problemSolved === true ? (
+            <div></div>
+          ) : (
             <div>
               <>
                 <div className="flex flex-col justify-center items-end">
@@ -261,7 +270,6 @@ const ProblemDetail = () => {
                       >
                         저장
                       </button>
-
                     </div>
                   ) : (
                     <div className="flex flex-col justify-center items-end">
@@ -289,14 +297,14 @@ const ProblemDetail = () => {
                         />
                       )}
                     </div>
-                  )
-                  }
+                  )}
                 </div>
               </>
-            </div>}
-        </div>}
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };
-
 export default ProblemDetail;

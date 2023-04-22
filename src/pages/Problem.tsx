@@ -19,7 +19,6 @@ import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { useAsync } from "react-use";
 import ScrollButton from "components/ScrollButton";
-const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
 interface ProblemProps {
   problemId: number;
@@ -38,9 +37,8 @@ interface ProblemProps {
 
 const Problem = () => {
   const URL = process.env.REACT_APP_DEV_URL;
-
+  const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const navigate = useNavigate();
-  const { memberInfo } = useRecoilValue(memberInfoState); // nickname 받기
   // const nickname = "alibaba"; // 테스트: 임시로 nickname 설정해둠
   const nickname = memberInfo.nickname;
   const [resData, setResData] = useState<ProblemProps[]>([]);

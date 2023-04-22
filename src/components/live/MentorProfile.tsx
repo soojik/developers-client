@@ -8,19 +8,60 @@ import { memberInfoState } from "recoil/userState";
 interface MentorProfileProps {
   // imgUrl: string;
   bio: string;
-  name: String;
+  name: string;
+  roomName: string;
+  startTime: string;
 }
 
-const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
+const MentorProfile: React.FC<MentorProfileProps> = ({
+  bio,
+  name,
+  roomName,
+  startTime,
+}) => {
   const { memberInfo, memberId } = useRecoilValue(memberInfoState);
-  const [subscribed, setSubscribed] = useState(false);
+  const [mentors, setMentors] = useState<string[]>([]);
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
-  const [sse, setSse] = useState<EventSource[]>([]); //sse 상태 추적
+  const isSelf = memberInfo.nickname === name; // 본인 구독 불가
+
+  const subscribed = mentors.includes(name); // 멘토 여부 판별
+
+  // 중복 여부 판별
+  const isMentorExists = (mentorName: string) => {
+    if (Array.isArray(mentors)) {
+      return mentors.some((name) => name === mentorName);
+    }
+    return false;
+  };
+
+  // 서버에서 구독 목록을 가져와 사용자가 이미 구독한 멘토인지 확인하고 구독 상태를 설정
+  useEffect(() => {
+    setSubscriptions([]);
+    setMentors([]);
+    axiosInstance
+      .get(
+        `${process.env.REACT_APP_NOTIFY_URL}/api/subscriptions?userName=${memberInfo.nickname}`
+      )
+      .then((res) => {
+        for (let subscribe of subscriptions) {
+          setMentors(subscribe.mentorName);
+        }
+      })
+      .catch((err) => console.log(err.data));
+  }, []);
 
   const handleSubscription = async () => {
+    if (isSelf) {
+      return;
+    }
+
     const endpoint = subscribed
-      ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe`
-      : `${process.env.REACT_APP_DEV_URL}/api/subscribe`;
+      ? `${process.env.REACT_APP_NOTIFY_URL}/api/unsubscribe`
+      : `${process.env.REACT_APP_NOTIFY_URL}/api/subscribe`;
+
+    const scheduleEndopint = subscribed
+      ? `${process.env.REACT_APP_NOTIFY_URL}/api/unsubscribe/schedule`
+      : `${process.env.REACT_APP_NOTIFY_URL}/api/subscribe/schedule`;
 
     const notifybody = subscribed
       ? {
@@ -33,6 +74,26 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
           email: memberInfo.email,
         };
 
+    const scheduleNotifyBody = subscribed
+      ? {
+          mentorName: name,
+          userName: memberInfo.nickname,
+          roomName: roomName,
+        }
+      : {
+          mentorName: name,
+          userName: memberInfo.nickname,
+          email: memberInfo.email,
+          roomName: roomName,
+          startTime: startTime,
+        };
+
+    if (isMentorExists(name) && subscribed) {
+      alert("이미 구독한 멘토입니다.");
+      return;
+    }
+
+    // 일반 푸시
     axiosInstance({
       url: `${endpoint}`,
       data: notifybody,
@@ -41,40 +102,40 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
         "Content-Type": "application/json",
       },
     })
-      .then(() => {
-        setSubscribed(!subscribed);
-        setSubscriptions((prevSubscriptions: any[]) => {
-          let updatedSubscriptions;
-
-          if (subscribed) {
-            updatedSubscriptions = prevSubscriptions.filter(
-              (sub) => sub.mentorName !== name
-            );
-          } else {
-            updatedSubscriptions = [
-              ...prevSubscriptions,
-              { mentorName: name, userName: memberInfo?.nickname },
-            ];
+      .then((res) => {
+        if (subscribed) {
+          setMentors(mentors.filter((el) => el !== name));
+        } else {
+          if (!isMentorExists(name)) {
+            setMentors([...mentors, name]);
           }
-          // SSE 설정 로직 추가
-          const es = new EventSource(
-            `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${name}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
-          );
-          es.addEventListener("push", (e) => {
-            new Notification(e.data);
-            console.log(e.data);
-          });
-
-          const eventSources = [...sse, es];
-          setSse(eventSources);
-
-          return updatedSubscriptions;
-        });
+        }
+        setSubscriptions(res.data);
       })
-      .catch((err) => console.log(err.data));
+      .catch((err) => console.log(err));
+
+    //스케쥴 푸시
+    axiosInstance({
+      url: `${scheduleEndopint}`,
+      data: scheduleNotifyBody,
+      method: subscribed ? "DELETE" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (subscribed) {
+          setMentors(mentors.filter((el) => el !== name));
+        } else {
+          if (!isMentorExists(name)) {
+            setMentors([...mentors, name]);
+          }
+        }
+        setSubscriptions(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
-  // imgUrl,
   return (
     <div className="mentorProfile">
       <div className="flex items-center mb-2">

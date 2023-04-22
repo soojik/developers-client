@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShowSchedule from "../components/live/ShowSchedule";
 import LiveList from "../components/live/LiveList";
 import MentorScheduling from "../components/live/MentorScheduling";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { subscriptionState } from "../recoil/subscriptionState";
 import { memberInfoState } from "recoil/userState";
 import { axiosInstance } from "apis/axiosConfig";
@@ -46,7 +46,6 @@ const convertScheduleToEvents = (
           owner: schedule.mentorName,
         };
         events.push(event);
-        console.log(event);
       });
     } else {
       schedules.forEach((schedule) => {
@@ -78,51 +77,6 @@ const Mentoring = () => {
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
-  const [sse, setSse] = useState<EventSource[]>([]); //sse 상태 추적
-
-  // 구독 정보 가져오는 함수
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        if (!subscriptions.length) {
-          const response = await axiosInstance.get(
-            `${process.env.REACT_APP_DEV_URL}/subscriptions?userName=${memberInfo.nickname}`
-          );
-          setSubscriptions(response.data);
-        }
-      } catch (error) {
-        console.error("구독 정보를 가져오는데 실패했습니다:", error);
-      }
-    };
-    fetchSubscriptions();
-  }, [memberInfo.nickname, setSubscriptions]);
-
-  // 푸시 알림 받는 로직
-  useEffect(() => {
-    const eventSources: EventSource[] = [];
-
-    if (!subscriptions.length) {
-      subscriptions.forEach((subscription: { mentorName: any }) => {
-        const es = new EventSource(
-          `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`
-        );
-        es.addEventListener("push", (e) => {
-          new Notification(e.data);
-          console.log(e.data);
-        });
-
-        eventSources.push(es);
-      });
-
-      setSse(eventSources);
-
-      return () => {
-        eventSources.forEach((es) => es.close());
-      };
-    }
-  }, [subscriptions, memberInfo.nickname, memberInfo.email]);
-
   useEffect(() => {
     // API와 통신하여 나의 모든 스케쥴(mySchedule) 가져오고,
     // 비회원의 일정 요청 방지
@@ -132,19 +86,17 @@ const Mentoring = () => {
       return;
     }
     axiosInstance({
-      url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,
+      url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentor/${memberId}`,
       method: "get",
     }).then((res) => {
       setMySchedulesAsMentor(res.data["data"]);
-      console.log(res.data["data"]);
     });
     axiosInstance({
-      url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${memberId}`,
+      url: `${process.env.REACT_APP_LIVE_URL}/api/schedules/mentee/${memberId}`,
       method: "get",
     }).then((res) => {
       // 멘티 일정 처리
       setMySchedulesAsMentee(res.data["data"]);
-      console.log(res.data["data"]);
     });
   }, []);
 

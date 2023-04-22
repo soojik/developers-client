@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Popup from 'components/live/PopUp';
-import MentorProfile from 'components/live/MentorProfile';
+import React, { useEffect, useState } from "react";
+import Popup from "components/live/PopUp";
+import MentorProfile from "components/live/MentorProfile";
 import CalendarPopUp from "components/live/CalendarPopUp";
-import { Room } from './RoomList';
-import { EventProp, ScheduleProps } from 'pages/Mentoring';
+import { Room } from "./RoomList";
+import { EventProp, ScheduleProps } from "pages/Mentoring";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { axiosInstance } from "apis/axiosConfig";
 import { memberInfoState } from "recoil/userState";
@@ -11,10 +11,14 @@ import { memberInfoState } from "recoil/userState";
 interface ShowMentoringProps {
   mySchedule: EventProp[];
   room: Room;
-  handleClose: () => void,
+  handleClose: () => void;
 }
 
-const ShowMentoring: React.FC<ShowMentoringProps> = ({ mySchedule, room, handleClose }) => {
+const ShowMentoring: React.FC<ShowMentoringProps> = ({
+  mySchedule,
+  room,
+  handleClose,
+}) => {
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const [showCalendarPopup, setShowCalendarPopup] = useState(false); // 다음 버튼을 누를 때
   const [roomSchedules, setRoomSchedules] = useState<ScheduleProps[]>([]);
@@ -22,16 +26,22 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({ mySchedule, room, handleC
   let newSchedule: any[] = [];
   const handleShowSchedule = () => {
     // 방 아이디로 스케쥴 조회
-    axiosInstance.get(`${process.env.REACT_APP_DEV_URL}/api/schedules/${room.mentoringRoomId}`)
-      .then(res => {
-        setRoomSchedules(res.data.data)
+    axiosInstance
+      .get(
+        `${process.env.REACT_APP_LIVE_URL}/api/schedules/${room.mentoringRoomId}`
+      )
+      .then((res) => {
+        setRoomSchedules(res.data.data);
       })
-      .catch(err => console.log(err));
-  }
+      .catch((err) => console.log(err));
+  };
 
   if (roomSchedules.length !== 0) {
-    newSchedule = roomSchedules.filter(roomSchedule =>
-      !mySchedule.some(my => my.startDate.toString() === roomSchedule.startDate)
+    newSchedule = roomSchedules.filter(
+      (roomSchedule) =>
+        !mySchedule.some(
+          (my) => my.startDate.toString() === roomSchedule.startDate
+        )
     );
   }
 
@@ -39,31 +49,55 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({ mySchedule, room, handleC
     <div>
       <Popup>
         {!showCalendarPopup ? (
-          <div className='mx-4'>
-            <div className="flex text-sm items-center text-gray-400">
-              제목
-            </div>
-            <h2 className="text-2xl pb-1 border-b border-gray-300"> {room.title}</h2>
+          <div className="mx-4">
+            <div className="flex text-sm items-center text-gray-400">제목</div>
+            <h2 className="text-2xl pb-1 border-b border-gray-300">
+              {" "}
+              {room.title}
+            </h2>
             <div className="flex text-sm items-center text-gray-400 mt-3">
               소개글
             </div>
-            <p className='py-2 border-b border-gray-300 mb-3'>{room.description}</p>
-            <div className="flex text-sm items-center text-gray-400 mt-3">
-              멘토
-            </div>
-            <MentorProfile name={room.mentorName} bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!" />
+            <p className="py-2 border-b border-gray-300 mb-3">
+              {room.description}
+            </p>
+            <MentorProfile
+              startTime={room.startTime}
+              roomName={room.title}
+              name={room.mentorName}
+              bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!"
+            />
             {/* imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" */}
-            <button className="bg-slate-200 text-accent-400 px-3 py-2 mr-3 rounded" onClick={handleClose}>닫기</button>
-            {memberId &&
-              <button className="bg-accent-400 text-slate-200 px-3 py-2 rounded" onClick={() => { setShowCalendarPopup(!showCalendarPopup); handleShowSchedule() }}>신청</button>
-            }
+            <button
+              className="bg-slate-200 text-accent-400 px-3 py-2 mr-3 rounded"
+              onClick={handleClose}
+            >
+              닫기
+            </button>
+            {memberId && (
+              <button
+                className="bg-accent-400 text-slate-200 px-3 py-2 rounded"
+                onClick={() => {
+                  setShowCalendarPopup(!showCalendarPopup);
+                  handleShowSchedule();
+                }}
+              >
+                신청
+              </button>
+            )}
           </div>
         ) : (
-          <CalendarPopUp events={newSchedule} handleClose={() => { handleClose; window.location.reload(); }} />
+          <CalendarPopUp
+            events={newSchedule}
+            handleClose={() => {
+              handleClose;
+              window.location.reload();
+            }}
+          />
         )}
       </Popup>
     </div>
   );
-}
+};
 
 export default ShowMentoring;

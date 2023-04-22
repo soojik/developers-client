@@ -211,32 +211,36 @@ const ProblemDetail = () => {
           <img src={detail.pathname} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
-      <div className="mt-4">
-        <label
-          htmlFor="answer"
-          className="block text-sm font-medium text-gray-700"
-        >
-          보기
-        </label>
-        <div className="flex flex-col items-start space-y-2">
-          {detail.answerCandidate.map((candidate: string, index: number) => (
-            <div key={index} className="flex items-center">
-              <input
-                type="radio"
-                id={`option${index + 1}`}
-                name="answerCandidate"
-                value={index + 1}
-                className="mr-2"
-                onChange={() => handleRadioClick(index + 1)}
-                disabled={radioDisabled}
-              />
-              <label htmlFor={`option${index + 1}`} className="text-sm">
-                {candidate}
-              </label>
-            </div>
-          ))}
+      {isLoggedIn === false ? (
+        <div></div>
+      ) : (
+        <div className="mt-4">
+          <label
+            htmlFor="answer"
+            className="block text-sm font-medium text-gray-700"
+          >
+            보기
+          </label>
+          <div className="flex flex-col items-start space-y-2">
+            {detail.answerCandidate.map((candidate: string, index: number) => (
+              <div key={index} className="flex items-center">
+                <input
+                  type="radio"
+                  id={`option${index + 1}`}
+                  name="answerCandidate"
+                  value={index + 1}
+                  className="mr-2"
+                  onChange={() => handleRadioClick(index + 1)}
+                  disabled={radioDisabled}
+                />
+                <label htmlFor={`option${index + 1}`} className="text-sm">
+                  {candidate}
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       {detail && (
         <button
           className=" flex py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-2"

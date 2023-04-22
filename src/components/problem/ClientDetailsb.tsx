@@ -228,24 +228,28 @@ const ProblemDetail = () => {
           <img src={detail.pathname} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
-      <div className="mt-4">
-        <label
-          htmlFor="answer"
-          className="block text-sm font-medium text-gray-700"
-        >
-          답변
-        </label>
-        <div className="mt-1">
-          <textarea
-            id="answer"
-            name="answer"
-            className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-black border-2 rounded-md"
-            value={inputAnswer}
-            onChange={handleAnswerChange}
-            disabled={!isEditing}
-          ></textarea>
+      {isLoggedIn === false ? (
+        <div></div>
+      ) : (
+        <div className="mt-4">
+          <label
+            htmlFor="answer"
+            className="block text-sm font-medium text-gray-700"
+          >
+            답변
+          </label>
+          <div className="mt-1">
+            <textarea
+              id="answer"
+              name="answer"
+              className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-black border-2 rounded-md"
+              value={inputAnswer}
+              onChange={handleAnswerChange}
+              disabled={!isEditing}
+            ></textarea>
+          </div>
         </div>
-      </div>
+      )}
 
       {detail && (
         <button

@@ -252,7 +252,7 @@ const ProblemDetail = () => {
         <p className="text-bold text-blue-500"> 해시태그:&nbsp;</p>{" "}
         <Tags tagList={detail.hashTag ? detail.hashTag.split(",") : []} />
       </div>
-      {memberInfo.isLoggedIn === false ? (
+      {isLoggedIn === false ? (
         <div></div>
       ) : (
         <div>

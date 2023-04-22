@@ -179,7 +179,7 @@ const ProblemDetail = () => {
 
         <div>
           {" "}
-          {memberInfo.isLoggedIn === false ? (
+          {isLoggedIn === false ? (
             <div></div>
           ) : (
             <p style={{ fontSize: "1.2rem", marginBottom: "10px" }}>

@@ -23,34 +23,34 @@ const App: React.FC = () => {
 
   useEffect(() => {
     console.log(subscriptions);
-    const eventSources = subscriptions.flatMap(
-      (subscription: { mentorName: any }) => {
-        const pushUrl = `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
-        const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen/schedule?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&time=&email=${memberInfo.email}`;
+    if (subscriptions.length > 0) {
+      const eventSources = subscriptions.flatMap(
+        (subscription: { mentorName: any }) => {
+          const pushUrl = `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
+          const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen/schedule?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&time=&email=${memberInfo.email}`;
+          const pushEs = new EventSource(pushUrl);
+          const scheduleEs = new EventSource(scheduleUrl);
 
-        const pushEs = new EventSource(pushUrl);
-        const scheduleEs = new EventSource(scheduleUrl);
+          pushEs.addEventListener("push", (e) => {
+            setModalMessage(e.data);
+            setShowModal(true);
+            console.log(e.data);
+          });
+          scheduleEs.addEventListener("schedule", (e) => {
+            setModalMessage(e.data);
+            setShowModal(true);
+            console.log(e.data);
+          });
 
-        pushEs.addEventListener("push", (e) => {
-          setModalMessage(e.data);
-          setShowModal(true);
-          console.log(e.data);
-        });
+          return [pushEs, scheduleEs];
+        }
+      );
 
-        scheduleEs.addEventListener("schedule", (e) => {
-          setModalMessage(e.data);
-          setShowModal(true);
-          console.log(e.data);
-        });
-
-        return [pushEs, scheduleEs];
-      }
-    );
-
-    // 컴포넌트가 언마운트될 때 이벤트 소싱 요청들을 닫습니다.
-    return () => {
-      eventSources.forEach((es: { close: () => any }) => es.close());
-    };
+      // 컴포넌트가 언마운트될 때 이벤트 소싱 요청들을 닫습니다.
+      return () => {
+        eventSources.forEach((es: { close: () => any }) => es.close());
+      };
+    }
   }, [subscriptions, memberInfo]);
 
   return (

@@ -28,7 +28,7 @@ const App: React.FC = () => {
       const eventSources = subscriptions
         .map((subscription: Subscription) => {
           const pushUrl = `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
-          const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}&time=${subscription}&roomName=${subscription.roomName}`;
+          const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen/schedule?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}&time=${subscription}&roomName=${subscription.roomName}`;
 
           const pushEs = new EventSource(pushUrl);
           const scheduleEs = new EventSource(scheduleUrl);

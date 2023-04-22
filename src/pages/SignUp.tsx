@@ -69,7 +69,8 @@ const SignUp = () => {
         }
       )
       .then((res) => {
-        console.log("회원가입 응답", res.data.memberId);
+        console.log("회원가입 응답", res.data);
+        alert("회원가입 되었습니다!");
         navigate("/login");
       })
       .catch((err) => console.log(err));

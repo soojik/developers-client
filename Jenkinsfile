@@ -23,6 +23,7 @@ pipeline {
       }
       post {
         failure {
+          echo 'REACT_APP_AWS_ACCESS_KEY_ID'
           echo 'Application Repository clone failure'
         }
         success {

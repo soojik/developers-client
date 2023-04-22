@@ -19,11 +19,11 @@ pipeline {
   stages {
     stage('Checkout Github') {
       steps {
+          echo 'REACT_APP_AWS_ACCESS_KEY_ID'
           checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: githubCredential, url: applicationGitAddress ]]])
       }
       post {
         failure {
-          echo 'REACT_APP_AWS_ACCESS_KEY_ID'
           echo 'Application Repository clone failure'
         }
         success {

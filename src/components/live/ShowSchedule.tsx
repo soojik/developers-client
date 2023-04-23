@@ -110,19 +110,6 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
             [event.title]: res.data.url,
           }));
         }
-
-        try {
-          await axiosInstance.post(
-            `${process.env.REACT_APP_DEV_URL}/api/publish/schedule`,
-            {
-              mentorName: memberInfo.nickname,
-              roomUrl: res.data.url,
-            }
-          );
-        } catch (err) {
-          console.log(err);
-        }
-
         window.open(res.data.url, "_blank");
         handleClose();
       } else {

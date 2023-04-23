@@ -52,7 +52,20 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             await axiosInstance
               .post(`${process.env.REACT_APP_DEV_URL}/api/publish`, {
                 mentorName: memberInfo.nickname,
-                message: `push::구독한 ${memberInfo.nickname} 멘토가 멘토링 룸을 개설하였습니다!`,
+                roomName: title,
+              })
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+
+            await axiosInstance
+              .post(`${process.env.REACT_APP_DEV_URL}/api/publish/schedule`, {
+                mentorName: memberInfo.nickname,
+                roomUrl: "https://diveloper.site/mentoring",
+                roomName: title,
               })
               .then((res) => {
                 console.log(res);

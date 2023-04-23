@@ -8,7 +8,6 @@ interface MentorProfileProps {
   bio: string;
   name: string;
   roomName: string;
-  startTime: string;
 }
 
 export interface Subscription {
@@ -16,14 +15,12 @@ export interface Subscription {
   userName: string;
   email: string;
   roomName: string;
-  startTime?: string;
 }
 
 const MentorProfile: React.FC<MentorProfileProps> = ({
   bio,
   name,
   roomName,
-  startTime,
 }) => {
   const { memberInfo, memberId } = useRecoilValue(memberInfoState);
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
@@ -55,37 +52,17 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
       ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe`
       : `${process.env.REACT_APP_DEV_URL}/api/subscribe`;
 
-    // schedule 엔드포인트 선택
-    const scheduleEndopint = subscribed
-      ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe/schedule`
-      : `${process.env.REACT_APP_DEV_URL}/api/subscribe/schedule`;
-
     const notifybody = subscribed
       ? {
           mentorName: name,
           userName: memberInfo.nickname,
-          roomName: roomName,
+          roomName,
         }
       : {
           mentorName: name,
           userName: memberInfo.nickname,
           email: memberInfo.email,
-          roomName: roomName,
-          startTime: startTime,
-        };
-
-    const scheduleNotifyBody = subscribed
-      ? {
-          mentorName: name,
-          userName: memberInfo.nickname,
-          roomName: roomName,
-        }
-      : {
-          mentorName: name,
-          userName: memberInfo.nickname,
-          email: memberInfo.email,
-          roomName: roomName,
-          startTime: startTime,
+          roomName,
         };
 
     // 일반 푸시 알림 요청
@@ -116,45 +93,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
             {
               mentorName: name,
               userName: memberInfo.nickname,
-              roomName: roomName,
-              startTime: startTime,
-            },
-          ]);
-        }
-        setSubscribed(!subscribed);
-      })
-      .catch((err) => console.log(err));
-
-    // 스케쥴 푸시 알림 요청
-    axiosInstance({
-      url: `${scheduleEndopint}`,
-      data: scheduleNotifyBody,
-      method: subscribed ? "DELETE" : "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (subscribed) {
-          // 구독 취소
-          setSubscriptions((prev: any[]) =>
-            prev.filter(
-              (subscription: { mentorName: string; userName: string }) =>
-                !(
-                  subscription.mentorName === name &&
-                  subscription.userName === memberInfo.nickname
-                )
-            )
-          );
-        } else {
-          // 구독
-          setSubscriptions((prev: any) => [
-            ...prev,
-            {
-              mentorName: name,
-              userName: memberInfo.nickname,
-              roomName: roomName,
-              startTime: startTime,
+              roomName,
             },
           ]);
         }

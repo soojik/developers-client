@@ -14,24 +14,27 @@ import ProblemSolved from "pages/ProblemSolved";
 // 알림 때문에 추가
 import { useRecoilValue } from "recoil";
 import { subscriptionState } from "./recoil/subscriptionState";
+import { scheduleSubscriptionState } from "./recoil/scheduleSubscriptionState";
 import { memberInfoState } from "recoil/userState";
 import { ToastContainer, toast } from "react-toastify";
 import { Subscription } from "./components/live/MentorProfile";
+import { ScheduleSubscriptions } from "./components/live/CalendarPopUp";
 import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
 
 const App: React.FC = () => {
   const subscriptions = useRecoilValue(subscriptionState);
+  const scheduleSubscriptions = useRecoilValue(scheduleSubscriptionState);
   const { memberInfo } = useRecoilValue(memberInfoState);
+  const location = useLocation();
 
   useEffect(() => {
     if (subscriptions.length > 0) {
       const eventSources = subscriptions
         .map((subscription: Subscription) => {
           const pushUrl = `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
-          const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen/schedule?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}&time=${subscription}&roomName=${subscription.roomName}`;
 
           const pushEs = new EventSource(pushUrl);
-          const scheduleEs = new EventSource(scheduleUrl);
 
           pushEs.addEventListener("push", (e) => {
             // 여기서 알림을 생성합니다.
@@ -39,13 +42,14 @@ const App: React.FC = () => {
             console.log(e.data);
           });
 
-          scheduleEs.addEventListener("schedule", (e) => {
-            // 여기서 알림을 생성합니다.
-            toast(e.data);
-            console.log(e.data);
+          pushEs.addEventListener("error", (e: any) => {
+            console.log(e);
+            if (e.status === 500) {
+              pushEs.close();
+            }
           });
 
-          return [pushEs, scheduleEs];
+          return [pushEs];
         })
         .flat();
 
@@ -54,7 +58,39 @@ const App: React.FC = () => {
         eventSources.forEach((es: { close: () => any }) => es.close());
       };
     }
-  }, [subscriptions, memberInfo]);
+  }, [subscriptions, memberInfo, location]);
+
+  useEffect(() => {
+    if (scheduleSubscriptions.length > 0) {
+      const eventSources = scheduleSubscriptions
+        .map((scheduleSubscriptions: ScheduleSubscriptions) => {
+          const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen/schedule?mentorName=${scheduleSubscriptions.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}&time=${scheduleSubscriptions.startTime}&roomName=${scheduleSubscriptions.roomName}`;
+
+          const scheduleEs = new EventSource(scheduleUrl);
+
+          scheduleEs.addEventListener("schedule", (e) => {
+            // 여기서 알림을 생성합니다.
+            toast(e.data);
+            console.log(e.data);
+          });
+
+          scheduleEs.addEventListener("error", (e: any) => {
+            console.log(e);
+            if (e.status === 500) {
+              scheduleEs.close();
+            }
+          });
+
+          return [scheduleEs];
+        })
+        .flat();
+
+      // 컴포넌트가 언마운트될 때 이벤트 소싱 요청들을 닫습니다.
+      return () => {
+        eventSources.forEach((es: { close: () => any }) => es.close());
+      };
+    }
+  }, [scheduleSubscriptions, memberInfo, location]);
 
   return (
     <div className="App">

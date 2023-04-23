@@ -4,7 +4,7 @@ import MentorProfile from "components/live/MentorProfile";
 import CalendarPopUp from "components/live/CalendarPopUp";
 import { Room } from "./RoomList";
 import { EventProp, ScheduleProps } from "pages/Mentoring";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { axiosInstance } from "apis/axiosConfig";
 import { memberInfoState } from "recoil/userState";
 
@@ -52,7 +52,6 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
           <div className="mx-4">
             <div className="flex text-sm items-center text-gray-400">제목</div>
             <h2 className="text-2xl pb-1 border-b border-gray-300">
-              {" "}
               {room.title}
             </h2>
             <div className="flex text-sm items-center text-gray-400 mt-3">
@@ -62,7 +61,6 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
               {room.description}
             </p>
             <MentorProfile
-              startTime={room.startTime}
               roomName={room.title}
               name={room.mentorName}
               bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!"

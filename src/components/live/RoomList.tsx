@@ -9,7 +9,6 @@ export interface Room {
   mentorName: string;
   description: String;
   createdAt: Date;
-  startTime: string;
 }
 
 interface RoomListProps {

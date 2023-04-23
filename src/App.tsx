@@ -29,6 +29,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (
+      JSON.stringify(memberInfo) !== "{}" &&
       !Object.keys(memberInfo).includes("undefined" || "null") &&
       !Object.values(memberInfo).includes("undefined" || "null") &&
       subscriptions.length > 0
@@ -74,6 +75,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (
+      JSON.stringify(memberInfo) !== "{}" &&
       !Object.keys(memberInfo).includes("undefined" || "null") &&
       !Object.values(memberInfo).includes("undefined" || "null") &&
       scheduleSubscriptions.length > 0

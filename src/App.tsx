@@ -28,7 +28,11 @@ const App: React.FC = () => {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    if (memberInfo && subscriptions.length > 0) {
+    if (
+      !Object.keys(memberInfo).includes("undefined" || "null") &&
+      !Object.values(memberInfo).includes("undefined" || "null") &&
+      subscriptions.length > 0
+    ) {
       const eventSources = subscriptions
         .map((subscription: Subscription) => {
           const pushUrl = `${process.env.REACT_APP_DEV_URL}/api/listen?mentorName=${subscription.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
@@ -69,7 +73,11 @@ const App: React.FC = () => {
   }, [subscriptions, memberInfo]);
 
   useEffect(() => {
-    if (memberInfo && scheduleSubscriptions.length > 0) {
+    if (
+      !Object.keys(memberInfo).includes("undefined" || "null") &&
+      !Object.values(memberInfo).includes("undefined" || "null") &&
+      scheduleSubscriptions.length > 0
+    ) {
       const eventSources = scheduleSubscriptions
         .map((scheduleSubscriptions: ScheduleSubscriptions) => {
           const scheduleUrl = `${process.env.REACT_APP_DEV_URL}/api/listen/schedule?mentorName=${scheduleSubscriptions.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}&time=${scheduleSubscriptions.startTime}&roomName=${scheduleSubscriptions.roomName}`;

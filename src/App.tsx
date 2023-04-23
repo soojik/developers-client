@@ -40,6 +40,13 @@ const App: React.FC = () => {
             console.log(e.data);
           });
 
+          pushEs.addEventListener("error", (e: any) => {
+            console.log(e);
+            if (e.status === 500) {
+              pushEs.close();
+            }
+          });
+
           return [pushEs];
         })
         .flat();
@@ -63,6 +70,13 @@ const App: React.FC = () => {
             // 여기서 알림을 생성합니다.
             toast(e.data);
             console.log(e.data);
+          });
+
+          scheduleEs.addEventListener("error", (e: any) => {
+            console.log(e);
+            if (e.status === 500) {
+              scheduleEs.close();
+            }
           });
 
           return [scheduleEs];

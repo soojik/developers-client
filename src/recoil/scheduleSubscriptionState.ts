@@ -8,9 +8,3 @@ export const scheduleSubscriptionState = atom({
   default: [],
   effects_UNSTABLE: [persistAtom],
 });
-
-export const resetScheduleSubscriptionsState = (
-  set: (arg0: RecoilState<any>, arg1: never[]) => void
-) => {
-  set(scheduleSubscriptionState, []);
-};

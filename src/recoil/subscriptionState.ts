@@ -8,9 +8,3 @@ export const subscriptionState = atom({
   default: [],
   effects_UNSTABLE: [persistAtom],
 });
-
-export const resetSubscriptionsState = (
-  set: (arg0: RecoilState<any>, arg1: never[]) => void
-) => {
-  set(subscriptionState, []);
-};

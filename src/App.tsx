@@ -12,15 +12,9 @@ import ProblemRegister from "pages/ProblemRegister";
 import ProblemSolved from "pages/ProblemSolved";
 
 // 알림 때문에 추가
-import { useRecoilValue } from "recoil";
-import {
-  resetSubscriptionsState,
-  subscriptionState,
-} from "./recoil/subscriptionState";
-import {
-  resetScheduleSubscriptionsState,
-  scheduleSubscriptionState,
-} from "./recoil/scheduleSubscriptionState";
+import { useRecoilValue, useResetRecoilState } from "recoil";
+import { subscriptionState } from "./recoil/subscriptionState";
+import { scheduleSubscriptionState } from "./recoil/scheduleSubscriptionState";
 import { memberInfoState } from "recoil/userState";
 import { ToastContainer, toast } from "react-toastify";
 import { Subscription } from "./components/live/MentorProfile";
@@ -118,8 +112,8 @@ const App: React.FC = () => {
   // 모든 subscriptions와 scheduleSubscriptions 삭제
   const resetSubscriptions = () => {
     // Recoil 상태를 초기화하는 함수를 호출하세요.
-    resetSubscriptionsState(subscriptions);
-    resetScheduleSubscriptionsState(scheduleSubscriptions);
+    useResetRecoilState(subscriptionState);
+    useResetRecoilState(scheduleSubscriptionState);
   };
 
   return (

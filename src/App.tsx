@@ -20,11 +20,13 @@ import { ToastContainer, toast } from "react-toastify";
 import { Subscription } from "./components/live/MentorProfile";
 import { ScheduleSubscriptions } from "./components/live/CalendarPopUp";
 import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
 
 const App: React.FC = () => {
   const subscriptions = useRecoilValue(subscriptionState);
   const scheduleSubscriptions = useRecoilValue(scheduleSubscriptionState);
   const { memberInfo } = useRecoilValue(memberInfoState);
+  const location = useLocation();
 
   useEffect(() => {
     if (subscriptions.length > 0) {
@@ -56,7 +58,7 @@ const App: React.FC = () => {
         eventSources.forEach((es: { close: () => any }) => es.close());
       };
     }
-  }, [subscriptions, memberInfo]);
+  }, [subscriptions, memberInfo, location]);
 
   useEffect(() => {
     if (scheduleSubscriptions.length > 0) {
@@ -88,7 +90,7 @@ const App: React.FC = () => {
         eventSources.forEach((es: { close: () => any }) => es.close());
       };
     }
-  }, [scheduleSubscriptions, memberInfo]);
+  }, [scheduleSubscriptions, memberInfo, location]);
 
   return (
     <div className="App">

@@ -90,15 +90,8 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                     },
                   })
                     .then((res) => {
-                      setScheduleSubscriptions((prev: any) => [
-                        ...prev,
-                        {
-                          mentorName: props.data.mentorName,
-                          userName: memberInfo.nickname,
-                          roomName: props.data.title,
-                          startTime: props.data.startDate,
-                        },
-                      ]);
+                      console.log(res);
+                      setScheduleSubscriptions(res.data.scheduleSubscriptions);
                     })
                     .catch((err) => console.log(err));
 

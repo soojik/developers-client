@@ -11,8 +11,9 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import { axiosInstance } from "apis/axiosConfig";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import { scheduleSubscriptionState } from "recoil/scheduleSubscriptionState";
 
 interface CalendarProps {
   events: any[];
@@ -51,6 +52,9 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
 }) => {
   const { memberInfo, memberId } = useRecoilValue(memberInfoState);
   const [roomUrls, setRoomUrls] = useState<{ [key: string]: string }>({}); // 방과 url 매핑
+  const [scheduleSubscriptions, setScheduleSubscriptions] = useRecoilState(
+    scheduleSubscriptionState
+  );
 
   useEffect(() => {
     const fetchRoomUrls = async () => {
@@ -82,6 +86,40 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
           `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${event.scheduleId}`
         );
         if (res.status === 200) {
+          // 알림 삭제
+          await axiosInstance
+            .delete(
+              `${process.env.REACT_APP_DEV_URL}/api/unsubscribe/schedule`,
+              {
+                data: {
+                  mentorName: event.owner,
+                  userName: memberInfo.nickname,
+                  roomName: event.title,
+                },
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              setScheduleSubscriptions((prev: any[]) =>
+                prev.filter(
+                  (scheduleSubscriptions: {
+                    roomName: string;
+                    mentorName: string;
+                    userName: string;
+                  }) =>
+                    !(
+                      scheduleSubscriptions.mentorName === event.owner &&
+                      scheduleSubscriptions.userName === memberInfo.nickname &&
+                      scheduleSubscriptions.roomName === event.title
+                    )
+                )
+              );
+            })
+            .catch((err) => console.log(err));
+
           alert("취소가 완료되었습니다.");
           handleClose();
         } else {

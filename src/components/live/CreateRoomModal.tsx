@@ -60,19 +60,6 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               .catch((err) => {
                 console.log(err);
               });
-
-            await axiosInstance
-              .post(`${process.env.REACT_APP_DEV_URL}/api/publish/schedule`, {
-                mentorName: memberInfo.nickname,
-                roomUrl: "https://diveloper.site/mentoring",
-                roomName: title,
-              })
-              .then((res) => {
-                console.log(res);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
           } else {
             window.alert(res.data["msg"]);
           }

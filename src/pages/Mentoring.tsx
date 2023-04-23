@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShowSchedule from "../components/live/ShowSchedule";
 import LiveList from "../components/live/LiveList";
 import MentorScheduling from "../components/live/MentorScheduling";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { subscriptionState } from "../recoil/subscriptionState";
+import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { axiosInstance } from "apis/axiosConfig";
 

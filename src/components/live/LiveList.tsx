@@ -75,7 +75,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
   const handleSearch = async (query: string) => {
     if (query) {
-      const url = `${process.env.REACT_APP_LIVE_URL}/api/room/${query}`;
+      const url = `/api/room/${query}`;
       const data = await axiosInstance.get(url);
       setRoomList(data.data.data);
       setCurrentPage(1);

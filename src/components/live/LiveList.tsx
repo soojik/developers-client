@@ -80,6 +80,12 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
       setRoomList(data.data.data);
       setCurrentPage(1);
     }
+    // 빈칸 입력하면 모든 데이터 가져오도록
+    else {
+      const data = await fetchRooms(null);
+      setRoomList(data);
+      setCurrentPage(1);
+    }
   };
 
   return (

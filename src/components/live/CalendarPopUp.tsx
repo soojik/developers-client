@@ -34,9 +34,9 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
   const [currentDate, setCurrentDate] = useState(new Date()); // 시간 변수를 상태값으로 두어 변경 가능
-  const [scheduleSubscriptions, setScheduleSubscriptions] = useRecoilState(
-    scheduleSubscriptionState
-  ); // 스케쥴링 알림 푸쉬
+  // const [scheduleSubscriptions, setScheduleSubscriptions] = useRecoilState(
+  //   scheduleSubscriptionState
+  // ); // 스케쥴링 알림 푸쉬
 
   const currentDateChange = (newDate: Date) => {
     setCurrentDate(newDate);
@@ -71,26 +71,26 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                       console.log(res.data);
                     });
 
-                  // 스케쥴 푸시 알림 구독
-                  await axiosInstance({
-                    url: `/api/subscribe/schedule`,
-                    data: {
-                      mentorName: props.data.mentorName,
-                      userName: memberInfo.nickname,
-                      email: memberInfo.email,
-                      roomName: props.data.title,
-                      startTime: props.data.startDate,
-                    },
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                  })
-                    .then((res) => {
-                      console.log(res);
-                      setScheduleSubscriptions(res.data.scheduleSubscriptions);
-                    })
-                    .catch((err) => console.log(err));
+                  // // 스케쥴 푸시 알림 구독
+                  // await axiosInstance({
+                  //   url: `/api/subscribe/schedule`,
+                  //   data: {
+                  //     mentorName: props.data.mentorName,
+                  //     userName: memberInfo.nickname,
+                  //     email: memberInfo.email,
+                  //     roomName: props.data.title,
+                  //     startTime: props.data.startDate,
+                  //   },
+                  //   method: "POST",
+                  //   headers: {
+                  //     "Content-Type": "application/json",
+                  //   },
+                  // })
+                  //   .then((res) => {
+                  //     console.log(res);
+                  //     setScheduleSubscriptions(res.data.scheduleSubscriptions);
+                  //   })
+                  //   .catch((err) => console.log(err));
 
                   handleClose();
                 } else {

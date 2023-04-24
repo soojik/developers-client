@@ -34,7 +34,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
     } else {
       // axios로 방 데이터 추가
       axiosInstance({
-        url: `${process.env.REACT_APP_DEV_URL}/api/room`,
+        url: `/api/room`,
         method: "post",
         data: {
           title: title,
@@ -50,7 +50,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             setStep(2);
             // 방 생성 이후에 알림
             await axiosInstance
-              .post(`${process.env.REACT_APP_DEV_URL}/api/publish`, {
+              .post(`/api/publish`, {
                 mentorName: memberInfo.nickname,
                 roomName: title,
               })

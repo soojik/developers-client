@@ -128,7 +128,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({
           selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
         );
         await axiosInstance({
-          url: `${process.env.REACT_APP_DEV_URL}/api/schedules`,
+          url: `/api/schedules`,
           method: "post",
           data: {
             mentoringRoomId: mentoringRoomId,

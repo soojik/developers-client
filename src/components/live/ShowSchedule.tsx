@@ -59,9 +59,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
   useEffect(() => {
     const fetchRoomUrls = async () => {
       try {
-        const res = await axiosInstance.get(
-          `${process.env.REACT_APP_DEV_URL}/api/live-session/list`
-        );
+        const res = await axiosInstance.get(`/api/live-session/list`);
         const sessionData = res.data;
         const parsedData: { [key: string]: string } = Object.entries(
           sessionData
@@ -83,24 +81,21 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
     if (!isMentor) {
       if (window.confirm("해당 시간을 취소하시겠습니까?")) {
         const res = await axiosInstance.delete(
-          `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${event.scheduleId}`
+          `/api/schedules/mentee/${event.scheduleId}`
         );
         if (res.status === 200) {
           // 알림 삭제
           await axiosInstance
-            .delete(
-              `${process.env.REACT_APP_DEV_URL}/api/unsubscribe/schedule`,
-              {
-                data: {
-                  mentorName: event.owner,
-                  userName: memberInfo.nickname,
-                  roomName: event.title,
-                },
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            )
+            .delete(`/api/unsubscribe/schedule`, {
+              data: {
+                mentorName: event.owner,
+                userName: memberInfo.nickname,
+                roomName: event.title,
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
             .then((res) => {
               setScheduleSubscriptions(res.data.scheduleSubscriptions);
             })
@@ -117,16 +112,13 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
 
   const handleJoinEvent = async () => {
     try {
-      const res = await axiosInstance.post(
-        `${process.env.REACT_APP_DEV_URL}/api/live-session/enter`,
-        {
-          roomName: event.title,
-          userName: event.owner,
-          userId: memberId,
-          time: 60,
-          scheduleId: event.scheduleId,
-        }
-      );
+      const res = await axiosInstance.post(`/api/live-session/enter`, {
+        roomName: event.title,
+        userName: event.owner,
+        userId: memberId,
+        time: 60,
+        scheduleId: event.scheduleId,
+      });
       if (res.status === 200) {
         if (!Object.keys(roomUrls).includes(event.title)) {
           setRoomUrls((prevRoomUrls) => ({
@@ -153,7 +145,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
         (el) => el === event.title
       );
       axiosInstance
-        .delete(`${process.env.REACT_APP_DEV_URL}/api/live-session/exit`, {
+        .delete(`/api/live-session/exit`, {
           data: {
             roomName: event.title,
             roomUUID: roomUrls[removeUrl[0]].split("daily.co/")[1],

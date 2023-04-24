@@ -54,7 +54,7 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
         if (window.confirm("해당 시간에 신청하시겠습니까?")) {
           if (memberInfo.point >= 30) {
             axiosInstance
-              .post(`${process.env.REACT_APP_DEV_URL}/api/register`, {
+              .post(`/api/register`, {
                 scheduleId: props.data.scheduleId,
                 menteeId: memberId,
                 menteeName: memberInfo.nickname,
@@ -64,19 +64,16 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                   alert("신청이 완료되었습니다");
                   // 점수 차감 요청
                   await axiosInstance
-                    .patch(
-                      `${process.env.REACT_APP_DEV_URL}/api/member/point/decrease`,
-                      {
-                        memberId: memberId,
-                      }
-                    )
+                    .patch(`/api/member/point/decrease`, {
+                      memberId: memberId,
+                    })
                     .then((res) => {
                       console.log(res.data);
                     });
 
                   // 스케쥴 푸시 알림 구독
                   await axiosInstance({
-                    url: `${process.env.REACT_APP_DEV_URL}/api/subscribe/schedule`,
+                    url: `/api/subscribe/schedule`,
                     data: {
                       mentorName: props.data.mentorName,
                       userName: memberInfo.nickname,

@@ -27,9 +27,7 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
   const handleShowSchedule = () => {
     // 방 아이디로 스케쥴 조회
     axiosInstance
-      .get(
-        `${process.env.REACT_APP_DEV_URL}/api/schedules/${room.mentoringRoomId}`
-      )
+      .get(`/api/schedules/${room.mentoringRoomId}`)
       .then((res) => {
         setRoomSchedules(res.data.data);
       })

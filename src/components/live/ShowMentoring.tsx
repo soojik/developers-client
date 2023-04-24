@@ -14,6 +14,8 @@ interface ShowMentoringProps {
   handleClose: () => void;
 }
 
+const offset = new Date().getTimezoneOffset() * 60000;
+
 const ShowMentoring: React.FC<ShowMentoringProps> = ({
   mySchedule,
   room,
@@ -36,11 +38,17 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
 
   if (roomSchedules.length !== 0) {
     newSchedule = roomSchedules.filter(
-      (roomSchedule) =>
-        !mySchedule.some(
-          (my) => my.startDate.toString() === roomSchedule.startDate
-        )
-    );
+      // 멘토링 시작 시간이 현재 시간보다 이른 경우 제외
+      (roomSchedule) => (
+        roomSchedule.startDate > new Date(new Date().getTime() - offset).toISOString()
+      ))
+      .filter(
+        (roomSchedule) => (
+          !mySchedule.some(
+            (my) => 
+              my.startDate.toLocaleString() === new Date(roomSchedule.startDate).toLocaleString()
+          )
+        ))
   }
 
   return (

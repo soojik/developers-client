@@ -17,12 +17,12 @@ interface RoomListProps {
 }
 
 export const thumbnails = [
-  "https://picsum.photos/id/237/200/300",
-  "https://picsum.photos/id/238/200/300",
-  "https://picsum.photos/id/239/200/300",
-  "https://picsum.photos/id/240/200/300",
-  "https://picsum.photos/id/241/200/300",
-  "https://picsum.photos/id/242/200/300",
+  "https://picsum.photos/id/0/300/200",
+  "https://picsum.photos/id/1/300/200",
+  "https://picsum.photos/id/2/300/200",
+  "https://picsum.photos/id/3/300/200",
+  "https://picsum.photos/id/4/300/200",
+  "https://picsum.photos/id/5/300/200",
 ];
 
 const RoomList: React.FC<RoomListProps> = ({ events, rooms }) => {
@@ -31,10 +31,8 @@ const RoomList: React.FC<RoomListProps> = ({ events, rooms }) => {
   const [showRoomInfo, setShowRoomInfo] = useState(false);
 
   const handleShowRoomInfo = (room: Room) => {
-    if (memberId) {
-      setSelectedRoom(room);
-      setShowRoomInfo(!showRoomInfo);
-    }
+    setSelectedRoom(room);
+    setShowRoomInfo(!showRoomInfo);
   };
 
   return (

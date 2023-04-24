@@ -79,21 +79,30 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({
   const [availableTimeSlots, setAvailableTimeSlots] =
     useState<string[]>(allTimeSlots);
 
-  useEffect(() => {
-    if (selectedDate) {
-      // 예약 가능한 시간대 계산
-      const reservedTimes = events
-        .filter(
-          (event) =>
-            event.startDate.toDateString() === selectedDate.toDateString()
-        )
-        .map((event) => event.startDate.getHours().toString());
-      const availableTimes = allTimeSlots.filter(
-        (time) => !reservedTimes.includes(time)
-      );
-      setAvailableTimeSlots(availableTimes);
-    }
-  }, [selectedDate, events]);
+    useEffect(() => {
+      if (selectedDate) {
+        let availableTimes: string[] = allTimeSlots;
+        // 선택 날짜(selectedDate) 가 오늘일 때, 현재 시간보다 이른 시간은 신청하지 못하도록
+        if (selectedDate.getDate() === new Date().getDate()) {
+          availableTimes = availableTimes.filter(
+            (time) =>
+              parseInt(time) > new Date().getHours()
+          )
+        }
+        // 예약 가능한 시간대 계산
+        const reservedTimes = events
+          .filter(
+            (event) =>
+              new Date(event.startDate).toDateString() ===
+              selectedDate.toDateString()
+          )
+          .map((event) => new Date(event.startDate).getHours().toString());
+        availableTimes = availableTimes.filter(
+          (time) => !reservedTimes.includes(time)
+        );
+        setAvailableTimeSlots(availableTimes);
+      }
+    }, [selectedDate, events]);
 
   // 예약 가능한 시간대 버튼을 동적으로 생성해주는 함수
   const renderTimeSlotButtons = () => {

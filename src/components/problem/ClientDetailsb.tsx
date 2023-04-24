@@ -56,6 +56,9 @@ const ProblemDetail = () => {
   const openModal = () => {
     if (window.confirm("답안을 제출 하시겠습니까?")) {
       setModalOpen(true);
+      if(modalTitle === "정답입니다!"){
+        updatePoint();
+      }
     }
   };
 
@@ -121,13 +124,17 @@ const ProblemDetail = () => {
   };
 
   const handleSave = () => {
-    setIsEditing(false);
-  };
+    if (inputAnswer.trim() === "") {
+      window.alert("답변을 작성해주세요!");
+    } else {
+      setIsEditing(false);
+    }
+    };
 
   const handleLikeButtonClick = async () => {
     try {
       const response = await axiosInstance.post(
-        `http://localhost:9001/api/problem/${location.state.problemId}`
+        `/api/problem/${location.state.problemId}`
       );
       setIsLiked(true);
       setLikes(likes + 1);
@@ -139,6 +146,26 @@ const ProblemDetail = () => {
       }
     }
   };
+
+
+  const updatePoint = async () => {
+    try {
+      const point = {
+        memberId: memberId,
+      };
+      await axiosInstance
+        .patch(`/api/member/point/increase`, point)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
 
   return (
     <>

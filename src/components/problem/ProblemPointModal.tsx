@@ -41,28 +41,12 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
     }
   };
 
-  const updatePoint = async () => {
-    try {
-      const point = {
-        memberId: memberId,
-      };
-      await axiosInstance
-        .patch(`/api/member/point/increase`, point)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+ 
 
   const handleClose = () => {
     if (title === "정답입니다!") {
       saveSolution();
-      updatePoint();
+
     }
     setVisible(false);
     onClose();
@@ -78,7 +62,7 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
           </h2>
           <div className="mt-4">
             <p className="text-l text-gray-500">
-              {memberInfo.point} + {point} = {totalPoint}
+              점수 {point} 점 획득 
             </p>
           </div>
         </div>
@@ -107,3 +91,4 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
 };
 
 export default Modal;
+

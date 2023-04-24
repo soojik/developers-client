@@ -91,22 +91,22 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
             `/api/schedules/mentee/${event.scheduleId}`
           );
           if (res.status === 200) {
-            // 알림 삭제
-            await axiosInstance
-              .delete(`/api/unsubscribe/schedule`, {
-                data: {
-                  mentorName: event.owner,
-                  userName: memberInfo.nickname,
-                  roomName: event.title,
-                },
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-              .then((res) => {
-                setScheduleSubscriptions(res.data.scheduleSubscriptions);
-              })
-              .catch((err) => console.log(err));
+            // // 알림 삭제
+            // await axiosInstance
+            //   .delete(`/api/unsubscribe/schedule`, {
+            //     data: {
+            //       mentorName: event.owner,
+            //       userName: memberInfo.nickname,
+            //       roomName: event.title,
+            //     },
+            //     headers: {
+            //       "Content-Type": "application/json",
+            //     },
+            //   })
+            //   .then((res) => {
+            //     setScheduleSubscriptions(res.data.scheduleSubscriptions);
+            //   })
+            //   .catch((err) => console.log(err));
 
             alert("취소가 완료되었습니다.");
             handleClose();

@@ -165,9 +165,12 @@ const App: React.FC = () => {
 
   // // 모든 subscriptions와 scheduleSubscriptions 삭제
   // const resetSubscriptions = () => {
-  //   // Recoil 상태를 초기화하는 함수를 호출하세요.
-  //   useResetRecoilState(subscriptionState);
-  //   useResetRecoilState(scheduleSubscriptionState);
+  //    // Recoil 상태를 초기화하는 함수를 호출하세요.
+  // const resetSubscriptionState = useResetRecoilState(subscriptionState);
+  // const resetScheduleSubscriptionState = useResetRecoilState(scheduleSubscriptionState);
+
+  // resetSubscriptionState();
+  // resetScheduleSubscriptionState();
   // };
 
   return (

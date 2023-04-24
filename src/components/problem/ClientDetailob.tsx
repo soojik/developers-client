@@ -38,7 +38,7 @@ const ProblemDetail = () => {
   const [pointAdd, setPointAdd] = useState(0); // 포인트 -> 연산값이 실제로 연산된 후 보내져야한다.
   const [isEditing, setIsEditing] = useState(true); // 수정 모드인지 여부를 true로 변경
   const [radioDisabled, setRadioDisabled] = useState(false);
-  const [originalAnswer, setOriginalAnswer] = useState(""); // 수정 모드 진입 시 기존 답변 저장
+  const [selectedNumberState, setSelectedNumberState] = useState<number | null>(null);
   const [problemSolved, setProblemSolved] = useState(false); // 문제 풀이 유무 DB저장을 위해서 만듦
   const [btnVisible, setBtnVisible] = useState(false); //문제 작성자는 문제 풀수없도록 하기 위한 속성===
   const [answerWriter, setAnswerWriter] = useState(""); //문제 작성자를 받아오기 위한값===
@@ -46,15 +46,22 @@ const ProblemDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   console.log(memberInfo.nickname);
+
   const sessionAnswer = sessionStorage.getItem("answer") || ""; // 값 null처리
+
   const openModal = () => {
     if (window.confirm("답안을 제출 하시겠습니까?")) {
       setModalOpen(true);
+      if(modalTitle === "정답입니다!"){
+        updatePoint();
+      }
     }
   };
+
   const checkAnswer = () => {
     return answer === sessionAnswer; //session answer이랑 값 비교
   };
+
   useEffect(() => {
     const fetchProblemDetail = async () => {
       try {
@@ -80,14 +87,16 @@ const ProblemDetail = () => {
     };
     fetchProblemDetail();
   }, [problemId, member]);
+
   if (!detail) {
     return <div>Loading...</div>;
   }
-  const handleRadioClick = (selectedNumber: number) => {
+
+  const handleRadioClick = (selectedNumber: number ) => {
+    setSelectedNumberState(selectedNumber);
     console.log("Selected radio button:", selectedNumber);
     console.log("Correct answer:", detail.answer);
     // 여기에서 번호를 전송하거나 다른 작업을 수행할 수 있습니다.
-    // 정답을 비교 후 모달 창으로 연산 포인트를 보낸다.
     const answerNumber = selectedNumber.toString(); // 문자열을 숫자로 변환
     if (answerNumber === detail.answer) {
       console.log("정답처리"); // 추후 삭제 예정
@@ -100,6 +109,7 @@ const ProblemDetail = () => {
       setPointAdd(0);
     }
   };
+
   const handleEditing = () => {
     if (window.confirm("수정 하시겠습니까?")) {
       setIsEditing(true);
@@ -108,10 +118,16 @@ const ProblemDetail = () => {
       // setInputAnswer(detail.answer);
     }
   };
+
   const handleSave = () => {
+    if (selectedNumberState === null) {
+      window.alert("값이 필요합니다.");
+      return;
+    }
     setIsEditing(false);
     setRadioDisabled(true);
   };
+
   const handleLikeButtonClick = async () => {
     try {
       const response = await axiosInstance.post(
@@ -128,6 +144,26 @@ const ProblemDetail = () => {
       }
     }
   };
+
+  const updatePoint = async () => {
+    try {
+      const point = {
+        memberId: memberId,
+      };
+      await axiosInstance
+        .patch(`/api/member/point/increase`, point)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+
   return (
     <>
       <div>
@@ -311,3 +347,4 @@ const ProblemDetail = () => {
   );
 };
 export default ProblemDetail;
+

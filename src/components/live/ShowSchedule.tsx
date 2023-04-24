@@ -102,21 +102,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
               }
             )
             .then((res) => {
-              console.log(res);
-              setScheduleSubscriptions((prev: any[]) =>
-                prev.filter(
-                  (scheduleSubscriptions: {
-                    roomName: string;
-                    mentorName: string;
-                    userName: string;
-                  }) =>
-                    !(
-                      scheduleSubscriptions.mentorName === event.owner &&
-                      scheduleSubscriptions.userName === memberInfo.nickname &&
-                      scheduleSubscriptions.roomName === event.title
-                    )
-                )
-              );
+              setScheduleSubscriptions(res.data.scheduleSubscriptions);
             })
             .catch((err) => console.log(err));
 

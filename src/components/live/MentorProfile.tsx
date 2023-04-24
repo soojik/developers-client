@@ -75,28 +75,8 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
       },
     })
       .then((res) => {
-        if (subscribed) {
-          // 구독 취소
-          setSubscriptions((prev: any[]) =>
-            prev.filter(
-              (subscription: { mentorName: string; userName: string }) =>
-                !(
-                  subscription.mentorName === name &&
-                  subscription.userName === memberInfo.nickname
-                )
-            )
-          );
-        } else {
-          // 구독
-          setSubscriptions((prev: any) => [
-            ...prev,
-            {
-              mentorName: name,
-              userName: memberInfo.nickname,
-              roomName,
-            },
-          ]);
-        }
+        console.log(res);
+        setSubscriptions(res.data.subscriptions);
         setSubscribed(!subscribed);
       })
       .catch((err) => console.log(err));

@@ -31,7 +31,7 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({
   const handleNextClick = () => {
     if (room.title !== title || room.description !== description) {
       axiosInstance({
-        url: `${process.env.REACT_APP_DEV_URL}/api/room/update`,
+        url: `/api/room/update`,
         method: "post",
         data: {
           mentoringRoomId: room.mentoringRoomId,

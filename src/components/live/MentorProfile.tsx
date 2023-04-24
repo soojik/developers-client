@@ -48,9 +48,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({
     }
 
     // 일반 푸시 엔드포인트
-    const endpoint = subscribed
-      ? `${process.env.REACT_APP_DEV_URL}/api/unsubscribe`
-      : `${process.env.REACT_APP_DEV_URL}/api/subscribe`;
+    const endpoint = subscribed ? `/api/unsubscribe` : `/api/subscribe`;
 
     const notifybody = subscribed
       ? {

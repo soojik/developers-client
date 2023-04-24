@@ -85,13 +85,13 @@ const Mentoring = () => {
       return;
     }
     axiosInstance({
-      url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentor/${memberId}`,
+      url: `/api/schedules/mentor/${memberId}`,
       method: "get",
     }).then((res) => {
       setMySchedulesAsMentor(res.data["data"]);
     });
     axiosInstance({
-      url: `${process.env.REACT_APP_DEV_URL}/api/schedules/mentee/${memberId}`,
+      url: `/api/schedules/mentee/${memberId}`,
       method: "get",
     }).then((res) => {
       // 멘티 일정 처리

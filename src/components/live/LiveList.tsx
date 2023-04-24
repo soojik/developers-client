@@ -24,7 +24,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
   const fetchRooms = async (lastTime: Date | null) => {
     const lastDateTimeParam = lastTime ? `/next?lastDateTime=${lastTime}` : "";
-    const url = `${process.env.REACT_APP_LIVE_URL}/api/room${lastDateTimeParam}`;
+    const url = `/api/room${lastDateTimeParam}`;
     const data = await axiosInstance.get(url);
     return data.data.data;
   };

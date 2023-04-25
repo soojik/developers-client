@@ -35,7 +35,7 @@ const ProblemRegisterBox = () => {
     location?.state ? location?.state?.level : "bronze"
   );
   const [hashTag, setHashTag] = useState<string[]>(
-    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : null
+    location?.state?.hashTag !== "" ? location?.state?.hashTag : null
   );
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
@@ -313,12 +313,12 @@ const ProblemRegisterBox = () => {
           onClick={() => DeletedFileClick()}
           ></button>)}
       </div>
-      {isimageOpen && location?.state?.pathname && (
+      {!isimageOpen && location?.state?.pathname && (
         <p className="flex">
           <img src={location?.state?.pathname} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
-      {isimageOpen && s3File && (
+      {!isimageOpen && s3File && (
       <p className="flex">
       <img src={s3File} alt="이미지를 불러오지 못했습니다." />
     </p>)}

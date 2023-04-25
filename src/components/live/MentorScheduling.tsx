@@ -94,8 +94,6 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
           <ModifyRoomInfo
             room={selectedRoom}
             onClose={() => {
-              setIsModalOpen(false);
-              window.location.reload();
             }}
             events={events}
           ></ModifyRoomInfo>

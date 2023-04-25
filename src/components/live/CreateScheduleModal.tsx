@@ -151,6 +151,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({
             console.log(`Selected time: ${selectedDate}`);
             console.log(res);
             onClose();
+            window.location.reload();
           })
           .catch((err) => {
             console.log(err);
@@ -200,7 +201,7 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({
       </div>
       <div className="text-right">
         <button type="button" className="mt-4 ml-auto" onClick={onClose}>
-          완료
+          닫기
         </button>
       </div>
     </Popup>

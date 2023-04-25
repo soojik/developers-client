@@ -230,6 +230,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
             console.log(`Selected time: ${selectedDate}`);
             console.log(res);
             onClose();
+            window.location.reload();
           })
           .catch((err) => {
             console.log(err);

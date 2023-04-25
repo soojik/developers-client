@@ -35,8 +35,9 @@ const ProblemRegisterBox = () => {
     location?.state ? location?.state?.level : "bronze"
   );
   const [hashTag, setHashTag] = useState<string[]>(
-    location?.state?.hashTag !== "" ? location?.state?.hashTag : null
+    location?.state?.hashTag[0] ? location?.state?.hashTag : []
   );
+
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
   const [s3File, setS3File] = useState("");
@@ -68,7 +69,7 @@ const ProblemRegisterBox = () => {
     setHashTag(hashTag.filter((data, index) => data !== item));
 
     // 10보다 큰 요소의 위치를 찾은 경우 해당 요소를 제거합니다.
-    console.log(hashTag);
+    console.log(location.state.hashtag);
   };
 
   const handlePointChange = (event: React.ChangeEvent<HTMLInputElement>) => {

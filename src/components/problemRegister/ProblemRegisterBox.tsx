@@ -105,6 +105,7 @@ const ProblemRegisterBox = () => {
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
       return;
+      
     }
 
     const answerArray = ["1", "2", "3", "4"];
@@ -239,7 +240,7 @@ const ProblemRegisterBox = () => {
         <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
         {/* {isHashTag && ( */}
         <div className="flex ">
-          {!location.state.hashTag.len ? null : hashTag.map((item, index) => (
+          {!location.state.hashTag.length ? null : hashTag.map((item, index) => (
             <div>
               <div className="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
                 {item}
@@ -249,14 +250,11 @@ const ProblemRegisterBox = () => {
                   }}
                   className="ml-5"
                 >
-                  x
                 </button>
               </div>
             </div>
           ))}
         </div>
-        {/* )} */}
-
         <div></div>
         <ContentBox
           content={inputContent}

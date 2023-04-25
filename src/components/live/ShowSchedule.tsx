@@ -78,41 +78,39 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
 
   // 일정 취소 이벤트
   const handleCancelEvent = async () => {
-    if (!isMentor) {
-      const startDate = new Date(event.startDate);
-      const cancleDate = new Date(startDate.getTime() - 10 * 60 * 1000);
-      const currentDate = new Date();
-      // startDate에서 10분 전의 시간과 현재 시간을 비교
-      if (currentDate >= cancleDate) {
-        alert("멘토링 시작 10분 전부터 취소할 수 없습니다.");
-      } else {
-        if (window.confirm("해당 시간을 취소하시겠습니까?")) {
-          const res = await axiosInstance.delete(
-            `/api/schedules/mentee/${event.scheduleId}`
-          );
-          if (res.status === 200) {
-            // // 알림 삭제
-            // await axiosInstance
-            //   .delete(`/api/unsubscribe/schedule`, {
-            //     data: {
-            //       mentorName: event.owner,
-            //       userName: memberInfo.nickname,
-            //       roomName: event.title,
-            //     },
-            //     headers: {
-            //       "Content-Type": "application/json",
-            //     },
-            //   })
-            //   .then((res) => {
-            //     setScheduleSubscriptions(res.data.scheduleSubscriptions);
-            //   })
-            //   .catch((err) => console.log(err));
+    const startDate = new Date(event.startDate);
+    const cancleDate = new Date(startDate.getTime() - 10 * 60 * 1000);
+    const currentDate = new Date();
+    // startDate에서 10분 전의 시간과 현재 시간을 비교
+    if (currentDate >= cancleDate) {
+      alert("멘토링 시작 10분 전부터 취소할 수 없습니다.");
+    } else {
+      if (window.confirm("해당 시간을 취소하시겠습니까?")) {
+        const res = await axiosInstance.delete(
+          `/api/schedules/mentee/${event.scheduleId}`
+        );
+        if (res.status === 200) {
+          // // 알림 삭제
+          // await axiosInstance
+          //   .delete(`/api/unsubscribe/schedule`, {
+          //     data: {
+          //       mentorName: event.owner,
+          //       userName: memberInfo.nickname,
+          //       roomName: event.title,
+          //     },
+          //     headers: {
+          //       "Content-Type": "application/json",
+          //     },
+          //   })
+          //   .then((res) => {
+          //     setScheduleSubscriptions(res.data.scheduleSubscriptions);
+          //   })
+          //   .catch((err) => console.log(err));
 
-            alert("취소가 완료되었습니다.");
-            handleClose();
-          } else {
-            alert(res.data.msg);
-          }
+          alert("취소가 완료되었습니다.");
+          handleClose();
+        } else {
+          alert(res.data.msg);
         }
       }
     }
@@ -247,7 +245,7 @@ const ShowSchedule: React.FC<CalendarProps> = ({ events, isMentor }) => {
       <div className="flex justify-end">
         <span className="text-[#6246EA] font-bold">멘토&nbsp;</span>
         <span className="text-[#E45858] font-bold">멘티</span>
-        </div>
+      </div>
       <div className="calendar">
         <Scheduler data={events} height={window.innerHeight - 250}>
           <ViewState

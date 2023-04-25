@@ -35,7 +35,7 @@ const ProblemRegisterBox = () => {
     location?.state ? location?.state?.level : "bronze"
   );
   const [hashTag, setHashTag] = useState<string[]>(
-    location?.state ? location?.state?.hashTag : null
+    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : null
   );
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
@@ -105,7 +105,6 @@ const ProblemRegisterBox = () => {
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
       return;
-      
     }
 
     const answerArray = ["1", "2", "3", "4"];
@@ -240,7 +239,7 @@ const ProblemRegisterBox = () => {
         <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
         {/* {isHashTag && ( */}
         <div className="flex ">
-          {hashTag.map((item, index) => (
+          {!location.state.hashTag.len ? null : hashTag.map((item, index) => (
             <div>
               <div className="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
                 {item}

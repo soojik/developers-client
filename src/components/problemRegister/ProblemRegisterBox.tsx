@@ -35,7 +35,7 @@ const ProblemRegisterBox = () => {
     location?.state ? location?.state?.level : "bronze"
   );
   const [hashTag, setHashTag] = useState<string[]>(
-    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : []
+    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : null
   );
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
@@ -105,9 +105,12 @@ const ProblemRegisterBox = () => {
   }
 
   const handleSubmit = async () => {
-    if (isSubjective == false && answers.length !== 4){
+    if (isSubjective == false)
+    {
+      for (let idx of answers){
+          if (idx.length == 0){
       window.alert("객관식은 꼭 4개의 답안 후보를 등록하셔야합니다.")
-      return
+      return}}
     }
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
@@ -246,7 +249,7 @@ const ProblemRegisterBox = () => {
         <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
         {/* {isHashTag && ( */}
         <div className="flex ">
-          {hashTag.length == 0 ? "" : hashTag.map((item, index) => (
+          {hashTag && (hashTag.map((item, index) => (
             <div>
               <div className="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
                 {item}
@@ -259,7 +262,7 @@ const ProblemRegisterBox = () => {
                 </button>
               </div>
             </div>
-          ))}
+          )))}
         </div>
         <div></div>
         <ContentBox

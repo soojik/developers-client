@@ -79,7 +79,11 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
           </div>
           <button
             className="bg-accent-500 text-white px-4 my-2 rounded-md"
-            onClick={() => handleRemoveSchedule(room)}
+            onClick={(e) => {
+              // 버블링 이벤트 방지
+              e.stopPropagation();
+              handleRemoveSchedule(room)
+            }}
           >
             삭제
           </button>

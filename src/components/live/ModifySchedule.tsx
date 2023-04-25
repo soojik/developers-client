@@ -78,6 +78,14 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
 
   useEffect(() => {
     if (selectedDate) {
+      let availableTimes: string[] = allTimeSlots;
+      // 선택 날짜(selectedDate) 가 오늘일 때, 현재 시간보다 이른 시간은 신청하지 못하도록
+      if (selectedDate.getDate() === new Date().getDate()) {
+        availableTimes = availableTimes.filter(
+          (time) =>
+            parseInt(time) > new Date().getHours()
+        )
+      }
       // 예약 가능한 시간대 계산
       const reservedTimes = events
         .filter(
@@ -86,7 +94,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
             selectedDate.toDateString()
         )
         .map((event) => new Date(event.startDate).getHours().toString());
-      const availableTimes = allTimeSlots.filter(
+      availableTimes = availableTimes.filter(
         (time) => !reservedTimes.includes(time)
       );
       setAvailableTimeSlots(availableTimes);
@@ -100,6 +108,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
 
   const handleClosePopup = () => {
     setShowCancelEventPopup(false);
+    onClose();
   };
 
   const CustomAppointment = (props: any) => {

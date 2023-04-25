@@ -18,7 +18,7 @@ const ProblemRegisterBox = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isimageOpen,setIsImageOpen] = useState(location?.state?.pathname ? true : false); 
+  const [isimageOpen,setIsImageOpen] = useState(false); 
   const [inputTitle, setInputTitle] = useState(
     location?.state ? location?.state?.title : ""
   );
@@ -100,14 +100,20 @@ const ProblemRegisterBox = () => {
   const handleCheckboxChange = (value: boolean) => {
     setIsObjective(!value);
   };
+  const DeletedFileClick = (setS3File: any) => {
+    setS3File('');
+  }
 
   const handleSubmit = async () => {
+    if (isSubjective == false && answers.length !== 4){
+      window.alert("객관식은 꼭 4개의 답안 후보를 등록하셔야합니다.")
+      return
+    }
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
       return;
       
     }
-
     const answerArray = ["1", "2", "3", "4"];
     if (!isSubjective) {
       if (!answerArray.includes(realAnswer)) {
@@ -150,7 +156,7 @@ const ProblemRegisterBox = () => {
   };
 
   const updateSubmit = async () => {
-    if (answers.length !== 4){
+    if (isSubjective == false && answers.length !== 4){
       window.alert("객관식은 꼭 4개의 답안 후보를 등록하셔야합니다.")
       return
     }
@@ -240,7 +246,7 @@ const ProblemRegisterBox = () => {
         <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
         {/* {isHashTag && ( */}
         <div className="flex ">
-          {hashTag.map((item, index) => (
+          {hashTag.length == 0 ? "" : hashTag.map((item, index) => (
             <div>
               <div className="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
                 {item}
@@ -290,6 +296,7 @@ const ProblemRegisterBox = () => {
         <S3Box s3select={s3upload} uploadCheck={fileSelect} />
       </div>
       <div>
+        {isimageOpen && (
           <button
             className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
             onClick={() => {
@@ -297,13 +304,21 @@ const ProblemRegisterBox = () => {
             }}
           >
             이미지 미리보기
-          </button>
+          </button>)}
+          {isimageOpen && (
+          < button className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-3"
+          onClick={() => DeletedFileClick(setS3File)}
+          ></button>)}
       </div>
-      {isimageOpen && (
+      {isimageOpen && location?.state?.pathname && (
         <p className="flex">
-          <img src={location.state.pathname} alt="이미지를 불러오지 못했습니다." />
+          <img src={location?.state?.pathname} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
+      {isimageOpen && s3File && (
+      <p className="flex">
+      <img src={s3File} alt="이미지를 불러오지 못했습니다." />
+    </p>)}
       {!location.state && (
         <SubmitButton text={"제출하기"} onClick={handleSubmit} />
       )}

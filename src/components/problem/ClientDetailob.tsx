@@ -13,6 +13,7 @@ import { memberInfoState } from "recoil/userState";
 import ProblemSolved from "pages/ProblemSolved";
 import { axiosInstance } from "apis/axiosConfig";
 
+
 interface ProblemBoxProps {
   problemId: number;
   nickname: string;
@@ -49,6 +50,7 @@ const ProblemDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const [solved, setSolved] = useState(detail?.solved);
+  const navigate = useNavigate();
 
   console.log(memberInfo.nickname);
 
@@ -59,8 +61,8 @@ const ProblemDetail = () => {
       setModalOpen(true);
       if (modalTitle === "정답입니다!") {
         updatePoint();
-        updateSolvedValue
-
+        updateSolvedValue();
+        navigate(`/api/problem/${location.state.problemId}/${memberInfo.nickname}`, { replace: true });
       }
     }
   };
@@ -134,6 +136,7 @@ const ProblemDetail = () => {
     }
     setIsEditing(false);
     setRadioDisabled(true);
+
   };
 
   const handleLikeButtonClick = async () => {

@@ -52,6 +52,7 @@ const ProblemDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const [solved, setSolved] = useState(detail?.solved);
+  
 
 
   //세션에 저장되어있는 값을 가져오기
@@ -63,6 +64,7 @@ const ProblemDetail = () => {
       if(modalTitle === "정답입니다!"){
         updatePoint();
         updateSolvedValue();
+        navigate(`/api/problem/${location.state.problemId}/${memberInfo.nickname}`, { replace: true });
       }
     }
   };
@@ -134,6 +136,8 @@ const ProblemDetail = () => {
       window.alert("답변을 작성해주세요!");
     } else {
       setIsEditing(false);
+
+      navigate(`/problem/${problemId}`, { replace: true });
     }
     };
 

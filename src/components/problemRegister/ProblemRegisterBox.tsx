@@ -41,6 +41,7 @@ const ProblemRegisterBox = () => {
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
   const [s3File, setS3File] = useState("");
+  const [attach, setattach] = useState(location?.state?.pathname ? location?.state?.pathname : "");
 
   const [isHashTag, setIsHashTag] = useState(false);
   const [subjectiveValue, SetSubjectiveValue] = useState(
@@ -103,6 +104,7 @@ const ProblemRegisterBox = () => {
   };
   const DeletedFileClick = () => {
     setS3File('');
+    setattach('')
   }
 
   const handleSubmit = async () => {
@@ -300,7 +302,7 @@ const ProblemRegisterBox = () => {
         <S3Box s3select={s3upload} uploadCheck={fileSelect} />
       </div>
       <div>
-        {isimageOpen && (
+        {!isimageOpen && attach && (
           <button
             className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
             onClick={() => {
@@ -309,14 +311,15 @@ const ProblemRegisterBox = () => {
           >
             이미지 미리보기
           </button>)}
-          {isimageOpen && (
+          {isimageOpen && attach && (
           < button className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-3"
-          onClick={() => DeletedFileClick()}
-          ></button>)}
+          onClick={() =>
+            DeletedFileClick()}
+          >삭제!!!!!!</button>)}
       </div>
-      {!isimageOpen && location?.state?.pathname && (
+      {isimageOpen && attach && (
         <p className="flex">
-          <img src={location?.state?.pathname} alt="이미지를 불러오지 못했습니다." />
+          <img src={attach} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
       {!isimageOpen && s3File && (

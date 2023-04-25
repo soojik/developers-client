@@ -35,7 +35,7 @@ const ProblemRegisterBox = () => {
     location?.state ? location?.state?.level : "bronze"
   );
   const [hashTag, setHashTag] = useState<string[]>(
-    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : []
+    location?.state?.hashTag !== "" ? location?.state?.hashTag : null
   );
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
@@ -105,9 +105,12 @@ const ProblemRegisterBox = () => {
   }
 
   const handleSubmit = async () => {
-    if (isSubjective == false && answers.length !== 4){
+    if (isSubjective == false)
+    {
+      for (let idx of answers){
+          if (idx.length == 0){
       window.alert("객관식은 꼭 4개의 답안 후보를 등록하셔야합니다.")
-      return
+      return}}
     }
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
@@ -246,7 +249,7 @@ const ProblemRegisterBox = () => {
         <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
         {/* {isHashTag && ( */}
         <div className="flex ">
-          {hashTag.length == 0 ? "" : hashTag.map((item, index) => (
+          {hashTag && (hashTag.map((item, index) => (
             <div>
               <div className="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
                 {item}
@@ -259,7 +262,7 @@ const ProblemRegisterBox = () => {
                 </button>
               </div>
             </div>
-          ))}
+          )))}
         </div>
         <div></div>
         <ContentBox
@@ -310,12 +313,12 @@ const ProblemRegisterBox = () => {
           onClick={() => DeletedFileClick()}
           ></button>)}
       </div>
-      {isimageOpen && location?.state?.pathname && (
+      {!isimageOpen && location?.state?.pathname && (
         <p className="flex">
           <img src={location?.state?.pathname} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
-      {isimageOpen && s3File && (
+      {!isimageOpen && s3File && (
       <p className="flex">
       <img src={s3File} alt="이미지를 불러오지 못했습니다." />
     </p>)}

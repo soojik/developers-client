@@ -15,6 +15,7 @@ import { removeLocalStorage } from "libs/localStorage";
 import { axiosInstance } from "apis/axiosConfig";
 import { MEMBER_API } from "apis/apis";
 import PencilIcon from "components/icons/PencilIcon";
+import CheckIcon from "components/icons/CheckIcon";
 
 const MyPage = () => {
   const { memberId } = useParams();
@@ -30,6 +31,7 @@ const MyPage = () => {
 
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
+  const [isMentor, setIsMentor] = useState(false);
   const [imgFile, setImgFile] = useState<File>();
   const [avatar, setAvatar] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
@@ -53,6 +55,7 @@ const MyPage = () => {
         ...memberInfo,
         memberInfo: userData.data?.data,
       });
+      setIsMentor(userData.data?.data.mentor);
       // console.log("유저조회", userData.data?.data);
       if (userData.data?.data?.profileImageUrl) {
         setAvatar(userData.data?.data?.profileImageUrl);
@@ -154,12 +157,15 @@ const MyPage = () => {
     if (window.confirm("확인을 누르면 회원 정보가 삭제됩니다.")) {
       axiosInstance
         .delete(`/api/auth/${memberId}`)
-        .then(() => {
+        .then((res) => {
+          removeLocalStorage("access_token");
+          removeLocalStorage("refresh_token");
+          resetMemberInfo();
           localStorage.clear();
           alert("그동안 이용해주셔서 감사합니다.");
           navigate("/");
         })
-        .catch((err) => alert(err.res.data.message));
+        .catch((err) => alert(err));
     } else {
       return;
     }
@@ -172,24 +178,18 @@ const MyPage = () => {
     navigate("/");
   };
 
-  const handleMentorBtnClick = () => {
-    axiosInstance
-      .patch(
-        `/api/member/mentor`,
-        {},
-        {
-          headers: {
-            "Content-type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        alert("멘토로 등록됐습니다");
-        // console.log(res.data);
-      })
-      .catch((err) => {
-        alert(err || "멘토 등록에 실패했습니다");
+  const handleMentorBtnClick = async () => {
+    try {
+      const { data } = await axiosInstance.patch(`/api/member/mentor`, {
+        memberId,
       });
+      alert("멘토로 등록됐습니다");
+      setModalOpened(false);
+      setMentorEditOpend(false);
+      setIsMentor(true);
+    } catch (error) {
+      alert(error || "멘토 등록에 실패했습니다");
+    }
   };
 
   return (
@@ -231,12 +231,19 @@ const MyPage = () => {
               점
             </div>
             <div className="flex justify-end">
-              <button
-                className="py-2 px-4 w-fit bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300"
-                onClick={() => handleUserInfoModal("mentor")}
-              >
-                멘토 등록하기
-              </button>
+              {isMentor === true ? (
+                <div className="flex items-center py-1.5 px-3 w-fit border text-green-700 border-green-600 rounded-md">
+                  <CheckIcon stroke="green" width={16} height={16} />
+                  &nbsp;등록된 멘토
+                </div>
+              ) : (
+                <button
+                  className="py-2 px-4 w-fit bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300"
+                  onClick={() => handleUserInfoModal("mentor")}
+                >
+                  멘토 등록하기
+                </button>
+              )}
             </div>
           </div>
         </div>

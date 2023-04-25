@@ -112,7 +112,6 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
         <CreateRoomModal
           onClose={() => {
             setIsModalOpen(false);
-            window.location.reload();
           }}
           events={events}
         />

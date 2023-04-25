@@ -108,7 +108,8 @@ const ProblemRegisterBox = () => {
     if (isSubjective == false)
     {for(let i = 0; i <=3; i ++){
       if(answers[i] == ''){
-        window.alert("객관식은 반드시 4개의 ")
+        window.alert("객관식은 반드시 4개의 답안 후보가 필수 입니다.")
+        return
       }
     }}
     if (s3Upload) {
@@ -158,10 +159,13 @@ const ProblemRegisterBox = () => {
   };
 
   const updateSubmit = async () => {
-    if (isSubjective == false && answers.length !== 4){
-      window.alert("객관식은 꼭 4개의 답안 후보를 등록하셔야합니다.")
-      return
-    }
+    if (isSubjective == false)
+    {for(let i = 0; i <=3; i ++){
+      if(answers[i] == ''){
+        window.alert("객관식은 반드시 4개의 답안 후보가 필수 입니다.")
+        return
+      }
+    }}
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
       return;
@@ -257,7 +261,7 @@ const ProblemRegisterBox = () => {
                     handleDeleteHashTagClick(index + 1, item);
                   }}
                   className="ml-5"
-                >
+                >x
                 </button>
               </div>
             </div>
@@ -312,6 +316,30 @@ const ProblemRegisterBox = () => {
           onClick={() =>
             DeletedFileClick()}
           >삭제하기</button>)}
+          {isimageOpen && attach && (
+            < button className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-3"
+              onClick={() => setIsImageOpen(false)}>닫기</button>
+          )}
+      </div>
+      <div>
+        {!isimageOpen && s3File && (
+          <button
+            className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
+            onClick={() => {
+              setIsImageOpen(!isimageOpen);
+            }}
+          >
+            이미지 미리보기
+          </button>)}
+          {isimageOpen && s3File && (
+          < button className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-3"
+          onClick={() =>
+            DeletedFileClick()}
+          >삭제하기</button>)}
+           {isimageOpen && s3File && (
+            < button className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-3"
+              onClick={() => setIsImageOpen(false)}>닫기</button>
+          )}
       </div>
       {isimageOpen && attach && (
         <p className="flex">

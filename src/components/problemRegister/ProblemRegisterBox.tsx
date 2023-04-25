@@ -18,7 +18,7 @@ const ProblemRegisterBox = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isimageOpen,setIsImageOpen] = useState(false); 
+  const [isimageOpen,setIsImageOpen] = useState(location?.state?.pathname ? true : false); 
   const [inputTitle, setInputTitle] = useState(
     location?.state ? location?.state?.title : ""
   );
@@ -290,9 +290,6 @@ const ProblemRegisterBox = () => {
         <S3Box s3select={s3upload} uploadCheck={fileSelect} />
       </div>
       <div>
-        {!location.state.pathname ? (
-          <div></div>
-        ) : (
           <button
             className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
             onClick={() => {
@@ -301,7 +298,6 @@ const ProblemRegisterBox = () => {
           >
             이미지 미리보기
           </button>
-        )}
       </div>
       {isimageOpen && (
         <p className="flex">

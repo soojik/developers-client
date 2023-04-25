@@ -18,6 +18,7 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
   const [visible, setVisible] = useState(isOpen);
   const navigate = useNavigate();
 
+  
   const content = 100;
   const [totalPoint, setTotalPoint] = useState(content + point); // 합산된 점수 값 저장
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);

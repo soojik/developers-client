@@ -31,8 +31,8 @@ const resources = [
     fieldName: "type",
     title: "Type",
     instances: [
-      { id: "mentor", text: "as mentor", color: "#EC407A" },
-      { id: "mentee", text: "as mentee", color: "#7E57C2" },
+      { id: "mentor", text: "as mentor", color: "#6246EA" },
+      { id: "mentee", text: "as mentee", color: "#e45858" },
     ],
   },
 ];
@@ -197,15 +197,14 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
         >
           입장하기
         </button>
-        {isMentor && (
+        {isMentor && memberInfo.nickname === event.owner ? (
           <button
             className="bg-red-200 hover:bg-red-300 px-3 py-2 mr-3 rounded"
             onClick={handleRemoveEvent}
           >
             종료하기
           </button>
-        )}
-        {!isMentor && (
+        ) : (
           <button
             className="bg-blue-200 hover:bg-blue-300 px-3 py-2 mr-3 rounded"
             onClick={handleCancelEvent}
@@ -244,30 +243,36 @@ const ShowSchedule: React.FC<CalendarProps> = ({ events, isMentor }) => {
   };
 
   return (
-    <div className="calendar">
-      <Scheduler data={events} height={window.innerHeight - 250}>
-        <ViewState
-          currentDate={currentDate}
-          onCurrentDateChange={currentDateChange}
-        />
-        <WeekView startDayHour={7} endDayHour={23} cellDuration={60} />
-        <Toolbar />
-        <DateNavigator />
-        <TodayButton />
-        <Appointments
-          appointmentComponent={(props) => (
-            <CustomAppointment {...props} onClick={handleEventClick} />
-          )}
-        />
-        <Resources data={resources} />
-      </Scheduler>
-      {showCancelEventPopup && (
-        <CancelEventPopup
-          event={selectedEvent}
-          handleClose={handleClosePopup}
-          isMentor={isMentor}
-        />
-      )}
+    <div>
+      <div className="flex justify-end">
+        <span className="text-[#6246EA] font-bold">멘토&nbsp;</span>
+        <span className="text-[#E45858] font-bold">멘티</span>
+        </div>
+      <div className="calendar">
+        <Scheduler data={events} height={window.innerHeight - 250}>
+          <ViewState
+            currentDate={currentDate}
+            onCurrentDateChange={currentDateChange}
+          />
+          <WeekView startDayHour={7} endDayHour={23} cellDuration={60} />
+          <Toolbar />
+          <DateNavigator />
+          <TodayButton />
+          <Appointments
+            appointmentComponent={(props) => (
+              <CustomAppointment {...props} onClick={handleEventClick} />
+            )}
+          />
+          <Resources data={resources} />
+        </Scheduler>
+        {showCancelEventPopup && (
+          <CancelEventPopup
+            event={selectedEvent}
+            handleClose={handleClosePopup}
+            isMentor={isMentor}
+          />
+        )}
+      </div>
     </div>
   );
 };

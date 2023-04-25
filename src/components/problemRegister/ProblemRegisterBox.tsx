@@ -28,9 +28,6 @@ const ProblemRegisterBox = () => {
   const [isObjective, setIsObjective] = useState(false);
   const [isSubjective, setIsSubjective] = useState(false);
   const [point, setInputPoint] = useState("10 Point");
-  const [files, setFiles] = useState<File[]>(
-    location?.state ? location?.state?.pathname : []
-  );
   const [selectedValue, setSelectedValue] = useState(
     location?.state ? location?.state?.level : "bronze"
   );
@@ -109,12 +106,11 @@ const ProblemRegisterBox = () => {
 
   const handleSubmit = async () => {
     if (isSubjective == false)
-    {
-      for (let idx of answers){
-          if (idx.length == 0){
-      window.alert("객관식은 꼭 4개의 답안 후보를 등록하셔야합니다.")
-      return}}
-    }
+    {for(let i = 0; i <=3; i ++){
+      if(answers[i] == ''){
+        window.alert("객관식은 반드시 4개의 ")
+      }
+    }}
     if (s3Upload) {
       window.alert("파일 업로드를 먼저 눌러주세요");
       return;
@@ -315,14 +311,14 @@ const ProblemRegisterBox = () => {
           < button className="py-2 px-4 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-3"
           onClick={() =>
             DeletedFileClick()}
-          >삭제!!!!!!</button>)}
+          >삭제하기</button>)}
       </div>
       {isimageOpen && attach && (
         <p className="flex">
           <img src={attach} alt="이미지를 불러오지 못했습니다." />
         </p>
       )}
-      {!isimageOpen && s3File && (
+      {isimageOpen && s3File && (
       <p className="flex">
       <img src={s3File} alt="이미지를 불러오지 못했습니다." />
     </p>)}

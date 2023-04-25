@@ -14,6 +14,7 @@ import { axiosInstance } from "apis/axiosConfig";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { scheduleSubscriptionState } from "recoil/scheduleSubscriptionState";
+import { ScheduleSubscriptions } from "./CalendarPopUp";
 
 interface CalendarProps {
   events: any[];
@@ -90,22 +91,29 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
           `/api/schedules/mentee/${event.scheduleId}`
         );
         if (res.status === 200) {
-          // // 알림 삭제
-          // await axiosInstance
-          //   .delete(`/api/unsubscribe/schedule`, {
-          //     data: {
-          //       mentorName: event.owner,
-          //       userName: memberInfo.nickname,
-          //       roomName: event.title,
-          //     },
-          //     headers: {
-          //       "Content-Type": "application/json",
-          //     },
-          //   })
-          //   .then((res) => {
-          //     setScheduleSubscriptions(res.data.scheduleSubscriptions);
-          //   })
-          //   .catch((err) => console.log(err));
+          // 알림 삭제
+          await axiosInstance
+            .delete(`/api/unsubscribe/schedule`, {
+              data: {
+                mentorName: event.owner,
+                userName: memberInfo.nickname,
+                roomName: event.title,
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+            .then((res) => {
+              setScheduleSubscriptions(
+                (prevScheduleSubscriptions: ScheduleSubscriptions[]) => {
+                  return prevScheduleSubscriptions.filter(
+                    (sub: ScheduleSubscriptions) =>
+                      sub.subscribeId !== res.data.subscribeId
+                  );
+                }
+              );
+            })
+            .catch((err) => console.log(err));
 
           alert("취소가 완료되었습니다.");
           handleClose();

@@ -48,18 +48,18 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             setMentoringRoomId(res.data["data"]);
             console.log(res);
             setStep(2);
-            // // 방 생성 이후에 알림
-            // await axiosInstance
-            //   .post(`/api/publish`, {
-            //     mentorName: memberInfo.nickname,
-            //     roomName: title,
-            //   })
-            //   .then((res) => {
-            //     console.log(res);
-            //   })
-            //   .catch((err) => {
-            //     console.log(err);
-            //   });
+
+            // 방 생성 이후에 알림
+            await axiosInstance
+              .post(`/api/publish`, {
+                mentorName: memberInfo.nickname,
+              })
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           } else {
             window.alert(res.data["msg"]);
           }

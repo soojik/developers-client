@@ -50,7 +50,7 @@ const Modal: React.FC<ModalProps> = ({ title, point, isOpen, onClose }) => {
     }
     setVisible(false);
     onClose();
-    navigate(`/api/problem/${location.state.problemId}/${memberInfo.nickname}`, { replace: true });
+    navigate(`/problem/detail`, { replace: true });
     // window.location.reload(); // 페이지 새로고침
   };
 

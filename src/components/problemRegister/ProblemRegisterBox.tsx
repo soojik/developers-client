@@ -322,7 +322,7 @@ const ProblemRegisterBox = () => {
           )}
       </div>
       <div>
-        {!isimageOpen && s3File && (
+        {!isimageOpen && s3File && s3Upload &&(
           <button
             className="py-1 px-2 bg-transparent text-blue-600 font-semibold border border-blue-600 rounded hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1 active:translate-y-0 mt-5"
             onClick={() => {

@@ -27,38 +27,44 @@ const Login = () => {
   } = useForm<LoginProps>({ mode: "onChange" });
 
   const handleLoginSubmit: SubmitHandler<LoginProps> = async (formData) => {
-    const { data } = await MEMBER_API.login(formData);
-    let accessToken = data.accessToken;
-    let refreshToken = data.refreshToken;
-    setLocalStorage("access_token", accessToken); // 임시
-    setLocalStorage("refresh_token", refreshToken);
+    try {
+      const { data } = await MEMBER_API.login(formData);
+      let accessToken = data.accessToken;
+      let refreshToken = data.refreshToken;
+      setLocalStorage("access_token", accessToken); // 임시
+      setLocalStorage("refresh_token", refreshToken);
 
-    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-    axiosInstance.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${accessToken}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${accessToken}`;
 
-    const resData = {
-      memberId: Number(data.memberId),
-      isLoggedIn: true,
-    };
-    setMember({
-      ...member,
-      ...resData,
-    });
+      const resData = {
+        memberId: Number(data.memberId),
+        isLoggedIn: true,
+      };
+      setMember({
+        ...member,
+        ...resData,
+      });
 
-    /* 유저정보 조회 */
-    const userData = await MEMBER_API.getUser(data.memberId);
-    setMember({
-      ...member,
-      isLoggedIn: true,
-      memberId: Number(data.memberId),
-      memberInfo: userData?.data.data,
-    });
-    // console.log("로그인후 유저정보조회:", userData?.data.data);
+      /* 유저정보 조회 */
+      const userData = await MEMBER_API.getUser(data.memberId);
+      setMember({
+        ...member,
+        isLoggedIn: true,
+        memberId: Number(data.memberId),
+        memberInfo: userData?.data.data,
+      });
+      // console.log("로그인후 유저정보조회:", userData?.data.data);
 
-    navigate("/");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      alert("로그인에 실패했습니다. 다시 로그인 해주세요.");
+    }
   };
+
   return (
     <div className="flex flex-col items-center justify-center ">
       <div className="w-4/5">

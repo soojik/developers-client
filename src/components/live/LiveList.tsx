@@ -75,18 +75,20 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
 
   const handleSearch = async (query: string) => {
     if (query) {
-      const url = `/api/room/${query}`;
+      // 1개 이상의 공백을 1개로 바꿔 보내주도록하고 앞, 뒤 공백 제거
+      const url = `/api/room/${query.replace(/\s+/g, ' ').trim()}`;
       const data = await axiosInstance.get(url);
-      setRoomList(data.data.data);
+      setRoomList([...data.data.data]);
       setCurrentPage(1);
     }
     // 빈칸 입력하면 모든 데이터 가져오도록
     else {
       const data = await fetchRooms(null);
-      setRoomList(data);
+      setRoomList([...data]);
       setCurrentPage(1);
     }
   };
+  
 
   return (
     <div className="flex flex-col justify-center items-center">

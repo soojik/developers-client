@@ -49,6 +49,8 @@ const ProblemDetail = () => {
   const [likes, setLikes] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+  const [solved, setSolved] = useState(detail?.solved);
+
 
   //세션에 저장되어있는 값을 가져오기
   const sessionAnswer = sessionStorage.getItem("answer") || "";
@@ -73,6 +75,7 @@ const ProblemDetail = () => {
           `/api/problem/${location.state.problemId}/${memberInfo.nickname}`
         );
         console.log(response?.data?.data);
+        setSolved(response.data?.data?.solved);
         setLikes(response.data?.data?.likes);
         setDetail(response.data.data);
         setProblemSolved(response.data.data.solved);
@@ -208,14 +211,14 @@ const ProblemDetail = () => {
           {isLoggedIn === false ? (
             <div></div>
           ) : (
-            <p style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
-              문제 해결 여부:{" "}
-              <span
-                className={detail.solved ? "solved" : "unsolved"}
-                style={{ fontWeight: "bold" }}
-              >
-                {detail.solved ? "해결" : "미해결"}
-              </span>
+             <p style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
+            문제 해결 여부:{" "}
+            <span
+              className={solved ? "solved" : "unsolved"}
+              style={{ fontWeight: "bold" }}
+            >
+              {solved ? "해결" : "미해결"}
+            </span>
             </p>
           )}
         </div>

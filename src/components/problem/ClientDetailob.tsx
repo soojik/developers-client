@@ -10,6 +10,7 @@ import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import ProblemSolved from "pages/ProblemSolved";
 import { axiosInstance } from "apis/axiosConfig";
+
 interface ProblemBoxProps {
   problemId: number;
   nickname: string;
@@ -45,6 +46,8 @@ const ProblemDetail = () => {
   const [likes, setLikes] = useState(detail?.likes || 0);
   const [isLiked, setIsLiked] = useState(false);
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
+  const [solved, setSolved] = useState(detail?.solved);
+
   console.log(memberInfo.nickname);
 
   const sessionAnswer = sessionStorage.getItem("answer") || ""; // 값 null처리
@@ -52,7 +55,7 @@ const ProblemDetail = () => {
   const openModal = () => {
     if (window.confirm("답안을 제출 하시겠습니까?")) {
       setModalOpen(true);
-      if(modalTitle === "정답입니다!"){
+      if (modalTitle === "정답입니다!") {
         updatePoint();
       }
     }
@@ -73,6 +76,7 @@ const ProblemDetail = () => {
         setLikes(response.data?.data?.likes);
         setAnswer(response.data.data.answer);
         setProblemSolved(response.data.data.solved);
+        setSolved(response.data?.data?.solved);
         const answerCandidateArray = answerCandidateString;
         setAnswerCandidate(answerCandidateArray);
         setDetail(response.data.data);
@@ -92,7 +96,7 @@ const ProblemDetail = () => {
     return <div>Loading...</div>;
   }
 
-  const handleRadioClick = (selectedNumber: number ) => {
+  const handleRadioClick = (selectedNumber: number) => {
     setSelectedNumberState(selectedNumber);
     console.log("Selected radio button:", selectedNumber);
     console.log("Correct answer:", detail.answer);
@@ -205,10 +209,10 @@ const ProblemDetail = () => {
           <p style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
             문제 해결 여부:{" "}
             <span
-              className={detail.solved ? "solved" : "unsolved"}
+              className={solved ? "solved" : "unsolved"}
               style={{ fontWeight: "bold" }}
             >
-              {detail.solved ? "해결" : "미해결"}
+              {solved ? "해결" : "미해결"}
             </span>
           </p>
         )}
@@ -347,4 +351,5 @@ const ProblemDetail = () => {
   );
 };
 export default ProblemDetail;
+
 

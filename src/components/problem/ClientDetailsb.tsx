@@ -1,3 +1,5 @@
+
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
@@ -60,6 +62,7 @@ const ProblemDetail = () => {
       setModalOpen(true);
       if(modalTitle === "정답입니다!"){
         updatePoint();
+        updateSolvedValue();
       }
     }
   };
@@ -168,6 +171,24 @@ const ProblemDetail = () => {
       console.error("Error:", error);
     }
   };
+
+  const updateSolvedValue = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/problem/${location.state.problemId}/${memberInfo.nickname}`
+      );
+      console.log(response?.data?.data);
+      setSolved(response.data?.data?.solved);
+      // 필요한 값을 업데이트하는 코드를 추가합니다.
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message, "Code:", error.code);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
+  
 
 
   return (
@@ -294,7 +315,7 @@ const ProblemDetail = () => {
 
       <div className="flex">
         <p className="text-bold text-blue-500"> 해시태그:&nbsp;</p>{" "}
-        <Tags tagList={detail.hashTag ? detail.hashTag.split(",") : []} />
+        <Tags tagList={detail?.hashTag ? detail?.hashTag?.split(",") : []} />
       </div>
 
       {isLoggedIn === false ? (

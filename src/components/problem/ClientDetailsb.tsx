@@ -374,6 +374,7 @@
 // };
 
 // export default ProblemDetail;
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
@@ -445,8 +446,11 @@ const ProblemDetail = () => {
   
   const handleModalClose = () => {
     setIsModalOpen(false);
-    // ... 상위 컴포넌트의 다른 상태(State)를 변경하는 로직 추가 가능
   };
+
+  useEffect(() => {
+    console.log(problemSolved);
+  }, [problemSolved]);
 
 
   useEffect(() => {

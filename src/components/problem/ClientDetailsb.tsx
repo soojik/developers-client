@@ -51,8 +51,6 @@ const ProblemDetail = () => {
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const [solved, setSolved] = useState(detail?.solved);
   
-
-
   //세션에 저장되어있는 값을 가져오기
   const sessionAnswer = sessionStorage.getItem("answer") || "";
 

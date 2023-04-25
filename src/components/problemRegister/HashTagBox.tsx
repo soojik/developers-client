@@ -8,20 +8,21 @@ const HashTagBox = ({handleHashTagClick}:HashTagprops) => {
 
 
 return(
-    <div className= "flex items-center flex-row text-center pt-5">
-        헤시 태그 :
-        {hashTagBox.map((item,index)=>
-
-<div className="m-5">
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={()=>{
-handleHashTagClick(index,item);
-        }}>
-            {item}
-        </button>
-        </div>
-        )}
-
+<div className="flex flex-wrap justify-center items-center text-center pt-5">
+  <p className="mr-3">헤시 태그:</p>
+  {hashTagBox.map((item, index) => (
+    <div className="m-2" key={index}>
+      <button
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        onClick={() => {
+          handleHashTagClick(index, item);
+        }}
+      >
+        {item}
+      </button>
     </div>
+  ))}
+</div>
 )
 }
 

@@ -289,7 +289,7 @@ const ProblemDetail = () => {
       )}
       <div className="flex">
         <p className="text-bold text-blue-500"> 해시태그:&nbsp;</p>{" "}
-        <Tags tagList={detail.hashTag ? detail.hashTag.split(",") : []} />
+        <Tags tagList={detail?.hashTag ? detail?.hashTag?.split(",") : []} />
       </div>
       {isLoggedIn === false ? (
         <div></div>

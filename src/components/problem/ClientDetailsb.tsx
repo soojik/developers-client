@@ -62,7 +62,7 @@ const ProblemDetail = () => {
       if(modalTitle === "정답입니다!"){
         updatePoint();
         updateSolvedValue();
-        navigate(`/api/problem/${location.state.problemId}/${memberInfo.nickname}`, { replace: true });
+
       }
     }
   };
@@ -135,7 +135,6 @@ const ProblemDetail = () => {
     } else {
       setIsEditing(false);
 
-      navigate(`/problem/${problemId}`, { replace: true });
     }
     };
 

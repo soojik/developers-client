@@ -48,7 +48,7 @@ const ProblemDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const [solved, setSolved] = useState(detail?.solved);
-  const navigate = useNavigate();
+
 
   console.log(memberInfo.nickname);
 
@@ -60,7 +60,6 @@ const ProblemDetail = () => {
       if (modalTitle === "정답입니다!") {
         updatePoint();
         updateSolvedValue();
-        navigate(`/api/problem/${location.state.problemId}/${memberInfo.nickname}`, { replace: true });
       }
     }
   };

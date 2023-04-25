@@ -35,7 +35,7 @@ const ProblemRegisterBox = () => {
     location?.state ? location?.state?.level : "bronze"
   );
   const [hashTag, setHashTag] = useState<string[]>(
-    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : null
+    location?.state && location?.state?.hashTag.length > 0 ? location?.state?.hashTag : []
   );
   const [selectedCheckBoxValue, setSelectedCheckBoxValue] = useState("");
   const [isValue, setIsValue] = useState(false);
@@ -240,7 +240,7 @@ const ProblemRegisterBox = () => {
         <TitleBox title={inputTitle} handleTitleChange={handleTitleChange} />
         {/* {isHashTag && ( */}
         <div className="flex ">
-          {!location.state.hashTag.length ? null : hashTag.map((item, index) => (
+          {location.state.hashTag.length == 0 ? null : hashTag.map((item, index) => (
             <div>
               <div className="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
                 {item}

@@ -1,5 +1,3 @@
-
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
@@ -12,6 +10,7 @@ import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import ProblemSolved from "pages/ProblemSolved";
 import { axiosInstance } from "apis/axiosConfig";
+
 
 interface ProblemBoxProps {
   problemId: number;
@@ -50,6 +49,7 @@ const ProblemDetail = () => {
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
   const [solved, setSolved] = useState(detail?.solved);
 
+
   console.log(memberInfo.nickname);
 
   const sessionAnswer = sessionStorage.getItem("answer") || ""; // 값 null처리
@@ -59,8 +59,7 @@ const ProblemDetail = () => {
       setModalOpen(true);
       if (modalTitle === "정답입니다!") {
         updatePoint();
-        updateSolvedValue
-
+        updateSolvedValue();
       }
     }
   };
@@ -134,6 +133,7 @@ const ProblemDetail = () => {
     }
     setIsEditing(false);
     setRadioDisabled(true);
+
   };
 
   const handleLikeButtonClick = async () => {
@@ -372,7 +372,3 @@ const ProblemDetail = () => {
   );
 };
 export default ProblemDetail;
-
-
-
-

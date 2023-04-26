@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { memberInfoState } from "recoil/userState";
+import { removeLocalStorage } from "libs/localStorage";
+import { axiosInstance } from "apis/axiosConfig";
+import { MEMBER_API } from "apis/apis";
 import RightArrowIcon from "components/icons/RightArrowIcon";
-import Popup from "components/live/PopUp";
 import MenuCloseIcon from "components/icons/MenuCloseIcon";
 import PwdInput from "components/mypage/PwdInput";
 import NicknameInput from "components/mypage/NicknameInput";
@@ -11,11 +13,10 @@ import AddressInput from "components/mypage/AddressInput";
 import ResumeEdit from "components/mypage/ResumeEdit";
 import DownArrowIcon from "components/icons/DownArrowIcon";
 import ConfirmBtn from "components/buttons/CofirmBtn";
-import { removeLocalStorage } from "libs/localStorage";
-import { axiosInstance } from "apis/axiosConfig";
-import { MEMBER_API } from "apis/apis";
 import PencilIcon from "components/icons/PencilIcon";
 import CheckIcon from "components/icons/CheckIcon";
+import BadgeList from "components/mypage/BadgeList";
+import Modal from "components/Modal";
 
 const MyPage = () => {
   const { memberId } = useParams();
@@ -30,6 +31,7 @@ const MyPage = () => {
   ];
 
   const [nickname, setNickname] = useState("");
+  const [badge, setBadge] = useState("");
   const [address, setAddress] = useState("");
   const [isMentor, setIsMentor] = useState(false);
   const [imgFile, setImgFile] = useState<File>();
@@ -47,6 +49,7 @@ const MyPage = () => {
   const [adressEditOpend, setAdressEditOpend] = useState(false);
   const [mentorEditOpend, setMentorEditOpend] = useState(false);
   const [avatarEditOpend, setAvatarEditOpend] = useState(false);
+  const [badgeEditOpend, setBadgeEditOpend] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -150,6 +153,7 @@ const MyPage = () => {
     else if (path === "password") setPwdEditOpend(true);
     else if (path === "mentor") setMentorEditOpend(true);
     else if (path === "avatar") setAvatarEditOpend(true);
+    else if (path === "badge") setBadgeEditOpend(true);
     setModalOpened(true);
   };
 
@@ -220,8 +224,11 @@ const MyPage = () => {
           </div>
           <div className="flex flex-col w-[65%] justify-between px-3 text-sm">
             <div>
-              <span className="text-accent-200 font-bold">{`<칭호/>`}</span>
-              <span> {`${memberInfo.memberInfo.nickname}`}</span>
+              <span> {`${memberInfo.memberInfo.nickname} `}</span>
+              <button
+                className="text-accent-200 font-bold hover:text-accent-500"
+                onClick={() => handleUserInfoModal("badge")}
+              >{`<${badge}/>`}</button>
             </div>
             <div className="font-light">
               포인트
@@ -312,7 +319,7 @@ const MyPage = () => {
       </div>
 
       {modalOpened ? (
-        <Popup>
+        <Modal>
           <div className="sm:w-[400px] min-w-[250px] h-fit relative">
             <div className="flex justify-end items-end">
               <div />
@@ -328,6 +335,7 @@ const MyPage = () => {
                   setPwdEditOpend(false);
                   setMentorEditOpend(false);
                   setAvatarEditOpend(false);
+                  setBadgeEditOpend(false);
                 }}
               />
             </div>
@@ -357,6 +365,7 @@ const MyPage = () => {
                 </div>
               </div>
             )}
+            {badgeEditOpend && <BadgeList setBadge={setBadge} />}
             {mentorEditOpend && (
               <div className="h-[200px]">
                 <div className="flex font-bold text-xl justify-center mt-2 mb-8">
@@ -391,7 +400,7 @@ const MyPage = () => {
               />
             )}
           </div>
-        </Popup>
+        </Modal>
       ) : null}
     </div>
   );

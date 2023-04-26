@@ -60,7 +60,7 @@ const App: React.FC = () => {
       };
       fetchData();
     }
-  }, []);
+  }, [subscriptions, scheduleSubscriptions, memberInfo]);
 
   useEffect(() => {
     if (
@@ -78,19 +78,19 @@ const App: React.FC = () => {
         const retry = () => {
           // if (retryCount < 3) {
           // retryCount += 1;
-          setTimeout(() => {
-            pushEs.close();
-            // 재연결 시도 추가
-            const newScheduleEs = new EventSource(pushUrl);
-            newScheduleEs.addEventListener("error", () => {
-              retry();
-            });
-            newScheduleEs.addEventListener("schedule", (e) => {
-              // 여기서 알림을 생성합니다.
-              toast(e.data);
-              // console.log(e.data);
-            });
-          }, 1000 * 60); // 10초 후에 재연결 시도
+          // setTimeout(() => {
+          pushEs.close();
+          // 재연결 시도 추가
+          const newScheduleEs = new EventSource(pushUrl);
+          newScheduleEs.addEventListener("error", () => {
+            retry();
+          });
+          newScheduleEs.addEventListener("schedule", (e) => {
+            // 여기서 알림을 생성합니다.
+            toast(e.data);
+            // console.log(e.data);
+          });
+          // }, 1000 * 60); // 10초 후에 재연결 시도
           // } else {
           // 재시도가 3번 실패한 경우, 1시간 후에 재연결 시도
           // 이렇게 하지 않으니까, 무조건 재 요청 가게 변경
@@ -142,19 +142,19 @@ const App: React.FC = () => {
           const retry = () => {
             //   if (retryCount < 3) {
             //     retryCount += 1;
-            setTimeout(() => {
-              scheduleEs.close();
-              // 재연결 시도 추가
-              const newScheduleEs = new EventSource(scheduleUrl);
-              newScheduleEs.addEventListener("error", () => {
-                retry();
-              });
-              newScheduleEs.addEventListener("schedule", (e) => {
-                // 여기서 알림을 생성합니다.
-                toast(e.data);
-                // console.log(e.data);
-              });
-            }, 1000 * 60); // 10초 후에 재연결 시도
+            // setTimeout(() => {
+            scheduleEs.close();
+            // 재연결 시도 추가
+            const newScheduleEs = new EventSource(scheduleUrl);
+            newScheduleEs.addEventListener("error", () => {
+              retry();
+            });
+            newScheduleEs.addEventListener("schedule", (e) => {
+              // 여기서 알림을 생성합니다.
+              toast(e.data);
+              // console.log(e.data);
+            });
+            // }, 1000 * 60); // 10초 후에 재연결 시도
             // } else {
             // 재시도가 3번 실패한 경우, 1시간 후에 재연결 시도
             // setTimeout(() => {

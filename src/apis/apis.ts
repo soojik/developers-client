@@ -30,6 +30,38 @@ export const MEMBER_API = {
       },
     });
   },
+  getPickBadge: (memberId: number) => {
+    return axiosInstance({
+      method: "GET",
+      url: `/api/member/badge/${memberId}/pick`,
+    });
+  },
+  getBadge: (memberId: number) => {
+    return axiosInstance({
+      method: "GET",
+      url: `/api/member/badge/${memberId}`,
+    });
+  },
+  patchBadge: <T>(data: T) => {
+    return axiosInstance({
+      method: "PATCH",
+      url: `/api/member/badge`,
+      data,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
+  postBadge: <T>(data: T) => {
+    return axiosInstance({
+      method: "POST",
+      url: `/api/member/badge`,
+      data,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
 };
 export const ROOM_API = {
   getRoomNew: () => {

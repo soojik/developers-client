@@ -31,8 +31,13 @@ const BadgeList = ({
     };
     const getBadgePick = async () => {
       const { data } = await MEMBER_API.getPickBadge(Number(memberId));
-      if (data?.data !== null) setPickBadges(data?.data?.myBadge);
-      // console.log("착용 :", data);
+      if (data?.data !== null) {
+        setPickBadges(data?.data?.myBadge);
+        if (data?.data?.myBadge === "BEGINNER") setBadge("초급자");
+        if (data?.data?.myBadge === "JUNIOR") setBadge("중급자");
+        if (data?.data?.myBadge === "JUNGNIOR") setBadge("고급자");
+        if (data?.data?.myBadge === "SENIOR") setBadge("해결사");
+      }
     };
     postFirstBadge();
     getBadge();

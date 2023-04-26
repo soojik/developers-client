@@ -65,7 +65,17 @@ const MyPage = () => {
         setImgPreview(userData.data?.data?.profileImageUrl);
       }
     };
+    const getBadgePick = async () => {
+      const { data } = await MEMBER_API.getPickBadge(Number(memberId));
+      if (data?.data !== null) {
+        if (data?.data?.myBadge === "BEGINNER") setBadge("초급자");
+        if (data?.data?.myBadge === "JUNIOR") setBadge("중급자");
+        if (data?.data?.myBadge === "JUNGNIOR") setBadge("고급자");
+        if (data?.data?.myBadge === "SENIOR") setBadge("해결사");
+      }
+    };
     getUser();
+    getBadgePick();
   }, [nickname, address]);
 
   const [activeIndex, setActiveIndex] = useState(0);

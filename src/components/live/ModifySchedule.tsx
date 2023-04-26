@@ -135,6 +135,7 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
             alert(res.data.msg);
             if (res.status === 200) {
               handleClose();
+              window.location.reload();
             }
           })
           .catch((err) => {

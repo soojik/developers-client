@@ -57,7 +57,8 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
             )}
             {problems!.map((el, idx) => (
               <Link
-                to={`/problem/${el.problemId}`}
+                to={`/problem/detail`}
+                state={el}
                 key={idx}
                 className="h-[100px] hover:bg-slate-100 hover:bg-opacity-60 p-3 border-b last:border-b-0 flex justify-between"
               >
@@ -96,7 +97,7 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
                 최근 개설된 채팅방이 없습니다.
               </div>
             )}
-            {rooms!.slice(5, rooms!.length).map((el, idx) => (
+            {rooms?.slice(0, 5).map((el, idx) => (
               <Link
                 to={`/mentoring/${el.mentoringRoomId}`} // 멘토링 방 url이 없음
                 key={idx}

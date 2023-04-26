@@ -56,13 +56,16 @@ const ProblemRegisterBox = () => {
   const { memberInfo, memberId, isLoggedIn } = useRecoilValue(memberInfoState);
 
   const handleHashTagClick = (index: Number, item: string) => {
-    if (hashTag.includes(item)) {
+    if (hashTag.length >= 4) {
+      return alert("최대 4개의 해시태그까지만 등록할 수 있습니다.");
+    } else if (hashTag.includes(item)) {
       return alert("이미 해쉬태그가 등록이되어있습니다.");
     } else {
       setHashTag([...hashTag, item]);
       setIsHashTag(true);
     }
   };
+  
   const handleDeleteHashTagClick = (i: Number, item: string) => {
     setHashTag(hashTag.filter((data, index) => data !== item));
 

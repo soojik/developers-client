@@ -18,11 +18,20 @@ import CheckIcon from "components/icons/CheckIcon";
 import BadgeList from "components/mypage/BadgeList";
 import Modal from "components/Modal";
 
+// 알림 객체 삭제
+import { subscriptionState } from "../recoil/subscriptionState";
+import { scheduleSubscriptionState } from "../recoil/scheduleSubscriptionState";
+
 const MyPage = () => {
   const { memberId } = useParams();
   const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
   const resetMemberInfo = useResetRecoilState(memberInfoState);
   const navigate = useNavigate();
+  // 알림 삭제
+  const resetSubscriptions = useResetRecoilState(subscriptionState);
+  const resetScheduleSubscriptions = useResetRecoilState(
+    scheduleSubscriptionState
+  );
 
   const careerInfoMenu = ["이력", "후기"];
   const userInfoMunu = [
@@ -186,6 +195,8 @@ const MyPage = () => {
   };
 
   const handleLogout = () => {
+    resetSubscriptions();
+    resetScheduleSubscriptions();
     resetMemberInfo();
     removeLocalStorage("access_token");
     removeLocalStorage("refresh_token");

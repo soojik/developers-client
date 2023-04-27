@@ -60,7 +60,7 @@ const App: React.FC = () => {
       };
       fetchData();
     }
-  }, [subscriptions, scheduleSubscriptions, memberInfo]);
+  }, []);
 
   useEffect(() => {
     if (

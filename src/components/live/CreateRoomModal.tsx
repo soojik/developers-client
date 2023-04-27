@@ -46,7 +46,6 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         .then(async (res) => {
           if (res.data["code"] == "200 OK") {
             setMentoringRoomId(res.data["data"]);
-            console.log(res);
             setStep(2);
 
             // 방 생성 이후에 알림

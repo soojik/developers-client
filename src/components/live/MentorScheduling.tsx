@@ -46,14 +46,12 @@ const MentorScheduling: React.FC<MentorSchedulingProps> = ({ events }) => {
 
   const handleRemoveSchedule = (room: Room) => {
     if (window.confirm("멘토링 방을 삭제하시겠습니까?")) {
-      console.log("room", room);
       axiosInstance({
         url: `/api/room/${room.mentoringRoomId}`,
         method: "delete",
       })
         .then((res) => {
           window.alert(res.data["msg"]);
-          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);

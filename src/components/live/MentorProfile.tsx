@@ -60,7 +60,6 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
       },
     })
       .then((res) => {
-        console.log(res);
         setSubscriptions((prevSubscriptions: Subscription[]) => {
           if (subscribed) {
             return prevSubscriptions.filter(

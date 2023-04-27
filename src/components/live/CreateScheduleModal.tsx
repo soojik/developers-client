@@ -148,8 +148,6 @@ const CreateScheduleDate: React.FC<CalendarProps> = ({
           },
         })
           .then((res) => {
-            console.log(`Selected time: ${selectedDate}`);
-            console.log(res);
             onClose();
             window.location.reload();
           })

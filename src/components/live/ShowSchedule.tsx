@@ -177,7 +177,6 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
           },
         })
         .then((res) => {
-          console.log(res);
           if (res.status === 200) {
             alert("방을 종료했습니다.");
             handleClose();

@@ -38,9 +38,7 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({
           title: title,
           description: description,
         },
-      }).then((res) => {
-        console.log(res.data);
-      });
+      })
     }
     setStep(2);
   };

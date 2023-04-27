@@ -121,7 +121,7 @@ const App: React.FC = () => {
         eventSources.forEach((es: { close: () => void }) => es.close());
       };
     }
-  }, [subscriptions, memberInfo]);
+  }, [subscriptions]);
 
   useEffect(() => {
     if (
@@ -183,7 +183,7 @@ const App: React.FC = () => {
         eventSources.forEach((es: { close: () => any }) => es.close());
       };
     }
-  }, [scheduleSubscriptions, memberInfo]);
+  }, [scheduleSubscriptions]);
 
   return (
     <div className="App">

@@ -45,7 +45,6 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
 
   const CustomAppointment = (props: any) => {
     const handleEventClick = () => {
-      console.log(props);
       if (props.data.mentorName === memberInfo.nickname) {
         // 직접 입력으로 추후 수정 필요
         alert("자신의 방에는 신청할 수 없습니다");
@@ -73,21 +72,16 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                       console.log(res.data);
                     });
 
+                  console.log(props);
                   // 스케쥴 푸시 알림 구독
-                  await axiosInstance({
-                    url: `/api/subscribe/schedule`,
-                    data: {
+                  await axiosInstance
+                    .post("`/api/subscribe/schedule`", {
                       mentorName: props.data.mentorName,
                       userName: memberInfo.nickname,
                       email: memberInfo.email,
                       roomName: props.data.mentoringRoomTitle,
                       startTime: props.data.startDate,
-                    },
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                  })
+                    })
                     .then((res) => {
                       console.log(res);
                       setScheduleSubscriptions(

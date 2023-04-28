@@ -91,7 +91,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
           `/api/schedules/mentee/${event.scheduleId}`
         );
         if (res.status === 200) {
-          // 알림 삭제
+          // 알림 삭제(멘티의 일정 취소 시)
           await axiosInstance
             .delete(`/api/unsubscribe/schedule`, {
               data: {
@@ -167,7 +167,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
       const removeUrl = Object.keys(roomUrls).filter(
         (el) => el === event.title
       );
-      axiosInstance
+      await axiosInstance
         .delete(`/api/live-session/exit`, {
           data: {
             roomName: event.title,
@@ -177,12 +177,36 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
           },
         })
         .then((res) => {
-          if (res.status === 200) {
-            alert("방을 종료했습니다.");
-            handleClose();
-          } else {
+          console.log(res);
+          if (res.status !== 200) {
             alert("오류가 발생했습니다. 다시 시도해주세요.");
           }
+        })
+        .catch((err) => console.log(err));
+
+      // 알림 삭제(멘토의 방 종료 시)
+      await axiosInstance
+        .delete(`/api/unsubscribe/schedule`, {
+          data: {
+            mentorName: event.owner,
+            userName: memberInfo.nickname,
+            roomName: event.title,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setScheduleSubscriptions(
+            (prevScheduleSubscriptions: ScheduleSubscriptions[]) => {
+              return prevScheduleSubscriptions.filter(
+                (sub: ScheduleSubscriptions) =>
+                  sub.subscribeId !== res.data.subscribeId
+              );
+            }
+          );
+          alert("방을 종료했습니다.");
+          handleClose();
         })
         .catch((err) => console.log(err));
     } catch (err) {

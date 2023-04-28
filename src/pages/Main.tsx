@@ -1,4 +1,4 @@
-import { PROBLEM_API, ROOM_API } from "apis/apis";
+import { POINT_API, PROBLEM_API, ROOM_API } from "apis/apis";
 import Carousel from "components/Carousel";
 import MainList from "components/MainList";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ const Main = () => {
   const [roomLikes, setRoomLikes] = useState([]);
   const [problemNew, setProblemNew] = useState([]);
   const [problemLikes, setProblemLikes] = useState([]);
+  const [pointRanking, setPointRanking] = useState([]);
   useEffect(() => {
     const getRoomNewest = async () => {
       const {
@@ -33,10 +34,19 @@ const Main = () => {
       } = await PROBLEM_API.getProblemLikes();
       setProblemLikes(data.slice(0, 5));
     };
+    const getPointRanking = async () => {
+      const {
+        data: { data },
+      } = await POINT_API.getPointRanking();
+      console.log(data);
+      setPointRanking(data.pointRanking);
+      console.log(pointRanking);
+    };
     getRoomNewest();
     // getRoomLike();
     getProblemNewest();
     getProblemLike();
+    getPointRanking();
   }, []);
 
   return (
@@ -51,17 +61,17 @@ const Main = () => {
         <MainList
           rooms={roomTop}
           option="room"
-          sectionHeader={"최근 개설된 채팅방"}
+          sectionHeader={"최근 개설된 멘토링룸"}
         />
         <MainList
           problems={problemLikes}
           option="problem"
-          sectionHeader={"이번 주 추천 문제"}
+          sectionHeader={"오늘의 추천 문제"}
         />
         <MainList
-          rooms={roomTop}
-          option="room"
-          sectionHeader={"WEEKLY ROOM BEST"}
+          ranking={pointRanking}
+          option="ranking"
+          sectionHeader={"포인트 랭킹 TOP 10"}
         />
       </div>
     </div>

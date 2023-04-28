@@ -45,7 +45,7 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
       .filter(
         (roomSchedule) => (
           !mySchedule.some(
-            (my) => 
+            (my) =>
               my.startDate.toLocaleString() === new Date(roomSchedule.startDate).toLocaleString()
           )
         ))
@@ -72,30 +72,32 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
               bio="멘토에 대한 연혁이 쭉쭉 필요합니다람쥐!"
             />
             {/* imgUrl="https://cdn.pixabay.com/photo/2016/10/09/15/21/business-man-1725976_1280.png" */}
-            <button
-              className="bg-slate-200 text-accent-400 px-3 py-2 mr-3 rounded"
-              onClick={handleClose}
-            >
-              닫기
-            </button>
-            {memberId && (
+            <div className="flex justify-end">
               <button
-                className="bg-accent-400 text-slate-200 px-3 py-2 rounded"
-                onClick={() => {
-                  setShowCalendarPopup(!showCalendarPopup);
-                  handleShowSchedule();
-                }}
+                className="bg-slate-200 text-accent-400 px-3 py-2 mr-3 rounded"
+                onClick={handleClose}
               >
-                신청
+                닫기
               </button>
-            )}
+              {memberId && (
+                <button
+                  className="bg-accent-400 text-slate-200 px-3 py-2 rounded"
+                  onClick={() => {
+                    setShowCalendarPopup(!showCalendarPopup);
+                    handleShowSchedule();
+                  }}
+                >
+                  신청
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <CalendarPopUp
             events={newSchedule}
             handleClose={() => {
-              handleClose;
-              window.location.reload();
+              handleClose();
+              setShowCalendarPopup(false);
             }}
           />
         )}

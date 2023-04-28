@@ -92,23 +92,25 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
       setCurrentPage(1);
     }
   };
-  
+
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="w-1/2">
-        <SearchBar onSearch={handleSearch}></SearchBar>
-      </div>
-      {memberInfo.mentor && (
-        <div className="h-16 flex items-center">
-          <button
-            className="py-2 px-4 w-fit rounded-md text-slate-50 bg-accent-400 hover:bg-accent-500"
-            onClick={handleOpenModal}
-          >
-            방 생성
-          </button>
+    <div className="flex flex-col items-center">
+      <div className="w-full flex justify-center">
+        <div className="w-3/4 flex justify-center">
+          <SearchBar onSearch={handleSearch}></SearchBar>
         </div>
-      )}
+        {memberInfo.mentor && (
+          <div className="w-fit ml-4 flex items-center">
+            <button
+              className="py-2 px-4 rounded-md text-slate-50 bg-accent-400 hover:bg-accent-500 mx-auto"
+              onClick={handleOpenModal}
+            >
+              방 생성
+            </button>
+          </div>
+        )}
+      </div>
       <div className="w-full">
         <RoomList events={events} rooms={displayedRooms}></RoomList>
       </div>
@@ -121,6 +123,7 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
         />
       )}
     </div>
+
   );
 };
 

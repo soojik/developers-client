@@ -27,15 +27,26 @@ interface RoomsProps {
   mentoringRoomId: number;
   title: string;
 }
+interface RankingProps {
+  nickname: string;
+  point: number;
+}
 
 type MainListType = {
   sectionHeader: string;
   option: string;
   problems?: MainListProps[];
   rooms?: RoomsProps[];
+  ranking?: RankingProps[];
 };
 
-const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
+const MainList = ({
+  sectionHeader,
+  option,
+  problems,
+  rooms,
+  ranking,
+}: MainListType) => {
   return (
     <>
       <div className="flex flex-col">
@@ -112,6 +123,21 @@ const MainList = ({ sectionHeader, option, problems, rooms }: MainListType) => {
                   <div className="text-sm">{el.createdAt.slice(0, 10)}</div>
                 </div>
               </Link>
+            ))}
+          </>
+        )}
+        {option === "ranking" && (
+          <>
+            {ranking?.length === 0 && (
+              <div className="font-thin py-16 flex justify-center">
+                가입한 사용자가 없습니다.
+              </div>
+            )}
+            {ranking!.map((el, idx) => (
+              <div className="flex justify-between">
+                <div className="text-sm font-medium">{el.nickname} &nbsp;</div>
+                <div className="text-sm">{el.point}점</div>
+              </div>
             ))}
           </>
         )}

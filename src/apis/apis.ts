@@ -82,3 +82,8 @@ export const PROBLEM_API = {
     });
   },
 };
+export const POINT_API = {
+  getPointRanking: () => {
+    return axiosInstance({ method: "GET", url: `/api/member/point/ranking` });
+  },
+};

@@ -105,6 +105,7 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                     .catch((err) => console.log(err));
 
                   handleClose();
+                  window.location.reload;
                 } else {
                   alert(res.data["msg"]);
                 }
@@ -140,12 +141,14 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
         <TodayButton />
         <Appointments appointmentComponent={CustomAppointment} />
       </Scheduler>
-      <button
-        className="bg-accent-400 text-white px-3 py-2 rounded-md"
-        onClick={handleClose}
-      >
-        닫기
-      </button>
+      <div className="flex justify-end">
+        <button
+          className="bg-accent-400 text-white px-3 py-2 rounded-md"
+          onClick={handleClose}
+        >
+          닫기
+        </button>
+      </div>
     </div>
   );
 };

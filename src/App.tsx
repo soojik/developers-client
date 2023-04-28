@@ -58,7 +58,6 @@ const App: React.FC = () => {
         setSubscriptions(subData);
         setScheduleSubscriptions(scheduleSubData);
       };
-      window.location.reload();
       fetchData();
     }
   }, []);

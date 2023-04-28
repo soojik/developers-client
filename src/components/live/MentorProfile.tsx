@@ -28,6 +28,14 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
     );
   });
 
+  useEffect(() => {
+    setSubscribed(() => {
+      return subscriptions.some(
+        (subscription: Subscription) => subscription.mentorName === name
+      );
+    });
+  }, [subscriptions]);
+
   // 이벤트 처리 함수를 수정하여 구독 및 구독 취소 시 엔드포인트가 정확하게 변경되도록 함
   const handleSubscription = async () => {
     if (isSelf) {
@@ -82,7 +90,6 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
           return prevSubscriptions;
         });
         setSubscribed(!subscribed);
-        window.location.reload();
       })
       .catch((err) => console.log(err));
   };

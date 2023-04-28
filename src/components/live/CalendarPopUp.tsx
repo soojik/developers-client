@@ -101,11 +101,12 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                           return prevScheduleSubscriptions;
                         }
                       );
+                      // window.location.reload();
                     })
                     .catch((err) => console.log(err));
 
                   handleClose();
-                  window.location.reload;
+                  // window.location.reload;
                 } else {
                   alert(res.data["msg"]);
                 }

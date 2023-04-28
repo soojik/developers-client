@@ -112,6 +112,7 @@ const CancelEventPopup: React.FC<CancelEventPopupProps> = ({
                   );
                 }
               );
+              // window.location.reload();
             })
             .catch((err) => console.log(err));
 

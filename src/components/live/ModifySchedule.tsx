@@ -131,7 +131,6 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
           method: "delete",
         })
           .then((res) => {
-            console.log(res.data);
             alert(res.data.msg);
             if (res.status === 200) {
               handleClose();
@@ -228,8 +227,6 @@ const ModifySchedule: React.FC<CalendarProps> = ({ onClose, room, events }) => {
           },
         })
           .then((res) => {
-            console.log(`Selected time: ${selectedDate}`);
-            console.log(res);
             onClose();
             window.location.reload();
           })

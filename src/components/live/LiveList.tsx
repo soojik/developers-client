@@ -74,6 +74,10 @@ const LiveList: React.FC<LiveListProps> = ({ events }) => {
   };
 
   const handleSearch = async (query: string) => {
+    if (query.length < 3) {
+      alert('3글자 이상부터 검색이 가능합니다.');
+      return;
+    }
     if (query) {
       // 1개 이상의 공백을 1개로 바꿔 보내주도록하고 앞, 뒤 공백 제거
       const url = `/api/room/${query.replace(/\s+/g, ' ').trim()}`;

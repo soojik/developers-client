@@ -22,7 +22,7 @@ const SearchBar: React.FC<Props> = ({ onSearch }) => {
       <form onSubmit={handleFormSubmit} className="w-full flex justify-center">
         <input
           type="text"
-          placeholder="검색어를 입력해주세요."
+          placeholder="검색어를 입력해주세요. (3글자 이상)"
           value={query}
           onChange={handleInputChange}
           className="border border-gray-300 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 flex-1"

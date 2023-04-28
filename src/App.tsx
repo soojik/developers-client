@@ -58,6 +58,7 @@ const App: React.FC = () => {
         setSubscriptions(subData);
         setScheduleSubscriptions(scheduleSubData);
       };
+      window.location.reload();
       fetchData();
     }
   }, []);
@@ -69,6 +70,7 @@ const App: React.FC = () => {
       memberInfo.nickname !== "null" &&
       subscriptions.length > 0
     ) {
+      window.location.reload();
       console.log(subscriptions);
       const eventSources = subscriptions.map((subscriptions: Subscription) => {
         const pushUrl = `/api/listen?mentorName=${subscriptions.mentorName}&userName=${memberInfo.nickname}&email=${memberInfo.email}`;
@@ -130,6 +132,7 @@ const App: React.FC = () => {
       memberInfo.nickname !== "null" &&
       scheduleSubscriptions.length > 0
     ) {
+      window.location.reload();
       console.log(scheduleSubscriptions);
       const eventSources = scheduleSubscriptions.map(
         (scheduleSubscriptions: ScheduleSubscriptions) => {

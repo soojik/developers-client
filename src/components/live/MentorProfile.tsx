@@ -14,7 +14,6 @@ export interface Subscription {
   mentorName: string;
   userName: string;
   email: string;
-  roomName: string;
 }
 
 const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
@@ -83,6 +82,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
           return prevSubscriptions;
         });
         setSubscribed(!subscribed);
+        window.location.reload();
       })
       .catch((err) => console.log(err));
   };
@@ -92,14 +92,14 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
       <div className="flex items-center mb-2">
         {/* <img className="border border-black rounded" src={imgUrl} alt="Mentor" width={70} height={70}/> */}
         <h3 className="text-xl pb-1">{name}</h3>
-        {!isSelf && memberId &&
-        <button
-          className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
-          onClick={handleSubscription}
-        >
-          {subscribed ? "알림 취소" : "알림"}
-        </button>
-        }
+        {!isSelf && memberId && (
+          <button
+            className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
+            onClick={handleSubscription}
+          >
+            {subscribed ? "알림 취소" : "알림"}
+          </button>
+        )}
       </div>
       {/* <h2>멘토 연혁</h2>
       <p>{bio}</p> */}

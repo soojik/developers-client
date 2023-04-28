@@ -150,9 +150,14 @@ const MyPage = () => {
         }
       )
       .then((res) => {
+        if (res.data.code.includes("409")) {
+          alert("이미 사용중인 닉네임입니다.");
+          return;
+        }
         alert("저장에 성공했습니다");
         setModalOpened(false);
         if (path === "nickname") {
+          console.log(res);
           setNickname(data);
           setNicknameEditOpend(false);
         } else {

@@ -13,7 +13,7 @@ const SearchBox: React.FC<Props> = ({ onSearch }) => {
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(`Submit`,query);
+    console.log(`Submit`, query);
     e.preventDefault();
     onSearch(query);
   };
@@ -30,7 +30,7 @@ const SearchBox: React.FC<Props> = ({ onSearch }) => {
       />
       <button
         type="submit"
-        className="bg-blue-600 text-white py-2 px-4 rounded-lg ml-2"
+        className="bg-blue-600 text-white py-2 px-4 rounded-lg ml-2 mr-2"
       >
         Search
       </button>

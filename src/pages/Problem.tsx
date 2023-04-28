@@ -17,6 +17,13 @@ import { useRecoilValue } from "recoil";
 import { memberInfoState } from "recoil/userState";
 import { useAsync } from "react-use";
 import ScrollButton from "components/ScrollButton";
+import { Button } from "@material-tailwind/react";
+import {
+  CloudArrowUpIcon,
+  ArrowLongRightIcon,
+  ArrowPathIcon,
+  BookmarkIcon,
+} from "@heroicons/react/24/outline";
 
 interface ProblemProps {
   problemId: number;
@@ -201,12 +208,15 @@ const Problem = () => {
               </ConfirmBtn>
             </div>
           )}
-          <ConfirmBtn onClick={resetListData}>데이터 초기화</ConfirmBtn>{" "}
-          {/* 버튼 수정 */}
         </div>
         <div className="flex justify-center mb-10">
           <div className="flex flex-col w-full">
-            <SearchBox onSearch={searchSubmit} />
+            <div className="flex">
+              <SearchBox onSearch={searchSubmit} />
+              <ConfirmBtn onClick={resetListData}>
+                <ArrowPathIcon strokeWidth={2} className="h-5 w-5" />
+              </ConfirmBtn>{" "}
+            </div>
             <div className="flex w-full justify-between">
               <DropBoxLevel
                 selectFn={handleChangeTemp}

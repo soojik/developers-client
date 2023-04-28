@@ -75,7 +75,7 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                   console.log(props);
                   // 스케쥴 푸시 알림 구독
                   await axiosInstance
-                    .post("`/api/subscribe/schedule`", {
+                    .post(`/api/subscribe/schedule`, {
                       mentorName: props.data.mentorName,
                       userName: memberInfo.nickname,
                       email: memberInfo.email,

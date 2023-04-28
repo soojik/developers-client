@@ -20,10 +20,15 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
   const { memberInfo, memberId } = useRecoilValue(memberInfoState);
   const [subscriptions, setSubscriptions] = useRecoilState(subscriptionState);
   const isSelf = memberInfo.nickname === name; // 본인 구독 불가
-  const [subscribed, setSubscribed] = useState();
+
+  // 구독 여부를 확인하는 변수를 생성하고 recoil에서 구독 목록(subscriptions)에 따라 값을 설정
+  const [subscribed, setSubscribed] = useState(() => {
+    return subscriptions.some(
+      (subscription: Subscription) => subscription.mentorName === name
+    );
+  });
 
   useEffect(() => {
-    // 구독 여부를 확인하는 변수를 생성하고 recoil에서 구독 목록(subscriptions)에 따라 값을 설정
     setSubscribed(() => {
       return subscriptions.some(
         (subscription: Subscription) => subscription.mentorName === name
@@ -39,8 +44,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
     }
 
     // 일반 푸시 엔드포인트
-    const endpoint =
-      subscriptions.mentorName === name ? `/api/unsubscribe` : `/api/subscribe`;
+    const endpoint = subscribed ? `/api/unsubscribe` : `/api/subscribe`;
 
     const notifybody = subscribed
       ? {
@@ -57,14 +61,14 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
     axiosInstance({
       url: `${endpoint}`,
       data: notifybody,
-      method: subscriptions.mentorName === name ? "DELETE" : "POST",
+      method: subscribed ? "DELETE" : "POST",
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((res) => {
         setSubscriptions((prevSubscriptions: Subscription[]) => {
-          if (subscriptions.mentorName === name) {
+          if (subscribed) {
             return prevSubscriptions.filter(
               (sub: Subscription) =>
                 !(
@@ -85,7 +89,8 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
           }
           return prevSubscriptions;
         });
-        // setSubscribed(!subscribed);
+        setSubscribed(!subscribed);
+        window.location.reload();
       })
       .catch((err) => console.log(err));
   };
@@ -100,7 +105,7 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
             className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
             onClick={handleSubscription}
           >
-            {subscriptions.mentorName === name ? "알림 취소" : "알림"}
+            {subscribed ? "알림 취소" : "알림"}
           </button>
         )}
       </div>

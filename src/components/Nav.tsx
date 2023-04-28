@@ -27,11 +27,11 @@ const Nav = () => {
       <div className="flex items-center justify-between">
         <Link to="/" className="flex items-center">
           <img
-            className="w-auto h-6"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+            className="w-auto h-8"
+            src="https://developers-attach-test.s3.ap-northeast-2.amazonaws.com/developers_logo.png"
             alt="로고 이미지"
           />
-          <div className="ml-4 font-bold text-white">Developers</div>
+          <div className="ml-1 font-bold text-white">Developers</div>
         </Link>
         <div className="hidden md:block">
           <div className="flex items-center">

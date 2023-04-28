@@ -66,6 +66,9 @@ const ShowMentoring: React.FC<ShowMentoringProps> = ({
             <p className="py-2 border-b border-gray-300 mb-3">
               {room.description}
             </p>
+            <div className="flex text-sm items-center text-gray-400 mt-3">
+              멘토
+            </div>
             <MentorProfile
               roomName={room.title}
               name={room.mentorName}

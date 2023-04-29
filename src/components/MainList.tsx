@@ -30,6 +30,7 @@ interface RoomsProps {
 interface RankingProps {
   nickname: string;
   point: number;
+  memberId?: number;
 }
 
 type MainListType = {
@@ -53,7 +54,13 @@ const MainList = ({
         <div className="flex p-3 justify-between">
           <MainListTitle>{sectionHeader}</MainListTitle>
           <Link
-            to={`${option === "problem" ? "/problem" : "/mentoring"}`}
+            to={`${
+              option === "problem"
+                ? "/problem"
+                : option === "room"
+                ? "/mentoring"
+                : "/" //랭킹
+            }`}
             className="flex"
           >
             <RightArrowIcon stroke="black" width={25} height={25} />
@@ -79,7 +86,7 @@ const MainList = ({
                   <div className="flex justify-between">
                     <div className="flex items-center justify-between">
                       <div className="flex">
-                        <div className="flex text-sm text-slate-600">
+                        <div className="flex text-sm text-gray-400">
                           {el.writer} &nbsp; &nbsp;
                         </div>
                         <div className="flex text-sm mr-4 items-center text-gray-400">
@@ -105,21 +112,22 @@ const MainList = ({
           <>
             {rooms?.length === 0 && (
               <div className="font-thin py-16 flex justify-center">
-                최근 개설된 채팅방이 없습니다.
+                최근 개설된 멘토링 방이 없습니다.
               </div>
             )}
             {rooms?.slice(0, 5).map((el, idx) => (
               <Link
-                to={`/mentoring/${el.mentoringRoomId}`} // 멘토링 방 url이 없음
+                // to={`/mentoring/${el.mentoringRoomId}`} // 멘토링 방 url이 없음
+                to={`/mentoring`} //임시
                 key={idx}
                 className="h-[100px] hover:bg-slate-100 hover:bg-opacity-60 p-3 border-b last:border-b-0"
               >
                 <div className="text-md font-semibold">{el.title}</div>
-                <div className="text-sm opacity-80">{el.description}</div>
-                <div className="flex justify-between opacity-40">
-                  <div className="text-sm font-medium">
-                    {el.mentorName} &nbsp;
-                  </div>
+                <div className="text-sm text-gray-500 line_wrap">
+                  {el.description}
+                </div>
+                <div className="flex justify-between text-gray-400">
+                  <div className="text-sm">{el.mentorName} &nbsp;</div>
                   <div className="text-sm">{el.createdAt.slice(0, 10)}</div>
                 </div>
               </Link>
@@ -133,12 +141,19 @@ const MainList = ({
                 가입한 사용자가 없습니다.
               </div>
             )}
-            {ranking!.map((el, idx) => (
-              <div className="flex justify-between">
-                <div className="text-sm font-medium">{el.nickname} &nbsp;</div>
-                <div className="text-sm">{el.point}점</div>
-              </div>
-            ))}
+            <ul>
+              {ranking!.map((el, idx) => (
+                <li className="h-[50px] flex justify-between p-3" key={idx}>
+                  <Link
+                    to={`/profile/${el.memberId}`}
+                    className="text-sm font-medium hover:opacity-60"
+                  >
+                    {el.nickname} &nbsp;
+                  </Link>
+                  <div className="text-sm">{el.point}점</div>
+                </li>
+              ))}
+            </ul>
           </>
         )}
       </div>

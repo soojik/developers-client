@@ -10,7 +10,7 @@ interface PwdCofirmProps {
   pwdConfirm?: string;
 }
 
-const PwdInput = ({ memberId }: { memberId?: string }) => {
+const PwdInput = ({ memberId }: { memberId?: number }) => {
   const URL = process.env.REACT_APP_DEV_URL;
   const [pwd, setPwd] = useState("");
   const navigate = useNavigate();

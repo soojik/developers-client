@@ -17,17 +17,26 @@ import PencilIcon from "components/icons/PencilIcon";
 import CheckIcon from "components/icons/CheckIcon";
 import BadgeList from "components/mypage/BadgeList";
 import Modal from "components/Modal";
-
-// 알림 객체 삭제
 import { subscriptionState } from "../recoil/subscriptionState";
 import { scheduleSubscriptionState } from "../recoil/scheduleSubscriptionState";
+
+interface MemberProps {
+  address: string;
+  email: string;
+  introduce: string | null;
+  mentor: boolean;
+  nickname: string;
+  point: number;
+  position: string;
+  profileImageUrl: string | null;
+  skills: string;
+}
 
 const MyPage = () => {
   const { memberId } = useParams();
   const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
   const resetMemberInfo = useResetRecoilState(memberInfoState);
   const navigate = useNavigate();
-  // 알림 삭제
   const resetSubscriptions = useResetRecoilState(subscriptionState);
   const resetScheduleSubscriptions = useResetRecoilState(
     scheduleSubscriptionState
@@ -38,7 +47,8 @@ const MyPage = () => {
     { menu: "닉네임", url: "nickname" },
     { menu: "거주지", url: "address" },
   ];
-
+  const [userInfo, setUserInfo] = useState<MemberProps>();
+  const [isMe, setIsMe] = useState(false);
   const [nickname, setNickname] = useState("");
   const [badge, setBadge] = useState("");
   const [address, setAddress] = useState("");
@@ -62,16 +72,30 @@ const MyPage = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const userData = await MEMBER_API.getUser(memberInfo.memberId!);
-      setMemberInfo({
-        ...memberInfo,
-        memberInfo: userData.data?.data,
-      });
+      const userData = await MEMBER_API.getUser(Number(memberId));
+      setUserInfo(userData.data?.data);
       setIsMentor(userData.data?.data.mentor);
+      setNickname(userData.data?.data.nickname);
+      setAddress(userData.data?.data.address);
       // console.log("유저조회", userData.data?.data);
+      let isMine = Number(memberId) === memberInfo?.memberId;
+      if (memberInfo?.isLoggedIn && isMine) {
+        setMemberInfo({
+          ...memberInfo,
+          memberInfo: userData.data?.data,
+        });
+        setIsMe(isMine);
+      } else setIsMe(false);
       if (userData.data?.data?.profileImageUrl) {
         setAvatar(userData.data?.data?.profileImageUrl);
         setImgPreview(userData.data?.data?.profileImageUrl);
+      } else {
+        setAvatar(
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        );
+        setImgPreview(
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        );
       }
     };
     const getBadgePick = async () => {
@@ -85,7 +109,7 @@ const MyPage = () => {
     };
     getUser();
     getBadgePick();
-  }, [nickname, address]);
+  }, [nickname, address, memberId]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const onMenuClick = (idx: number): any => {
@@ -120,7 +144,7 @@ const MyPage = () => {
       try {
         await axiosInstance.post(`/api/attach/profile`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
-          params: { memberId },
+          params: { memberId: memberInfo.memberId },
         });
         /* 프로필 이미지 미리보기 */
         const reader = new FileReader();
@@ -142,7 +166,7 @@ const MyPage = () => {
     await axiosInstance
       .patch(
         `/api/member/${path}`,
-        { memberId, [path]: data },
+        { memberId: memberInfo.memberId, [path]: data },
         {
           headers: {
             "Content-type": "application/json",
@@ -184,7 +208,7 @@ const MyPage = () => {
   const handleUserDelete = () => {
     if (window.confirm("확인을 누르면 회원 정보가 삭제됩니다.")) {
       axiosInstance
-        .delete(`/api/auth/${memberId}`)
+        .delete(`/api/auth/${memberInfo?.memberId}`)
         .then((res) => {
           removeLocalStorage("access_token");
           removeLocalStorage("refresh_token");
@@ -211,7 +235,7 @@ const MyPage = () => {
   const handleMentorBtnClick = async () => {
     try {
       const { data } = await axiosInstance.patch(`/api/member/mentor`, {
-        memberId,
+        memberId: memberInfo?.memberId,
       });
       alert("멘토로 등록됐습니다");
       setModalOpened(false);
@@ -233,12 +257,14 @@ const MyPage = () => {
               src={avatar}
               alt="profile image"
             />
-            <button
-              className="absolute bottom-0 right-[-8px] p-2 rounded-full bg-blue-500 hover:bg-blue-600"
-              onClick={() => handleUserInfoModal("avatar")}
-            >
-              <PencilIcon fill="white" width={18} height={18} />
-            </button>
+            {isMe && (
+              <button
+                className="absolute bottom-0 right-[-8px] p-2 rounded-full bg-blue-500 hover:bg-blue-600"
+                onClick={() => handleUserInfoModal("avatar")}
+              >
+                <PencilIcon fill="white" width={18} height={18} />
+              </button>
+            )}
             <input
               className="hidden bg-cover"
               type="file"
@@ -250,18 +276,19 @@ const MyPage = () => {
           </div>
           <div className="flex flex-col w-[65%] justify-between px-3 text-sm">
             <div>
-              <span> {`${memberInfo.memberInfo.nickname} `}</span>
-              <button
-                className="text-accent-200 font-bold hover:text-accent-500"
-                onClick={() => handleUserInfoModal("badge")}
-              >{`<${badge}/>`}</button>
+              <span> {`${userInfo?.nickname} `}</span>
+              {isMe ? (
+                <button
+                  className="text-accent-200 font-bold hover:text-accent-500"
+                  onClick={() => handleUserInfoModal("badge")}
+                >{`<${badge}/>`}</button>
+              ) : (
+                <button className="text-accent-200 font-bold cursor-default">{`<${badge}/>`}</button>
+              )}
             </div>
             <div className="font-light">
               포인트
-              <span className="font-bold">
-                {` ${memberInfo.memberInfo.point} `}
-              </span>
-              점
+              <span className="font-bold">{` ${userInfo?.point} `}</span>점
             </div>
             <div className="flex justify-end">
               {isMentor === true ? (
@@ -269,56 +296,67 @@ const MyPage = () => {
                   <CheckIcon stroke="green" width={16} height={16} />
                   &nbsp;등록된 멘토
                 </div>
-              ) : (
+              ) : isMe ? (
                 <button
                   className="py-2 px-4 w-fit bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300"
                   onClick={() => handleUserInfoModal("mentor")}
                 >
                   멘토 등록하기
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
-        <div className="pb-4 mb-4 md:border-b">
-          <div className="font-extrabold text-zinc-500 mb-2 flex justify-between">
-            내 정보 관리
-            <button
-              className="p-1.5 text-accent-100 rounded-md border border-accent-100 font-bold  hover:bg-slate-200 text-[10px]"
-              onClick={() => handleUserInfoModal("password")}
-            >
-              비밀번호 변경
-            </button>
-          </div>
+        <div className="">
+          {isMe && (
+            <div className="font-extrabold text-zinc-500 mb-2 flex justify-between">
+              내 정보 관리
+              <button
+                className="p-1.5 text-accent-100 rounded-md border border-accent-100 font-bold  hover:bg-slate-200 text-[10px]"
+                onClick={() => handleUserInfoModal("password")}
+              >
+                비밀번호 변경
+              </button>
+            </div>
+          )}
           <div className="transition-all rounded-md p-2 flex justify-between">
             이메일
-            <span className=" text-slate-400">{`${memberInfo.memberInfo.email}`}</span>
+            <span className=" text-slate-400">{`${userInfo?.email}`}</span>
           </div>
-          {userInfoMunu?.map((el) => (
-            <div
-              className="hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between cursor-pointer"
-              onClick={() => handleUserInfoModal(el.url)}
-              key={el.menu}
-            >
-              {el.menu} <RightArrowIcon />
-            </div>
-          ))}
-        </div>
 
-        <div className="flex justify-around">
-          <button
-            className="py-2 px-4 text-xs bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300"
-            onClick={handleLogout}
-          >
-            로그아웃
-          </button>
-          <button
-            className="py-2 px-4 text-xs bg-red-100 rounded-md text-red-500 font-bold hover:bg-opacity-70"
-            onClick={handleUserDelete}
-          >
-            회원탈퇴
-          </button>
+          {isMe ? (
+            userInfoMunu?.map((el) => (
+              <div
+                className=" hover:bg-zinc-200 transition-all rounded-md p-2 flex justify-between cursor-pointer"
+                onClick={() => handleUserInfoModal(el.url)}
+                key={el.menu}
+              >
+                {el.menu} <RightArrowIcon />
+              </div>
+            ))
+          ) : (
+            <div className="transition-all rounded-md p-2 flex justify-between">
+              거주지
+              <span className=" text-slate-400">{`${userInfo?.address}`}</span>
+            </div>
+          )}
         </div>
+        {isMe && (
+          <div className="flex justify-around pt-4 mt-4 md:border-t">
+            <button
+              className="py-2 px-4 text-xs bg-slate-200 rounded-md text-accent-400 font-bold hover:bg-slate-300"
+              onClick={handleLogout}
+            >
+              로그아웃
+            </button>
+            <button
+              className="py-2 px-4 text-xs bg-red-100 rounded-md text-red-500 font-bold hover:bg-opacity-70"
+              onClick={handleUserDelete}
+            >
+              회원탈퇴
+            </button>
+          </div>
+        )}
       </div>
       {/* 오른쪽 - 커리어 정보관리 */}
       <div className="sm:bg-zinc-50 sm:rounded-3xl sm:col-span-2 h-auto sm:shadow-lg sm:p-4">
@@ -410,20 +448,15 @@ const MyPage = () => {
                 </div>
               </div>
             )}
-            {pwdEditOpend && <PwdInput memberId={memberId} />}
+            {pwdEditOpend && <PwdInput memberId={memberInfo?.memberId} />}
             {nicknameEditOpend && (
               <NicknameInput
-                memberId={memberId}
                 editUserInfo={editUserInfo}
-                prevNickname={memberInfo.memberInfo.nickname}
+                prevNickname={nickname}
               />
             )}
             {adressEditOpend && (
-              <AddressInput
-                memberId={memberId}
-                editUserInfo={editUserInfo}
-                prevAddress={memberInfo.memberInfo.address}
-              />
+              <AddressInput editUserInfo={editUserInfo} prevAddress={address} />
             )}
           </div>
         </Modal>

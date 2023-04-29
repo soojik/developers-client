@@ -1,11 +1,10 @@
+import { useEffect, useState } from "react";
 import { POINT_API, PROBLEM_API, ROOM_API } from "apis/apis";
 import Carousel from "components/Carousel";
 import MainList from "components/MainList";
-import { useEffect, useState } from "react";
 
 const Main = () => {
   const [roomTop, setRoomTop] = useState([]);
-  const [roomLikes, setRoomLikes] = useState([]);
   const [problemNew, setProblemNew] = useState([]);
   const [problemLikes, setProblemLikes] = useState([]);
   const [pointRanking, setPointRanking] = useState([]);
@@ -15,12 +14,6 @@ const Main = () => {
         data: { data },
       } = await ROOM_API.getRoomNew();
       setRoomTop(data);
-    };
-    const getRoomLike = async () => {
-      /*  const {
-        data: { data },
-      } = await ROOM_API.getRoomLikes();
-      setRoomLikes(data); */
     };
     const getProblemNewest = async () => {
       const {
@@ -38,12 +31,10 @@ const Main = () => {
       const {
         data: { data },
       } = await POINT_API.getPointRanking();
-      console.log(data);
+      // console.log("랭킹", data);
       setPointRanking(data.pointRanking);
-      console.log(pointRanking);
     };
     getRoomNewest();
-    // getRoomLike();
     getProblemNewest();
     getProblemLike();
     getPointRanking();

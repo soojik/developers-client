@@ -45,9 +45,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (
-      memberInfo.nickname &&
-      memberInfo.nickname !== "undefined" &&
-      memberInfo.nickname !== "null"
+      memberInfo?.nickname &&
+      memberInfo?.nickname !== "undefined" &&
+      memberInfo?.nickname !== "null"
     ) {
       const fetchData = async () => {
         const subData = await fetchSubscriptions(memberInfo.nickname);
@@ -65,9 +65,9 @@ const App: React.FC = () => {
   const prevSubscriptionsRef = useRef(subscriptions);
   useEffect(() => {
     if (
-      memberInfo.nickname &&
-      memberInfo.nickname !== "undefined" &&
-      memberInfo.nickname !== "null" &&
+      memberInfo?.nickname &&
+      memberInfo?.nickname !== "undefined" &&
+      memberInfo?.nickname !== "null" &&
       subscriptions.length > 0
     ) {
       console.log(subscriptions);
@@ -134,9 +134,9 @@ const App: React.FC = () => {
   const prevScheduleSubscriptionsRef = useRef(scheduleSubscriptions);
   useEffect(() => {
     if (
-      memberInfo.nickname &&
-      memberInfo.nickname !== "undefined" &&
-      memberInfo.nickname !== "null" &&
+      memberInfo?.nickname &&
+      memberInfo?.nickname !== "undefined" &&
+      memberInfo?.nickname !== "null" &&
       scheduleSubscriptions.length > 0
     ) {
       console.log(scheduleSubscriptions);

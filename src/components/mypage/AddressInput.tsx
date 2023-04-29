@@ -4,11 +4,9 @@ import ConfirmBtn from "components/buttons/CofirmBtn";
 import { addressList } from "libs/options";
 
 const AddressInput = ({
-  memberId,
   editUserInfo,
   prevAddress,
 }: {
-  memberId?: string;
   editUserInfo: (path: string, data: string) => any;
   prevAddress: string;
 }) => {

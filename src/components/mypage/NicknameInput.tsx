@@ -5,7 +5,6 @@ const NicknameInput = ({
   editUserInfo,
   prevNickname,
 }: {
-  memberId?: string;
   editUserInfo: (path: string, data: string) => any;
   prevNickname: string;
 }) => {

@@ -18,7 +18,7 @@ interface CarrerInput {
 }
 
 const CareerInput = ({ prevCareer, setPrevCareer }: CarrerInput) => {
-  const { memberId } = useRecoilValue(memberInfoState);
+  const loginInfo = useRecoilValue(memberInfoState);
   const [inputId, setInputId] = useState(0);
   const [editIdx, setEditIdx] = useState<number[]>([]);
   const [career, setCareer] = useState<CareerItemProps[]>([
@@ -110,7 +110,7 @@ const CareerInput = ({ prevCareer, setPrevCareer }: CarrerInput) => {
       setEditIdx([...editIdx, index]);
     }
     const { data } = await axiosInstance.post(`/api/member/career`, {
-      memberId,
+      memberId: loginInfo?.memberId,
       ...reqCareer,
     });
     setInitCareerId(data.data.careerId); // 등록 후 바로 수정가능하게 id값 세팅

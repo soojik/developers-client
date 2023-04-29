@@ -105,7 +105,7 @@ const CalendarPopup: React.FC<CalendarPopupProps> = ({
                     .catch((err) => console.log(err));
 
                   handleClose();
-                  window.location.reload;
+                  window.location.reload();
                 } else {
                   alert(res.data["msg"]);
                 }

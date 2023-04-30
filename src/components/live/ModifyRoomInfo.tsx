@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ModifySchedule from "./ModifySchedule";
 import { axiosInstance } from "apis/axiosConfig";
 import { EventProp } from "pages/Mentoring";
+import { TextField } from '@mui/material';
 
 export interface Room {
   mentoringRoomId: number;
@@ -52,46 +53,41 @@ const ModifyRoomInfo: React.FC<ModifyRoomInfoProps> = ({
           events={events}
         ></ModifySchedule>
       ) : (
-        <form>
-          <div className="mb-4">
-            <label htmlFor="title" className="block mb-2 font-bold">
-              방 제목
-            </label>
-            <input
-              id="title"
-              value={title}
-              type="text"
-              className="w-full border-gray-300 rounded-md px-4 py-2"
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="description" className="block mb-2 font-bold">
-              방 소개글
-            </label>
-            <input
-              id="description"
-              value={description}
-              type="text"
-              className="w-full border-gray-300 rounded-md px-4 py-2"
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-accent-400 text-slate-200 px-3 py-2 mr-2 rounded"
-              onClick={handleNextClick}
-            >
-              다음
-            </button>
-            <button type="button" className="mr-4" onClick={() => onClose()}>
-              취소
-            </button>
-          </div>
-        </form>
+        <div>
+        <h2 className="text-lg font-bold mb-4">방 수정</h2>
+          <form>
+            <div className="mb-4">
+              <TextField
+                id="title"
+                label="제목"
+                className="w-full border-gray-300 rounded-md px-4 py-2"
+                onChange={(e) => setTitle(e.target.value)}
+                variant="filled"
+              />
+            </div>
+            <div className="mb-4">
+              <TextField
+                id="description"
+                label="소개글"
+                className="w-full border-gray-300 rounded-md px-4 py-2"
+                onChange={(e) => setDescription(e.target.value)}
+                variant="filled"
+              />
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="bg-accent-400 text-slate-200 px-3 py-2 mr-2 rounded"
+                onClick={handleNextClick}
+              >
+                다음
+              </button>
+              <button type="button" className="mr-4" onClick={() => onClose()}>
+                취소
+              </button>
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );

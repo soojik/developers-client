@@ -48,14 +48,14 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
 
     const notifybody = subscribed
       ? {
-          mentorName: name,
-          userName: memberInfo.nickname,
-        }
+        mentorName: name,
+        userName: memberInfo.nickname,
+      }
       : {
-          mentorName: name,
-          userName: memberInfo.nickname,
-          email: memberInfo.email,
-        };
+        mentorName: name,
+        userName: memberInfo.nickname,
+        email: memberInfo.email,
+      };
 
     // 일반 푸시 알림 요청
     axiosInstance({
@@ -100,12 +100,22 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ bio, name }) => {
       <div className="flex items-center mb-2">
         {/* <img className="border border-black rounded" src={imgUrl} alt="Mentor" width={70} height={70}/> */}
         <h3 className="text-xl pb-1">{name}</h3>
-        {!isSelf && memberId && (
+        {memberId ? (
+          !isSelf && (
+            <button
+              className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
+              onClick={handleSubscription}
+            >
+              {subscribed ? "알림 취소" : "알림"}
+            </button>
+          )
+        ) : (
           <button
-            className="bg-accent-400 text-slate-200 px-3 py-2 mx-2 rounded"
+            className="bg-gray-300 text-slate-100 px-3 py-2 mx-2 rounded"
             onClick={handleSubscription}
+            disabled
           >
-            {subscribed ? "알림 취소" : "알림"}
+            알림
           </button>
         )}
       </div>
